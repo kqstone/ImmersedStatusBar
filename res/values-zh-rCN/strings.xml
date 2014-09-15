@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="module_name">MIUI6沉浸状态栏</string>
+    <string name="module_desc">miui6第三方程序提供沉浸式状态栏</string>
+    <string name="module_desc_full">解决miui6第三方程序不能沉浸状态栏\n\n作者: kqstone (kqstone@qq.com)\n致谢: 特别感谢MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar)提供的诸多代码</string>
+</resources>
