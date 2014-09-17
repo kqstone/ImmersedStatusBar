@@ -21,7 +21,6 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mIsSystemApp", false);
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mNeedGetColorFromBackground", false);
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mStatusBarBackground", null);
-				XposedHelpers.setAdditionalInstanceField(param.thisObject, "timesOfSetContenView", 0);
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mRepaddingHandled", false);
 			}
 		});
@@ -29,9 +28,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 		XposedHelpers.findAndHookMethod(Activity.class, "onCreate", Bundle.class, new ActivityOnCreateHook());
 		XposedHelpers.findAndHookMethod(Activity.class, "performResume", new ActivityOnResumeHook());
 		XposedHelpers.findAndHookMethod(Activity.class, "onWindowFocusChanged", boolean.class, new OnWindowFocusedHook());
-		XposedHelpers.findAndHookMethod(Activity.class, "setContentView", int.class, new SetContentViewHook());
-		XposedHelpers.findAndHookMethod(Activity.class, "setContentView", View.class, new SetContentViewHook());
-		XposedHelpers.findAndHookMethod(Activity.class, "setContentView", View.class, LayoutParams.class, new SetContentViewHook());
+		XposedHelpers.findAndHookMethod(Activity.class, "onContentChanged", new OnContentChangedHook());
 
 	}
 

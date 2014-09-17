@@ -8,7 +8,8 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
-public class SetContentViewHook extends XC_MethodHook {
+public class OnContentChangedHook extends XC_MethodHook {
+	private boolean mHasChange= false;
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -19,18 +20,19 @@ public class SetContentViewHook extends XC_MethodHook {
 			return;
 		} 
 		
-		int i = (Integer)XposedHelpers.getAdditionalInstanceField(activity, "timesOfSetContenView");
-		Utils.log("setContentView execution times: "+ i);
-		
-		if (i > 0) {
-			XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", null);
-			XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", true);
-			dialog(activity);
-//			ActivityOnResumeHook.sendChangeStatusBarIntent(activity);
-//			OnWindowFocusedHook.sendChangeStatusBarIntent(activity);			
+		if (!mHasChange) {
+			mHasChange = true;
+			return;
 		}
-		
-		XposedHelpers.setAdditionalInstanceField(activity, "timesOfSetContenView", i+1);
+		Utils.log("Content changed, re-tint statusbar");
+
+		XposedHelpers.setAdditionalInstanceField(activity,
+				"mStatusBarBackground", null);
+		XposedHelpers.setAdditionalInstanceField(activity,
+				"mNeedGetColorFromBackground", true);
+		dialog(activity);
+		// ActivityOnResumeHook.sendChangeStatusBarIntent(activity);
+		// OnWindowFocusedHook.sendChangeStatusBarIntent(activity);
 	}
 	
 	private void dialog(Activity activity) {
