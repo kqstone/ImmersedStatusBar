@@ -94,32 +94,32 @@ public class Utils {
 		return bitmap;
 	}
 	
-	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {
-		View view = activity.getWindow().getDecorView().getRootView();
-
-		view.destroyDrawingCache();
-		view.setDrawingCacheEnabled(true);
-		Bitmap bitmap1 = view.getDrawingCache();			
-				
-		if (bitmap1 == null) 
-			return null;
-		
-		outputBitmapToFile(bitmap1, activity);
-		
-		int corpTop = Constant.STATUS_BAR_HEIGHT;
-		int bitmap1Height = bitmap1.getHeight();
-		Utils.log("bitmap1Height: "+ bitmap1Height);
-		if (bitmap1Height < Constant.DISPLAY_HEIGHT) {
-			corpTop = 0;
-		} 
-		
-		// Crop and compress the image so that we don't get a TransactionTooLargeException.		
-		int width = bitmap1.getWidth() / 4;
-		Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, corpTop, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
-//		bitmap1.recycle();
-
-		return bitmap;
-	}
+//	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {
+//		View view = activity.getWindow().getDecorView().getRootView();
+//
+//		view.destroyDrawingCache();
+//		view.setDrawingCacheEnabled(true);
+//		Bitmap bitmap1 = view.getDrawingCache();			
+//				
+//		if (bitmap1 == null) 
+//			return null;
+//		
+//		outputBitmapToFile(bitmap1, activity);
+//		
+//		int corpTop = Constant.STATUS_BAR_HEIGHT;
+//		int bitmap1Height = bitmap1.getHeight();
+//		Utils.log("bitmap1Height: "+ bitmap1Height);
+//		if (bitmap1Height < Constant.DISPLAY_HEIGHT) {
+//			corpTop = 0;
+//		} 
+//		
+//		// Crop and compress the image so that we don't get a TransactionTooLargeException.		
+//		int width = bitmap1.getWidth() / 4;
+//		Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, corpTop, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
+////		bitmap1.recycle();
+//
+//		return bitmap;
+//	}
 	
 	public static BitMapColor getBitmapColor(Bitmap bitmap) {
 		BitMapColor bmc = new BitMapColor();

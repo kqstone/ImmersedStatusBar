@@ -41,6 +41,10 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 		boolean needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
 		if (!needGetColorFromBackground)
 			return;
+		int delay = Constant.DELAY_GET_CACHEDRAWABLE;
+		if (activity.getLocalClassName().equals("com.uc.browser.InnerUCMobile"))
+			delay = 800;
+		
 		Handler handler = new Handler();
 		
 		
@@ -83,7 +87,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 
 				activity.sendBroadcast(intent);
 				XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
-			}}, Constant.DELAY_GET_CACHEDRAWABLE);
+			}}, delay);
 
 	}
 }
