@@ -52,13 +52,13 @@ public class Utils {
 
 		float[] hsv = new float[3];
 		Color.colorToHSV(color, hsv);
+		float saturation = hsv[1];
 		float value = hsv[2];
-		Utils.log("Color Value: "+value);
-		if (value > 0.86) {
+		Utils.log("Color Saturation:" + saturation + "; Color Value: " + value);
+		if (saturation < 0.33 && value > 0.67) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@SuppressLint("NewApi")
@@ -74,8 +74,9 @@ public class Utils {
 		return keyguardLocked;
 	}
 	
-	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {
-		View view = activity.getWindow().getDecorView();
+	public static Bitmap getBitMapFromActivityBackground(Activity activity) {
+		View view = activity.getWindow().getDecorView().getRootView();
+		view.destroyDrawingCache();
 		view.setDrawingCacheEnabled(true);
 		Bitmap bitmap1 = view.getDrawingCache();	
 		
@@ -89,16 +90,15 @@ public class Utils {
 		
 		int width = bitmap1.getWidth() / 4;
 		Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, statusbarHeight, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
-//		bitmap1.recycle();
-		view.destroyDrawingCache();
+		
 		return bitmap;
 	}
 	
-	public static Bitmap getBitMapFromActivityBackground(Activity activity) {
-		View view = activity.getWindow().getDecorView();
+	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {
+		View view = activity.getWindow().getDecorView().getRootView();
 
+		view.destroyDrawingCache();
 		view.setDrawingCacheEnabled(true);
-		view.buildDrawingCache();
 		Bitmap bitmap1 = view.getDrawingCache();			
 				
 		if (bitmap1 == null) 
@@ -116,8 +116,8 @@ public class Utils {
 		// Crop and compress the image so that we don't get a TransactionTooLargeException.		
 		int width = bitmap1.getWidth() / 4;
 		Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, corpTop, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
-		bitmap1.recycle();
-		view.destroyDrawingCache();
+//		bitmap1.recycle();
+
 		return bitmap;
 	}
 	
@@ -189,16 +189,22 @@ public class Utils {
 		if (!Constant.DBG_IMAGE)
 			return;
 
-		String fname = "/sdcard/debug/" + activity.getLocalClassName() + ".png";
-		FileOutputStream out;
-		try {
-			out = new FileOutputStream(fname);
-			bitmap.compress(Bitmap.CompressFormat.PNG, 80, out);
-			// bitmap.recycle();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final String fname = "/sdcard/debug/" + activity.getLocalClassName() + ".png";
+		new Thread(){
+			@Override
+			public void run() {
+				FileOutputStream out;
+				try {
+					out = new FileOutputStream(fname);
+					bitmap.compress(Bitmap.CompressFormat.PNG, 80, out);
+					// bitmap.recycle();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}.start();
 
 	}
 

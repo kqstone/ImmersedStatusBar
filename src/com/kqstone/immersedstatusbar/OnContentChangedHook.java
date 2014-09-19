@@ -9,10 +9,11 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnContentChangedHook extends XC_MethodHook {
-	private boolean mHasChange= false;
+	private int mChangeTimes= 0;
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+		mChangeTimes++;
 		final Activity activity = (Activity) param.thisObject;	
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
 		if (isSysApp) {
@@ -20,11 +21,10 @@ public class OnContentChangedHook extends XC_MethodHook {
 			return;
 		} 
 		
-		if (!mHasChange) {
-			mHasChange = true;
+		if (mChangeTimes == 1) {
 			return;
 		}
-		Utils.log("Content changed, re-tint statusbar");
+		Utils.log("Content changed for " + mChangeTimes + " times, re-tint statusbar");
 
 		XposedHelpers.setAdditionalInstanceField(activity,
 				"mStatusBarBackground", null);
