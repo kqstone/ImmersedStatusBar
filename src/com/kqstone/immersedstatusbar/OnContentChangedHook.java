@@ -30,8 +30,17 @@ public class OnContentChangedHook extends XC_MethodHook {
 				"mStatusBarBackground", null);
 		XposedHelpers.setAdditionalInstanceField(activity,
 				"mNeedGetColorFromBackground", true);
-//		dialog(activity);
+		dialog(activity);
 		// ActivityOnResumeHook.sendChangeStatusBarIntent(activity);
-		OnWindowFocusedHook.sendChangeStatusBarIntent(activity);
+//		OnWindowFocusedHook.sendChangeStatusBarIntent(activity);
+	}
+	
+	private void dialog(Activity activity) {
+		AlertDialog.Builder builder = new Builder(activity);
+
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
+		dialog.dismiss();
 	}
 }
