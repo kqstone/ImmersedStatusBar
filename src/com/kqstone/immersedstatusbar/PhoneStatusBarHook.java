@@ -54,21 +54,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		
 	};
 
-	
-	private BroadcastReceiver mLockScreenReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			Utils.log("lockscreen detected...");
-			if(!Utils.isKeyguardLocked(context))
-				return;
-			updateStatusBarContent(false);
-			updateStatusBarBackground(Constant.COLOR_TRANSPARENT);
-		}
-		
-	};
-	
 	private void updateStatusBarContent(boolean darkmode) {
 		Utils.log("darkmode: " + darkmode);
 		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mTargetDarkMode", darkmode);
@@ -97,12 +82,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					intentFilter.addAction(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 					context.registerReceiver(mActivityResumeReceiver, intentFilter);
-					
-					IntentFilter lockscreenFilter = new IntentFilter();
-					lockscreenFilter.addAction(Intent.ACTION_SCREEN_ON);
-					lockscreenFilter.addAction(Intent.ACTION_SCREEN_OFF);
-					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-					context.registerReceiver(mLockScreenReceiver, lockscreenFilter);
 				}
 				
 			});
