@@ -14,8 +14,6 @@ public final class Constant {
 	public static final String IS_DARKMODE = "is_darkmode";
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
 	public static final String DARKMODE_HANDLE = "dark_handled";
-	public static final int COLOR_BLACK = Color.parseColor("#ff000000");
-	public static final int COLOR_TRANSPARENT = Color.parseColor("#00000000");
 	
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
 	public static final int DELAY_GET_CACHEDRAWABLE = 50;

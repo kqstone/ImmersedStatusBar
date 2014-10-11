@@ -7,6 +7,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.WindowManager;
@@ -44,7 +45,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			return;
 		}
 
-		int color = Constant.COLOR_BLACK;
+		int color = Color.BLACK;
 		boolean colorHandled = false;
 		boolean isdark = false;
 		boolean darkHandled = false;
@@ -52,7 +53,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
 		if (isSysApp) {
 			Utils.log("System app, change color to transparent");
-			color = Constant.COLOR_TRANSPARENT;
+			color = Color.TRANSPARENT;
 			colorHandled = true;
 		} 
 		

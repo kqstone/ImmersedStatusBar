@@ -5,6 +5,7 @@ import com.kqstone.immersedstatusbar.BitMapColor.Type;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Handler;
 import android.view.WindowManager;
 import de.robv.android.xposed.XC_MethodHook;
@@ -58,7 +59,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			public void run() {
 				// TODO Auto-generated method stub
 				Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
-				int color = Constant.COLOR_BLACK;
+				int color = Color.BLACK;
 				boolean isdark = false;
 				boolean darkHandled = false;
 				

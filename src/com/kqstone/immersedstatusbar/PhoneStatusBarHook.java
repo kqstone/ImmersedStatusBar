@@ -45,7 +45,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					mPreDarkMode = false;
 				}
 			}			
-			int color = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Constant.COLOR_BLACK);
+			int color = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 			if (color != mPreColor) {
 				updateStatusBarBackground(color); 
 				mPreColor = color;
