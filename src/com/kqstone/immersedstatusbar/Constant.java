@@ -1,6 +1,5 @@
 package com.kqstone.immersedstatusbar;
 
-import de.robv.android.xposed.XposedHelpers;
 import android.graphics.Color;
 
 public final class Constant {
@@ -19,7 +18,9 @@ public final class Constant {
 	public static final int COLOR_TRANSPARENT = Color.parseColor("#00000000");
 	
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
-	public static final int DELAY_GET_CACHEDRAWABLE = 150;
+	public static final int DELAY_GET_CACHEDRAWABLE = 50;
+	
+	public static final int TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION = 600;
 	
 //	public static final int DISPLAY_HEIGHT = 1280;
 //	public static final int DISPLAY_WIDTH = 720;

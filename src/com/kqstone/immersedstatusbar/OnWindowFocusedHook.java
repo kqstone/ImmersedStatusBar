@@ -20,6 +20,10 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			return;	
 		
 		final Activity activity = (Activity) param.thisObject;
+		sendChangeStatusBarIntent(activity);
+	}
+	
+	public static void sendChangeStatusBarIntent(final Activity activity) {
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
 		if (isSysApp) {
 			Utils.log("System app, change color to transparent");
@@ -33,17 +37,17 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 				== WindowManager.LayoutParams.FLAG_FULLSCREEN) {
 			return;
 		}
-
-		sendChangeStatusBarIntent(activity);
-	}
-	
-	public static void sendChangeStatusBarIntent(final Activity activity) {
+		
 		boolean needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
 		if (!needGetColorFromBackground)
 			return;
 		int delay = Constant.DELAY_GET_CACHEDRAWABLE;
-		if (activity.getLocalClassName().equals("com.uc.browser.InnerUCMobile"))
+		String activityName = activity.getLocalClassName();
+		if (activityName.equals("com.uc.browser.InnerUCMobile")) {
 			delay = 800;
+		} else if (activityName.equals("activity.SplashActivity") && activity.getPackageName().equals("com.tencent.mobileqq")) {
+			delay = 300;
+		}
 		
 		Handler handler = new Handler();
 		

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.view.View;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -17,6 +18,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private Object instancePhoneStatusBar;
+	private int mPreColor = Color.BLACK;
+	private boolean mPreDarkMode = false;
 	
 	private BroadcastReceiver mActivityResumeReceiver = new BroadcastReceiver() {
 
@@ -29,16 +32,24 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			boolean darkMode;
 			if (darkHandled) {
 				darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
-				updateStatusBarContent(darkMode);
+				if (darkMode != mPreDarkMode) {
+					updateStatusBarContent(darkMode);
+					mPreDarkMode = darkMode;
+				}
+				
 			} else {
 				int disabled = XposedHelpers.getIntField(instancePhoneStatusBar, "mDisabled");
 				Utils.log("mDisabled: " + disabled);
-				if (disabled == 0 || disabled == 128 || disabled == 8388608) {
+				if ((disabled == 0 || disabled == 128 || disabled == 8388608) && mPreDarkMode) {
 					updateStatusBarContent(false);
+					mPreDarkMode = false;
 				}
 			}			
 			int color = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Constant.COLOR_BLACK);
-			updateStatusBarBackground(color);
+			if (color != mPreColor) {
+				updateStatusBarBackground(color); 
+				mPreColor = color;
+			}
 		}
 		
 	};
@@ -66,7 +77,8 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	
 	private void updateStatusBarBackground(int color) {
 		View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
-//		ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.1F, 1.0F }).setDuration(300).start();
+		ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.1F, 1.0F })
+			.setDuration(Constant.TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION).start();
 		statusBarView.setBackgroundColor(color);
 	}
 	
