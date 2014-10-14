@@ -70,12 +70,14 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 						color = bitmapColor.Color;
 						XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
 						isdark = Utils.getDarkMode(color);
+						XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
 						darkHandled = true;
 					} else if (bitmapColor.mType == Type.GRADUAL) {
 						Utils.log("GRADUAL BitMap found, rePadding viewgroup...");
 						color = bitmapColor.Color;
 						XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
 						isdark = Utils.getDarkMode(color);
+						XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
 						darkHandled = true;
 						if (!(Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mRepaddingHandled")) {
 							Utils.resetPadding(activity, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);

@@ -21,6 +21,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mIsSystemApp", false);
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mNeedGetColorFromBackground", false);
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mStatusBarBackground", null);
+				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mDarkMode", false);
 				XposedHelpers.setAdditionalInstanceField(param.thisObject, "mRepaddingHandled", false);
 			}
 		});

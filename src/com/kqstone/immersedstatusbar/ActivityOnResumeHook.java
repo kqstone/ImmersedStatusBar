@@ -63,7 +63,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			if(obj !=null) {
 				color = (Integer)obj;
 				Utils.log("get color from mStatusBarBackground:" + color);
-				isdark = Utils.getDarkMode(color);
+				isdark = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mDarkMode");
 				colorHandled = true;
 
 				XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
@@ -83,6 +83,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 //							actionBar.setBackgroundDrawable(new ColorDrawable(color));
 							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
 							isdark = Utils.getDarkMode(color);
+							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
 							colorHandled = true;
 						} catch (IllegalArgumentException e) {
 						}
