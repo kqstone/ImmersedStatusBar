@@ -89,9 +89,15 @@ public class Utils {
 			return null;
 		
 		int width = bitmap1.getWidth() / 4;
-		Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, statusbarHeight, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
-		
-		return bitmap;
+		try {
+			Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, statusbarHeight, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
+			
+			return bitmap;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 //	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {
@@ -150,13 +156,14 @@ public class Utils {
 	
 	public static void resetPadding(Activity activity, int offsetHeight) {
 		
-		ViewGroup decorView = (ViewGroup) activity.findViewById(android.R.id.content);
-//		ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
-		int top = decorView.getPaddingTop() - offsetHeight;
-		int left = decorView.getPaddingLeft();
-		int right = decorView.getPaddingRight();
-		int bottom = decorView.getPaddingBottom();
-		decorView.setPadding(left, top, right, bottom);
+		ViewGroup rootView = (ViewGroup) activity.findViewById(android.R.id.content);
+		if (rootView == null)
+			return;
+		int top = rootView.getPaddingTop() - offsetHeight;
+		int left = rootView.getPaddingLeft();
+		int right = rootView.getPaddingRight();
+		int bottom = rootView.getPaddingBottom();
+		rootView.setPadding(left, top, right, bottom);
 //		
 	}
 	
