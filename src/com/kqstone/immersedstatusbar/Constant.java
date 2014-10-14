@@ -16,9 +16,9 @@ public final class Constant {
 	public static final String DARKMODE_HANDLE = "dark_handled";
 	
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
-	public static final int DELAY_GET_CACHEDRAWABLE = 50;
+	public static final int DELAY_GET_CACHEDRAWABLE = 0;
 	
-	public static final int TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION = 600;
+	public static final int TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION = 0;
 	
 //	public static final int DISPLAY_HEIGHT = 1280;
 //	public static final int DISPLAY_WIDTH = 720;
