@@ -3,4 +3,12 @@
     <string name="module_name">Immersed Statusbar for Miui6</string>
     <string name="module_desc">Immersed Statusbar for Miui6</string>
     <string name="module_desc_full">Immersed Statusbar for Miui6\nAuthor: kqstone (kqstone@163.com)\nAcknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
+    
+    <!--settings  -->
+    <string name="title_settings">Settings</string>
+    
+    <!--about  -->
+    <string name="about">About</string>
+    <string name="author_inform">Author: kqstone (kqstone@163.com)</string>
+    <string name="acknow_inform">Acknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
 </resources>

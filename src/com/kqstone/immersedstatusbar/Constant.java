@@ -23,5 +23,8 @@ public final class Constant {
 //	public static final int DISPLAY_HEIGHT = 1280;
 //	public static final int DISPLAY_WIDTH = 720;
 //	public static final int STATUS_BAR_HEIGHT = 50;
+	
+	// preference const
+	public static final String PREF_SHOW_SET_PER_ACT = "show_pref_per_act";
 
 }

@@ -16,6 +16,16 @@
         <meta-data android:name="xposeddescription" android:value="@string/module_desc" />
         <meta-data android:name="xposeddetails" android:value="@string/module_desc_full" />
         
+        <activity
+            android:name=".Settings"
+            android:label="@string/module_name" android:theme="@android:style/Theme.Holo.Light">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="About" android:theme="@android:style/Theme.Holo.Light"></activity>
+        
     </application>
 
 </manifest>
