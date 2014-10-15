@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.WindowManager;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -84,6 +85,19 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 							XposedHelpers.setAdditionalInstanceField(activity, "mRepaddingHandled", true);
 						}
 						
+					} else if (bitmapColor.mType == Type.PICTURE) {
+						Utils.log("Flat BitMap found...");
+						if (Settings.System.getInt(
+								activity.getContentResolver(),
+								SettingsActivity.KEY_PREF_FORCE_TINT, 0) == 1) {
+							color = bitmapColor.Color;
+							XposedHelpers.setAdditionalInstanceField(activity,
+									"mStatusBarBackground", color);
+							isdark = Utils.getDarkMode(color);
+							XposedHelpers.setAdditionalInstanceField(activity,
+									"mDarkMode", isdark);
+							darkHandled = true;
+						}
 					}
 				}
 				

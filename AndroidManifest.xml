@@ -5,7 +5,10 @@
           android:versionCode="20"
           android:versionName="1.09" >
 
-    <uses-sdk android:minSdkVersion="15" />
+    <uses-sdk android:minSdkVersion="19" />
+    
+    <uses-permission android:name="android.permission.READ_SETTINGS" />
+	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
     
     <application 
         android:label="@string/module_name" 
@@ -17,7 +20,7 @@
         <meta-data android:name="xposeddetails" android:value="@string/module_desc_full" />
         
         <activity
-            android:name=".Settings"
+            android:name=".SettingsActivity"
             android:label="@string/module_name" android:theme="@android:style/Theme.Holo.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

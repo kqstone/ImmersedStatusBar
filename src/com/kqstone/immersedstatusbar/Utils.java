@@ -141,6 +141,7 @@ public class Utils {
 		Utils.log("color4:" +color4);
 		if (color1 != color2 || color3 != color4) {
 			bmc.mType = BitMapColor.Type.PICTURE;
+			bmc.Color = color3;
 			return bmc;
 		}
 		if (color1 != color3) {
