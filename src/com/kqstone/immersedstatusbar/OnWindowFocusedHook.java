@@ -33,7 +33,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			return;
 		} 
 		
-		WindowType type = (WindowType) XposedHelpers.getAdditionalInstanceField(activity, "mWindowType");;
+		WindowType type = Utils.getWindowType(activity);
 		if (type != WindowType.Normal) {
 			return;
 		}
