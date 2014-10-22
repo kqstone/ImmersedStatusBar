@@ -51,9 +51,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				darkHandled = true;
 				break;
 			case Translucent:
-				Utils.log("need get darkmode after window focus changed");
-				XposedHelpers.setAdditionalInstanceField(activity,
-						"mNeedGetDarkModeFromBackground", true);
+				Utils.log("Translucent activity, need get darkmode after window focus changed");
 				return;
 			default:
 				darkHandled = true;

@@ -15,6 +15,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnWindowFocusedHook extends XC_MethodHook {
+	private Boolean mDarkModeTranslucent;
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -26,7 +27,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 		sendChangeStatusBarIntent(activity);
 	}
 	
-	public static void sendChangeStatusBarIntent(final Activity activity) {
+	public void sendChangeStatusBarIntent(final Activity activity) {
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
 		if (isSysApp) {
 			Utils.log("System app, change color to transparent");
@@ -107,21 +108,21 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 				}}, delay);
 			break;
 		case Translucent:
-			boolean needGetDarkModeFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetDarkModeFromBackground");
-			if (needGetDarkModeFromBackground) {
+			if (this.mDarkModeTranslucent == null) {
 				Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
 				if (bitmap != null) {
 					BitMapColor bitmapColor= Utils.getBitmapColor(bitmap);
 					int color = bitmapColor.Color;
-					boolean darkMode = Utils.getDarkMode(color);
-					Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
-					intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Color.TRANSPARENT);
-					intent.putExtra(Constant.IS_DARKMODE, darkMode);
-					intent.putExtra(Constant.DARKMODE_HANDLE, true);
-
-					activity.sendBroadcast(intent);
+					mDarkModeTranslucent = Utils.getDarkMode(color);
 				}
 			}
+			Intent intent = new Intent(
+					Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+			intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR,
+					Color.TRANSPARENT);
+			intent.putExtra(Constant.IS_DARKMODE, mDarkModeTranslucent);
+			intent.putExtra(Constant.DARKMODE_HANDLE, true);
+			activity.sendBroadcast(intent);
 			break;
 		default:
 			break;
