@@ -39,76 +39,77 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			Utils.log("System app, change color to transparent");
 			color = Color.TRANSPARENT;
 			colorHandled = true;
-		} 
-		
-		WindowType type = Utils.getWindowType(activity);
-		if (type == WindowType.Float) {
-			Utils.log("is Floating window, ignore");
-			return;
-		}
-		
-		if (!colorHandled && type == WindowType.Fullscreen) {
-			color = Color.parseColor("#99000000");
-			colorHandled = true;
-			isdark = false;
-			darkHandled = true;
-		}
-		
-		if (!colorHandled && type == WindowType.Translucent) {
-			Utils.log("Translucent status activity");
-//			Object obj = XposedHelpers.getAdditionalInstanceField(activity, "mDarkMode");
-//			if (obj == null) {
-				Utils.log("need get darkmode after window focus changed");
-				XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetDarkModeFromBackground", true);
+		} else {
+			WindowType type = Utils.getWindowType(activity);
+			switch (type) {
+			case Float:
 				return;
-//			} else {
-//				color = Color.TRANSPARENT;
-//				colorHandled = true;
-//				isdark = (Boolean) obj;
-//			}
-		}
-		
-		if (!colorHandled) {
-			darkHandled = true;
-			Object obj = XposedHelpers.getAdditionalInstanceField(activity, "mStatusBarBackground");
-			if(obj !=null) {
-				color = (Integer)obj;
-				Utils.log("get color from mStatusBarBackground:" + color);
-				isdark = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mDarkMode");
+			case Fullscreen:
+				color = Color.parseColor("#66000000");
 				colorHandled = true;
-
-				XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
-			}
-		}
-				
-		if (!colorHandled) {
-			darkHandled = true;
-			ActionBar actionBar = activity.getActionBar();
-			if (actionBar != null) {
-				FrameLayout container = (FrameLayout) XposedHelpers.getObjectField(actionBar, "mContainerView");
-				if (container != null) {
-					Drawable backgroundDrawable = (Drawable) XposedHelpers.getObjectField(container, "mBackground");
-					if (backgroundDrawable != null) {
-						try {
-							color = Utils.getMainColorFromActionBarDrawable(backgroundDrawable);
-//							actionBar.setBackgroundDrawable(new ColorDrawable(color));
-							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
-							isdark = Utils.getDarkMode(color);
-							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
-							colorHandled = true;
-						} catch (IllegalArgumentException e) {
+				isdark = false;
+				darkHandled = true;
+				break;
+			case Translucent:
+				Utils.log("need get darkmode after window focus changed");
+				XposedHelpers.setAdditionalInstanceField(activity,
+						"mNeedGetDarkModeFromBackground", true);
+				return;
+			default:
+				darkHandled = true;
+				Object obj = XposedHelpers.getAdditionalInstanceField(activity,
+						"mStatusBarBackground");
+				if (obj != null) {
+					color = (Integer) obj;
+					Utils.log("get color from mStatusBarBackground:" + color);
+					isdark = (Boolean) XposedHelpers
+							.getAdditionalInstanceField(activity, "mDarkMode");
+					colorHandled = true;
+					XposedHelpers.setAdditionalInstanceField(activity,
+							"mNeedGetColorFromBackground", false);
+				}
+				if (!colorHandled) {
+					darkHandled = true;
+					ActionBar actionBar = activity.getActionBar();
+					if (actionBar != null) {
+						FrameLayout container = (FrameLayout) XposedHelpers
+								.getObjectField(actionBar, "mContainerView");
+						if (container != null) {
+							Drawable backgroundDrawable = (Drawable) XposedHelpers
+									.getObjectField(container, "mBackground");
+							if (backgroundDrawable != null) {
+								try {
+									color = Utils
+											.getMainColorFromActionBarDrawable(backgroundDrawable);
+									actionBar
+											.setBackgroundDrawable(new ColorDrawable(
+													color));
+									XposedHelpers.setAdditionalInstanceField(
+											activity, "mStatusBarBackground",
+											color);
+									isdark = Utils.getDarkMode(color);
+									XposedHelpers.setAdditionalInstanceField(
+											activity, "mDarkMode", isdark);
+									colorHandled = true;
+								} catch (IllegalArgumentException e) {
+								}
+								container.invalidate();
+							}
 						}
-						container.invalidate();
 					}
 				}
-			}		
-		}
+
+				if (!colorHandled) {
+					XposedHelpers.setAdditionalInstanceField(activity,
+							"mNeedGetColorFromBackground", true);
+					Utils.log("can't handle color, need to get color from drawcache after widow focus changed");
+					return;
+				}
+				break;
+			}
+
+		} 
 		
-		if (!colorHandled) {
-			XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", true);
-			Utils.log("can't handle color, need to get color from drawcache after widow focus changed");
-			return;
-		}
 
 		Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
