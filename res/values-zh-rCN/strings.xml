@@ -3,4 +3,15 @@
     <string name="module_name">MIUI6沉浸状态栏</string>
     <string name="module_desc">miui6第三方程序提供沉浸式状态栏</string>
     <string name="module_desc_full">解决miui6第三方程序不能沉浸状态栏\n\n作者: kqstone (kqstone@qq.com)\n致谢: 特别感谢MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar)提供的诸多代码</string>
+
+    <!--settings  -->
+    <string name="title_settings">设置</string>
+    <string name="title_force_tint">强制变色</string>
+    <string name="summary_force_tint">对顶栏非单一色或渐变色应用强制变色</string>
+    
+    <!--about  -->
+    <string name="about">关于</string>
+    <string name="about_app">关于MIUI6版沉浸状态栏</string>
+    <string name="author_inform">作者: kqstone (kqstone@163.com)</string>
+    <string name="acknow_inform">致谢: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
 </resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint"/><PreferenceCategory android:title="@string/about">
-        <Preference android:title="@string/about" android:key="about" />
+    <CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint" android:summary="@string/summary_force_tint"/><PreferenceCategory android:title="@string/about">
+        <Preference android:title="@string/about_app" android:key="about" />
     </PreferenceCategory>
     
 
