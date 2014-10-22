@@ -3,6 +3,8 @@ package com.kqstone.immersedstatusbar;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getStaticIntField;
 
+import com.kqstone.immersedstatusbar.Utils.WindowType;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -30,17 +32,9 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 	}
 	
 	public static void sendChangeStatusBarIntent(Activity activity) {
-		Intent activityIntent = activity.getIntent();
-		if (activityIntent != null
-				&& (activityIntent.getFlags() & FLAG_FLOATING_WINDOW) == FLAG_FLOATING_WINDOW) {
-			Utils.log("is Floating window, ignore");
-			return;
-		}
-
-		// From Xposed SwipeBack by PeterCxy
-		// https://github.com/LOSP/SwipeBack/blob/master/src/us/shandian/mod/swipeback/hook/ModSwipeBack.java
-		int isFloating = getStaticIntField(findClass("com.android.internal.R.styleable", null), "Window_windowIsFloating");
-		if (activity.getWindow().getWindowStyle().getBoolean(isFloating, false)) {
+		WindowType type = (WindowType) XposedHelpers.getAdditionalInstanceField(activity,
+				"mWindowType");
+		if (type == WindowType.Float) {
 			Utils.log("is Floating window, ignore");
 			return;
 		}
@@ -51,7 +45,20 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		boolean darkHandled = false;
 		
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
-		if (isSysApp) {
+		
+		if (type == WindowType.Fullscreen) {
+			color = Color.parseColor("#99000000");
+			colorHandled = true;
+			isdark = false;
+			darkHandled = true;
+		}
+		
+		if (!colorHandled && type == WindowType.Translucent && !isSysApp) {
+			color = Color.TRANSPARENT;
+			colorHandled = true;			
+		}
+		
+		if (!colorHandled && isSysApp) {
 			Utils.log("System app, change color to transparent");
 			color = Color.TRANSPARENT;
 			colorHandled = true;

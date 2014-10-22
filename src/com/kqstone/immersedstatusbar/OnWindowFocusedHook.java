@@ -1,6 +1,7 @@
 package com.kqstone.immersedstatusbar;
 
 import com.kqstone.immersedstatusbar.BitMapColor.Type;
+import com.kqstone.immersedstatusbar.Utils.WindowType;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -32,11 +33,10 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			return;
 		} 
 		
-		int flags = activity.getWindow().getAttributes().flags;
-		if ((flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-				== WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS ||
-				(flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) 
-				== WindowManager.LayoutParams.FLAG_FULLSCREEN) {
+		WindowType type = (WindowType) XposedHelpers.getAdditionalInstanceField(activity,
+				"mWindowType");
+		
+		if (type != WindowType.Normal) {
 			return;
 		}
 		

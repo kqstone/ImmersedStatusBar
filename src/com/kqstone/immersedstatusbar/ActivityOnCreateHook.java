@@ -1,5 +1,7 @@
 package com.kqstone.immersedstatusbar;
 
+import com.kqstone.immersedstatusbar.Utils.WindowType;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -13,14 +15,15 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-		Activity activity = (Activity) param.thisObject;	
-		ApplicationInfo info = activity.getApplicationInfo();
-		Utils.log(String.valueOf((info.flags & ApplicationInfo.FLAG_SYSTEM) != 0));
-		Utils.log(String.valueOf((info.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0));
-		if ((info.flags & ApplicationInfo.FLAG_SYSTEM) != 0 || (info.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) !=0) {
-			XposedHelpers.setAdditionalInstanceField(param.thisObject, "mIsSystemApp", true);
-			Utils.log("Activity from system app: " + activity.getLocalClassName());
-		}
+		Activity activity = (Activity) param.thisObject;
+		boolean issysapp = Utils.isSystemApp(activity);
+		XposedHelpers.setAdditionalInstanceField(param.thisObject,
+				"mIsSystemApp", issysapp);
+		Utils.log("Activity from system app: " + activity.getLocalClassName());
+
+		WindowType type = Utils.getWindowType(activity);
+		XposedHelpers.setAdditionalInstanceField(param.thisObject,
+				"mWindowType", type);
 	}
-	
+
 }

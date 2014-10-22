@@ -10,6 +10,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -173,6 +175,40 @@ public class Utils {
 		String activityName = activity.getLocalClassName();
 		Utils.log("PackageName: " + packageName + "\n" +"ActivityName: " + activityName);
 	}
+	
+	public static WindowType getWindowType(Activity activity) {
+		Intent activityIntent = activity.getIntent();
+		int flags = activity.getWindow().getAttributes().flags;
+		if ((flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) {
+			return WindowType.Translucent;
+		}
+
+		if ((flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN) {
+			return WindowType.Fullscreen;
+		}
+
+		if (activityIntent != null
+				&& (activityIntent.getFlags() & 0x00002000) == 0x00002000) {
+			return WindowType.Float;
+		}
+		// From Xposed SwipeBack by PeterCxy
+		// https://github.com/LOSP/SwipeBack/blob/master/src/us/shandian/mod/swipeback/hook/ModSwipeBack.java
+		int isFloating = XposedHelpers.getStaticIntField(XposedHelpers
+				.findClass("com.android.internal.R.styleable", null),
+				"Window_windowIsFloating");
+		if (activity.getWindow().getWindowStyle().getBoolean(isFloating, false)) {
+			Utils.log("is Floating window, ignore");
+			return WindowType.Float;
+		}
+		return WindowType.Normal;
+	}
+	
+	public static boolean isSystemApp(Activity activity) {
+		ApplicationInfo info = activity.getApplicationInfo();
+		boolean issysapp = (info.flags & ApplicationInfo.FLAG_SYSTEM) != 0
+				|| (info.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0;
+		return issysapp;
+	}
 
 	private static Bitmap drawableToBitmap(Drawable drawable) throws IllegalArgumentException {
 		if (drawable instanceof BitmapDrawable) {
@@ -214,6 +250,10 @@ public class Utils {
 			}
 		}.start();
 
+	}
+	
+	enum WindowType {
+		Normal, Float, Translucent, Fullscreen
 	}
 
 }
