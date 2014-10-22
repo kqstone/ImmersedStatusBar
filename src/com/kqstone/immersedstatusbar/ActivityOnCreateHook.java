@@ -19,7 +19,7 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 		boolean issysapp = Utils.isSystemApp(activity);
 		XposedHelpers.setAdditionalInstanceField(param.thisObject,
 				"mIsSystemApp", issysapp);
-		Utils.log("Activity from system app: " + activity.getLocalClassName());
+		Utils.log(activity.getLocalClassName() + ": is sys app:" + issysapp);
 	}
 
 }

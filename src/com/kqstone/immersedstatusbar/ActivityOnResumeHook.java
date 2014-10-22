@@ -55,8 +55,17 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		}
 		
 		if (!colorHandled && type == WindowType.Translucent) {
-			color = Color.TRANSPARENT;
-			colorHandled = true;			
+			Utils.log("Translucent status activity");
+//			Object obj = XposedHelpers.getAdditionalInstanceField(activity, "mDarkMode");
+//			if (obj == null) {
+				Utils.log("need get darkmode after window focus changed");
+				XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetDarkModeFromBackground", true);
+				return;
+//			} else {
+//				color = Color.TRANSPARENT;
+//				colorHandled = true;
+//				isdark = (Boolean) obj;
+//			}
 		}
 		
 		if (!colorHandled) {
