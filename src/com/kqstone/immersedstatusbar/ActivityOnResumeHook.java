@@ -19,6 +19,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityOnResumeHook extends XC_MethodHook {
+	public WindowType mWindowType;
 	
 	/* Floating Window Intent ID */
 	public static final int FLAG_FLOATING_WINDOW = 0x00002000;
@@ -31,10 +32,13 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		sendChangeStatusBarIntent(activity);
 	}
 	
-	public static void sendChangeStatusBarIntent(Activity activity) {
-		WindowType type = (WindowType) XposedHelpers.getAdditionalInstanceField(activity,
-				"mWindowType");
-		if (type == WindowType.Float) {
+	public void sendChangeStatusBarIntent(Activity activity) {
+		if (mWindowType == null) {
+			mWindowType = Utils.getWindowType(activity);
+			XposedHelpers.setAdditionalInstanceField(activity,
+					"mWindowType", mWindowType);
+		}
+		if (mWindowType == WindowType.Float) {
 			Utils.log("is Floating window, ignore");
 			return;
 		}
@@ -46,14 +50,14 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
 		
-		if (type == WindowType.Fullscreen) {
+		if (mWindowType == WindowType.Fullscreen) {
 			color = Color.parseColor("#99000000");
 			colorHandled = true;
 			isdark = false;
 			darkHandled = true;
 		}
 		
-		if (!colorHandled && type == WindowType.Translucent && !isSysApp) {
+		if (!colorHandled && mWindowType == WindowType.Translucent && !isSysApp) {
 			color = Color.TRANSPARENT;
 			colorHandled = true;			
 		}

@@ -20,10 +20,6 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 		XposedHelpers.setAdditionalInstanceField(param.thisObject,
 				"mIsSystemApp", issysapp);
 		Utils.log("Activity from system app: " + activity.getLocalClassName());
-
-		WindowType type = Utils.getWindowType(activity);
-		XposedHelpers.setAdditionalInstanceField(param.thisObject,
-				"mWindowType", type);
 	}
 
 }
