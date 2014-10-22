@@ -47,7 +47,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			return;
 		}
 		
-		if (!colorHandled || type == WindowType.Fullscreen) {
+		if (!colorHandled && type == WindowType.Fullscreen) {
 			color = Color.parseColor("#99000000");
 			colorHandled = true;
 			isdark = false;
