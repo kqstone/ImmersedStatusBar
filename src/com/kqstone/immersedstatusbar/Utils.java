@@ -77,7 +77,7 @@ public class Utils {
 	}
 	
 	public static Bitmap getBitMapFromActivityBackground(Activity activity) {
-		View view = activity.getWindow().getDecorView().getRootView();
+		View view = activity.getWindow().getDecorView();
 		view.destroyDrawingCache();
 		view.setDrawingCacheEnabled(true);
 		Bitmap bitmap1 = view.getDrawingCache();	
