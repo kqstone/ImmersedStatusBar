@@ -43,7 +43,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
 				if (darkMode != mPreDarkMode) {
 					updateStatusBarContent(darkMode);
-					updateNotificationIcons(darkMode);
 					mPreDarkMode = darkMode;
 				}
 				
@@ -52,7 +51,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				Utils.log("mDisabled: " + disabled);
 				if ((disabled == 0 || disabled == 128 || disabled == 8388608) && mPreDarkMode) {
 					updateStatusBarContent(false);
-					updateNotificationIcons(false);
 					mPreDarkMode = false;
 				}
 			}			
@@ -78,20 +76,17 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		statusBarView.setBackgroundColor(color);
 	}
 	
-	private void updateNotificationIcons(boolean darkmode) {
-		Utils.log("set notification icons to " + (darkmode ? "dark":"white") + " mode");
+	private void updateNotificationIcons() {
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		ViewGroup notificationIcons = (ViewGroup) XposedHelpers.getObjectField(simpleStatusbar, "mNotificationIcons");
-		Mode mode = darkmode ? PorterDuff.Mode.DARKEN : PorterDuff.Mode.LIGHTEN;
+		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
+		int color = darkmode ? Color.parseColor("#FF505050") : Color.parseColor("#FFC0C0C0");
 		int k = notificationIcons.getChildCount();
 		for (int i=0; i<k; i++) {
 			View icon = notificationIcons.getChildAt(i);
 			if (icon != null && (icon instanceof ImageView)) {
 				ImageView iconimage = (ImageView)icon;
-				Drawable icondraw =iconimage.getDrawable();
-				Bitmap grayicon = Utils.toGrayscale(Utils.drawableToBitmap(icondraw));
-				iconimage.setImageBitmap(grayicon);
-				iconimage.setColorFilter(Color.GRAY, mode);
+				iconimage.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
 			}
 		}
 	}
@@ -128,7 +123,15 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					"updateNotificationIcons", boolean.class, ArrayList.class, LinearLayout.LayoutParams.class, new XC_MethodHook(){
 				@Override
 				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
-					updateNotificationIcons(mPreDarkMode);
+					updateNotificationIcons();
+				}
+			});	
+			
+			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.SimpleStatusBar", lpparam.classLoader), 
+					"updateDarkMode", new XC_MethodHook(){
+				@Override
+				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
+					updateNotificationIcons();
 				}
 			});	
 		}
