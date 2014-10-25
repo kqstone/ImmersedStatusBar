@@ -91,6 +91,9 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	}
 	
 	private void updateNotificationIcons() {
+		boolean showNotificationIcons = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mShowNotificationIcons");
+		if (!showNotificationIcons)
+			return;
 		if (mContext == null) {
 			mContext = (Context) XposedHelpers.getObjectField(instancePhoneStatusBar, "mContext");
 		}
@@ -199,22 +202,26 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			});	
 			
 			Class<?> StatusBarIcon = XposedHelpers.findClass("com.android.internal.statusbar.StatusBarIcon", null);
-			Class<?> Notification = XposedHelpers.findClass("android.app.Notification", null);
-			
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.StatusBarIconView", lpparam.classLoader), 
-					"getIcon", Context.class, StatusBarIcon, Notification, new XC_MethodReplacement(){
+					"setIcon", StatusBarIcon, new XC_MethodHook(){
 
 				@Override
-				protected Drawable replaceHookedMethod(MethodHookParam param)
+				protected void afterHookedMethod(MethodHookParam param)
 						throws Throwable {
+					boolean supportDarkMode = XposedHelpers.getBooleanField(param.thisObject, "mSupportDarkMode");
+					boolean enableDarkMode = XposedHelpers.getBooleanField(param.thisObject, "mEnableDarkMode");
+					if (supportDarkMode && enableDarkMode)
+						return;
+					
 					if (mContext == null) {
 						mContext = (Context) XposedHelpers.getObjectField(instancePhoneStatusBar, "mContext");
 					}
 					boolean tinticons = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false;
 					Utils.log("tint notification icons: " + tinticons + ", hook getIcon>>>>>>>>");
-//					if (tinticons) {
-						return getIcon((Context)param.args[0], param.args[1]);
-//					} 
+					if (tinticons) {
+						Drawable drawable = getIcon(mContext, param.args[0]);
+						((ImageView)param.thisObject).setImageDrawable(drawable);
+					} 
 				}
 			});	
 		}
