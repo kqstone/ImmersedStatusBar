@@ -8,11 +8,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ import android.widget.LinearLayout;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
@@ -115,6 +119,38 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		XposedHelpers.callMethod(instancePhoneStatusBar, "updateViewsInStatusBar");	
 	}
 	
+    public static Drawable getIcon(Context context, Object icon) {
+        Resources r = null;
+        
+        String iconPackage = (String) XposedHelpers.getObjectField(icon, "iconPackage");
+
+        if (iconPackage != null) {
+            try {
+                int userId = (Integer) XposedHelpers.callMethod(((UserHandle)XposedHelpers.getObjectField(icon, "user")), "getIdentifier");
+                if (userId == XposedHelpers.getStaticIntField(UserHandle.class, "USER_ALL")) {
+                    userId = XposedHelpers.getStaticIntField(UserHandle.class, "USER_OWNER");
+                }
+                r = (Resources) XposedHelpers.callMethod(context.getPackageManager(), "getResourcesForApplicationAsUser", iconPackage, userId);
+            } catch (Exception ex) {
+                return null;
+            }
+        } else {
+            r = context.getResources();
+        }
+        
+        int iconId = XposedHelpers.getIntField(icon, "iconId");
+        if (iconId == 0) {
+            return null;
+        }
+
+        try {
+            return r.getDrawable(iconId);
+        } catch (RuntimeException e) {
+        }
+
+        return null;
+    }
+	
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
 		// TODO Auto-generated method stub
@@ -159,6 +195,26 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				@Override
 				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
 					updateNotificationIcons();
+				}
+			});	
+			
+			Class<?> StatusBarIcon = XposedHelpers.findClass("com.android.internal.statusbar.StatusBarIcon", null);
+			Class<?> Notification = XposedHelpers.findClass("android.app.Notification", null);
+			
+			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.StatusBarIconView", lpparam.classLoader), 
+					"getIcon", Context.class, StatusBarIcon, Notification, new XC_MethodReplacement(){
+
+				@Override
+				protected Drawable replaceHookedMethod(MethodHookParam param)
+						throws Throwable {
+					if (mContext == null) {
+						mContext = (Context) XposedHelpers.getObjectField(instancePhoneStatusBar, "mContext");
+					}
+					boolean tinticons = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false;
+					Utils.log("tint notification icons: " + tinticons + ", hook getIcon>>>>>>>>");
+//					if (tinticons) {
+						return getIcon((Context)param.args[0], param.args[1]);
+//					} 
 				}
 			});	
 		}

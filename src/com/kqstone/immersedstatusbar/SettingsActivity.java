@@ -56,8 +56,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		} else if (key.equals(Constant.KEY_PREF_TINT_NOTIFICATION)) {
 			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, checked ? 1 : 0);
 			this.mPreTintNotification.setChecked(checked);
-			Intent intent = new Intent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
-			this.sendBroadcast(intent);
+//			Intent intent = new Intent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
+//			this.sendBroadcast(intent);
 		}
 		
 		return false;

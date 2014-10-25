@@ -8,13 +8,13 @@
     <string name="title_settings">Settings</string>
     <string name="title_force_tint">Force Tint StatusBar</string>
     <string name="summary_force_tint">Force tint statusbar for app without single or gradual uppart</string>
+    <string name="title_tint_notification">Tint Notification Icons (Need Restart)</string>
+    <string name="summary_tint_notification">Tint Notification Icons to adapt darkmode, need restart system.</string>
     
     <!--about  -->
     <string name="about">About</string>
     <string name="about_app">About Immersed Statusbar for MIUI6</string>
     <string name="author_inform">Author: kqstone (kqstone@163.com)</string>
     <string name="acknow_inform">Acknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
-    <string name="title_tint_notification">Tint Notification Icons</string>
-    <string name="summary_tint_notification">Tint Notification Icons to adapt darkmode</string>
     
 </resources>
