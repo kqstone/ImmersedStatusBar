@@ -10,6 +10,7 @@ public final class Constant {
 	public static final String MODULE = "ImmersedStatusbar";
 	
 	public static final String INTENT_CHANGE_STATUSBAR_COLOR = "com.kqstone.immersedstatusbar.CHANGESTATUSBARCOLOR";
+	public static final String INTENT_UPDATE_NOTIFICATION_ICONS = "com.kqstone.immersedstatusbar.UPDATENOTIFICATIONICONS";
 
 	public static final String IS_DARKMODE = "is_darkmode";
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
@@ -26,5 +27,8 @@ public final class Constant {
 	
 	// preference const
 	public static final String PREF_SHOW_SET_PER_ACT = "show_pref_per_act";
+	
+	public final static String KEY_PREF_FORCE_TINT = "key_force_tint";
+	public final static String KEY_PREF_TINT_NOTIFICATION = "key_tint_notification";
 
 }

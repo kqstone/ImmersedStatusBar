@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private Object instancePhoneStatusBar;
+	private Context mContext;
 	private int mPreColor = Color.BLACK;
 	private boolean mPreDarkMode = false;
 	
@@ -34,30 +36,38 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			if (!intent.getAction().equals(Constant.INTENT_CHANGE_STATUSBAR_COLOR)) 
-				return;
-			boolean darkHandled = intent.getBooleanExtra(Constant.DARKMODE_HANDLE, false);
-			boolean darkMode;
-			if (darkHandled) {
-				darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
-				if (darkMode != mPreDarkMode) {
-					updateStatusBarContent(darkMode);
-					mPreDarkMode = darkMode;
+			if (intent.getAction().equals(
+					Constant.INTENT_CHANGE_STATUSBAR_COLOR)) {
+				boolean darkHandled = intent.getBooleanExtra(
+						Constant.DARKMODE_HANDLE, false);
+				boolean darkMode;
+				if (darkHandled) {
+					darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
+							false);
+					if (darkMode != mPreDarkMode) {
+						updateStatusBarContent(darkMode);
+						mPreDarkMode = darkMode;
+					}
+
+				} else {
+					int disabled = XposedHelpers.getIntField(
+							instancePhoneStatusBar, "mDisabled");
+					Utils.log("mDisabled: " + disabled);
+					if ((disabled == 0 || disabled == 128 || disabled == 8388608)
+							&& mPreDarkMode) {
+						updateStatusBarContent(false);
+						mPreDarkMode = false;
+					}
 				}
-				
-			} else {
-				int disabled = XposedHelpers.getIntField(instancePhoneStatusBar, "mDisabled");
-				Utils.log("mDisabled: " + disabled);
-				if ((disabled == 0 || disabled == 128 || disabled == 8388608) && mPreDarkMode) {
-					updateStatusBarContent(false);
-					mPreDarkMode = false;
+				int color = intent.getIntExtra(
+						Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
+				if (color != mPreColor) {
+					updateStatusBarBackground(color);
+					mPreColor = color;
 				}
-			}			
-			int color = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
-			if (color != mPreColor) {
-				updateStatusBarBackground(color); 
-				mPreColor = color;
+			} else if (intent.getAction().equals(
+					Constant.INTENT_UPDATE_NOTIFICATION_ICONS)) {
+				refreshNotificationIcons();
 			}
 		}
 		
@@ -77,18 +87,32 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	}
 	
 	private void updateNotificationIcons() {
+		if (mContext == null) {
+			mContext = (Context) XposedHelpers.getObjectField(instancePhoneStatusBar, "mContext");
+		}
+		boolean tinticons = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false;
+		Utils.log("is tint notification: " + tinticons);
+		if (!tinticons)
+			return;
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		ViewGroup notificationIcons = (ViewGroup) XposedHelpers.getObjectField(simpleStatusbar, "mNotificationIcons");
 		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
-		int color = darkmode ? Color.parseColor("#FF505050") : Color.parseColor("#FFC0C0C0");
+		int color = darkmode ? Color.parseColor("#505050") : Color.parseColor("#E0E0E0");
 		int k = notificationIcons.getChildCount();
 		for (int i=0; i<k; i++) {
 			View icon = notificationIcons.getChildAt(i);
 			if (icon != null && (icon instanceof ImageView)) {
 				ImageView iconimage = (ImageView)icon;
 				iconimage.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+				iconimage.setAlpha(0.8F);
 			}
 		}
+	}
+	
+	private void refreshNotificationIcons() {
+		Utils.log("refresh notification icons >>>>>>>>>>>>>>>>");
+		XposedHelpers.callMethod(instancePhoneStatusBar, "updateNotificationIcons");
+		XposedHelpers.callMethod(instancePhoneStatusBar, "updateViewsInStatusBar");	
 	}
 	
 	@Override
@@ -109,12 +133,15 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					"start", new XC_MethodHook() {
 				@Override
 				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
-					
-					Context context = (Context) XposedHelpers.getObjectField(instancePhoneStatusBar, "mContext");
+					if (mContext == null) {
+						mContext = (Context) XposedHelpers.getObjectField(instancePhoneStatusBar, "mContext");
+					}
 					IntentFilter intentFilter = new IntentFilter();
 					intentFilter.addAction(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+					intentFilter.addAction(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-					context.registerReceiver(mActivityResumeReceiver, intentFilter);
+					mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
+					
 				}
 				
 			});

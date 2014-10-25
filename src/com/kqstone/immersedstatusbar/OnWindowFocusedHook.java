@@ -86,7 +86,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 							Utils.log("Flat BitMap found...");
 							if (Settings.System.getInt(
 									activity.getContentResolver(),
-									SettingsActivity.KEY_PREF_FORCE_TINT, 0) == 1) {
+									Constant.KEY_PREF_FORCE_TINT, 0) == 1) {
 								color = bitmapColor.Color;
 								XposedHelpers.setAdditionalInstanceField(activity,
 										"mStatusBarBackground", color);
