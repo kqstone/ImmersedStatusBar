@@ -16,6 +16,9 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -209,8 +212,25 @@ public class Utils {
 				|| (info.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0;
 		return issysapp;
 	}
+	
+	public static Bitmap toGrayscale(Bitmap bmpOriginal) {
+		int width, height;
+		height = bmpOriginal.getHeight();
+		width = bmpOriginal.getWidth();
 
-	private static Bitmap drawableToBitmap(Drawable drawable) throws IllegalArgumentException {
+		Bitmap bmpGrayscale = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bmpGrayscale);
+		Paint paint = new Paint();
+		ColorMatrix cm = new ColorMatrix();
+		cm.setSaturation(0);
+		ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+		paint.setColorFilter(f);
+		c.drawBitmap(bmpOriginal, 0, 0, paint);
+		return bmpGrayscale;
+	}
+
+	public static Bitmap drawableToBitmap(Drawable drawable) throws IllegalArgumentException {
 		if (drawable instanceof BitmapDrawable) {
 			return ((BitmapDrawable)drawable).getBitmap();
 		}
