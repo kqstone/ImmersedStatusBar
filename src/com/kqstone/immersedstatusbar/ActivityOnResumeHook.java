@@ -19,6 +19,11 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityOnResumeHook extends XC_MethodHook {
+	private SettingHelper mSettingHelper; 
+
+	public ActivityOnResumeHook(SettingHelper settingHelper) {
+		mSettingHelper = settingHelper;
+	}
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -65,6 +70,16 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 					colorHandled = true;
 					XposedHelpers.setAdditionalInstanceField(activity,
 							"mNeedGetColorFromBackground", false);
+				}
+				if (!colorHandled) {
+					int i = mSettingHelper.getColor(activity.getPackageName(), activity.getLocalClassName());
+					if (i != Constant.UNKNOW_COLOR) {
+						color = i;
+						XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground",color);
+						isdark = Utils.getDarkMode(color);
+						XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
+						colorHandled = true;
+					}
 				}
 				if (!colorHandled) {
 					darkHandled = true;

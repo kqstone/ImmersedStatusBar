@@ -3,11 +3,14 @@ package com.kqstone.immersedstatusbar;
 import android.graphics.Color;
 
 public final class Constant {
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	public static final boolean DBG_IMAGE = false;
 	
 	public static final String MODULE = "ImmersedStatusbar";
+	public static final String PKG_NAME = "com.kqstone.immersedstatusbar";	
+
+	public final static int UNKNOW_COLOR = 16777216;
 	
 	public static final String INTENT_CHANGE_STATUSBAR_COLOR = "com.kqstone.immersedstatusbar.CHANGESTATUSBARCOLOR";
 	public static final String INTENT_UPDATE_NOTIFICATION_ICONS = "com.kqstone.immersedstatusbar.UPDATENOTIFICATIONICONS";
