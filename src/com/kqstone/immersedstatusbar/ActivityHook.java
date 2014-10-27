@@ -51,7 +51,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
 		// TODO Auto-generated method stub
-		mSettingHelper = SettingHelper.getInstance(new XSharedPreferences(Constant.PKG_NAME, SettingHelper.PREF));
+		mSettingHelper = new SettingHelper(new XSharedPreferences(Constant.PKG_NAME, SettingHelper.PREF));
 		
 		XposedBridge.hookAllConstructors(Activity.class, new XC_MethodHook() {
 			@Override
