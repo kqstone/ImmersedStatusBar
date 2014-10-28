@@ -9,37 +9,28 @@ import android.graphics.Color;
 import de.robv.android.xposed.XSharedPreferences;
 
 public class SettingHelper {
-	public final static String PREF = "color";
 	private XSharedPreferences mXPreferences;
 	private SharedPreferences mPreferences;
-	private static Context mContext;
-	private static SettingHelper mInstance;	
+	private Context mContext;
+	private String mPkgName;
 	
-	public SettingHelper(XSharedPreferences xprefs) {
-		mXPreferences = xprefs;
+	public SettingHelper(String pkgname) {
+		mPkgName = pkgname;
+		mXPreferences = new XSharedPreferences(Constant.PKG_NAME, pkgname);
 	}
 	
-	private SettingHelper(SharedPreferences prefs) {
-		mPreferences = prefs;
+	public SettingHelper(Context context, String pkgName) {
+		mContext = context;
+		SharedPreferences sp = context.getSharedPreferences(pkgName, Context.MODE_WORLD_READABLE);
 	}
 	
-	public static SettingHelper getInstance(Context context) {
-		if (mInstance == null) {
-			mContext = context;
-			SharedPreferences sp = context.getSharedPreferences(PREF, Context.MODE_WORLD_READABLE);
-			mInstance = new SettingHelper(sp);
-		}
-		return mInstance;		
-	}
-	
-	
-	public int getColor(String pkgName, String actName) {
-		return mXPreferences.getInt(getKey(pkgName, actName), Constant.UNKNOW_COLOR);
+	public int getColor(String actName) {
+		return mXPreferences.getInt(getKey(actName), Constant.UNKNOW_COLOR);
 	}
 	
 	public void writeColor(String pkgName, String actName, int color) {
 		Editor edit = mPreferences.edit();
-		edit.putInt(getKey(pkgName, actName), color);
+		edit.putInt(getKey(actName), color);
 		edit.commit();
 		Intent intent = new Intent(Constant.INTENT_UPDATE_SETTINGS);
 		mContext.sendBroadcast(intent);
@@ -59,8 +50,8 @@ public class SettingHelper {
 		return false;
 		
 	}
-	private String getKey(String pkgName, String actName) {
-		return pkgName + "_" + actName;
+	private String getKey(String actName) {
+		return actName;
 	}
 
 }

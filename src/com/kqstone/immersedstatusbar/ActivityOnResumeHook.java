@@ -72,7 +72,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 							"mNeedGetColorFromBackground", false);
 				}
 				if (!colorHandled) {
-					int i = mSettingHelper.getColor(activity.getPackageName(), activity.getLocalClassName());
+					int i = mSettingHelper.getColor(activity.getLocalClassName());
 					if (i != Constant.UNKNOW_COLOR) {
 						color = i;
 						XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground",color);

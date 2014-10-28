@@ -56,8 +56,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
-		// TODO Auto-generated method stub
-		mSettingHelper = new SettingHelper(new XSharedPreferences(Constant.PKG_NAME, SettingHelper.PREF));
+		// TODO Auto-generated method stub		
 		
 		XposedBridge.hookAllConstructors(Activity.class, new XC_MethodHook() {
 			@Override
@@ -68,6 +67,8 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", null);
 				XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", false);
 				XposedHelpers.setAdditionalInstanceField(activity, "mRepaddingHandled", false);
+				
+				mSettingHelper = new SettingHelper(activity.getPackageName());
 				
 				IntentFilter filter = new IntentFilter();
 				filter.addAction(Constant.INTENT_UPDATE_SETTINGS);
