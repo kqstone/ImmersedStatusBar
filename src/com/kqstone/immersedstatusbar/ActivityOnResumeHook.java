@@ -69,7 +69,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				}
 				if (!colorHandled) {
 					if (mSettingHelper == null) {
-						mSettingHelper = new SettingHelper(activity.getPackageCodePath());
+						mSettingHelper = new SettingHelper(activity.getPackageName());
 					}
 					int i = mSettingHelper.getColor(activity.getLocalClassName());
 					if (i != Constant.UNKNOW_COLOR) {
