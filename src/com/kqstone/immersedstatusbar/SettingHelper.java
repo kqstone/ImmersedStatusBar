@@ -12,10 +12,8 @@ public class SettingHelper {
 	private XSharedPreferences mXPreferences;
 	private SharedPreferences mPreferences;
 	private Context mContext;
-	private String mPkgName;
 	
 	public SettingHelper(String pkgname) {
-		mPkgName = pkgname;
 		mXPreferences = new XSharedPreferences(Constant.PKG_NAME, pkgname);
 	}
 	

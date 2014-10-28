@@ -47,12 +47,6 @@ import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityHook implements IXposedHookZygoteInit {
 	private SettingHelper mSettingHelper;
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context arg0, Intent arg1) {
-			mSettingHelper.reload();
-		}};
 
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
@@ -67,17 +61,12 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", null);
 				XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", false);
 				XposedHelpers.setAdditionalInstanceField(activity, "mRepaddingHandled", false);
-				
-				mSettingHelper = new SettingHelper(activity.getPackageName());
-				
-				IntentFilter filter = new IntentFilter();
-				filter.addAction(Constant.INTENT_UPDATE_SETTINGS);
-				activity.registerReceiver(mReceiver, filter);
+
 			}
 		});
 		
 		XposedHelpers.findAndHookMethod(Activity.class, "onCreate", Bundle.class, new ActivityOnCreateHook());
-		XposedHelpers.findAndHookMethod(Activity.class, "performResume", new ActivityOnResumeHook(mSettingHelper));
+		XposedHelpers.findAndHookMethod(Activity.class, "performResume", new ActivityOnResumeHook());
 		XposedHelpers.findAndHookMethod(Activity.class, "onWindowFocusChanged", boolean.class, new OnWindowFocusedHook());
 		XposedHelpers.findAndHookMethod(Activity.class, "onContentChanged", new OnContentChangedHook());
 

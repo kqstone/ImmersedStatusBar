@@ -20,11 +20,7 @@ import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityOnResumeHook extends XC_MethodHook {
 	private SettingHelper mSettingHelper; 
-
-	public ActivityOnResumeHook(SettingHelper settingHelper) {
-		mSettingHelper = settingHelper;
-	}
-
+	
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 		Activity activity = (Activity) param.thisObject;
@@ -72,6 +68,9 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 							"mNeedGetColorFromBackground", false);
 				}
 				if (!colorHandled) {
+					if (mSettingHelper == null) {
+						mSettingHelper = new SettingHelper(activity.getPackageCodePath());
+					}
 					int i = mSettingHelper.getColor(activity.getLocalClassName());
 					if (i != Constant.UNKNOW_COLOR) {
 						color = i;
