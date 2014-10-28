@@ -36,7 +36,7 @@ public class SettingHelper {
 		String r = Integer.toHexString(Color.red(color));
 		String g = Integer.toHexString(Color.green(color));
 		String b = Integer.toHexString(Color.blue(color));
-		edit.putString(r+g+b, null);
+		edit.putString(actName, r+g+b);
 		edit.commit();
 		Intent intent = new Intent(Constant.INTENT_UPDATE_SETTINGS);
 		mContext.sendBroadcast(intent);
