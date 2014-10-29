@@ -75,6 +75,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 					if (i != Constant.UNKNOW_COLOR) {
 						color = i;
 						XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground",color);
+						XposedHelpers.setAdditionalInstanceField(activity, "mHasProfile",true);
 						isdark = Utils.getDarkMode(color);
 						XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
 						colorHandled = true;

@@ -61,6 +61,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", null);
 				XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", false);
 				XposedHelpers.setAdditionalInstanceField(activity, "mRepaddingHandled", false);
+				XposedHelpers.setAdditionalInstanceField(activity, "mHasProfile",false);
 
 			}
 		});

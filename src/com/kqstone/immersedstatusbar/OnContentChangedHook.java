@@ -1,5 +1,7 @@
 package com.kqstone.immersedstatusbar;
 
+import com.kqstone.immersedstatusbar.Utils.WindowType;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -20,7 +22,12 @@ public class OnContentChangedHook extends XC_MethodHook {
 			Utils.log("System app, change color to transparent");
 			return;
 		} 
-		
+		WindowType type = Utils.getWindowType(activity);
+		if (type != WindowType.Normal)
+			return;
+		boolean hasProfile = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mHasProfile");
+		if (hasProfile)
+			return;
 		if (mChangeTimes == 1) {
 			return;
 		}
@@ -37,10 +44,8 @@ public class OnContentChangedHook extends XC_MethodHook {
 	
 	private void dialog(Activity activity) {
 		AlertDialog.Builder builder = new Builder(activity);
-
 		AlertDialog dialog = builder.create();
 		dialog.show();
-
 		dialog.dismiss();
 	}
 }
