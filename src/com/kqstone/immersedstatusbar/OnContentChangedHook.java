@@ -11,11 +11,9 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnContentChangedHook extends XC_MethodHook {
-	private int mChangeTimes= 0;
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-		mChangeTimes++;
 		final Activity activity = (Activity) param.thisObject;	
 		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
 		if (isSysApp) {
@@ -28,10 +26,13 @@ public class OnContentChangedHook extends XC_MethodHook {
 		boolean hasProfile = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mHasProfile");
 		if (hasProfile)
 			return;
-		if (mChangeTimes == 1) {
+		int changeTimes = (Integer) XposedHelpers.getAdditionalInstanceField(activity, "mContentChangeTimes");
+		XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes", changeTimes+1);
+		if (changeTimes == 0) {
 			return;
 		}
-		Utils.log("Content changed for " + mChangeTimes + " times, re-tint statusbar");
+		
+		Utils.log("Content changed for " + changeTimes + " times, re-tint statusbar");
 
 		XposedHelpers.setAdditionalInstanceField(activity,
 				"mStatusBarBackground", null);
