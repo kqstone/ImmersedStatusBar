@@ -34,6 +34,7 @@ public final class Constant {
 	
 	public final static String KEY_PREF_FORCE_TINT = "key_force_tint";
 	public final static String KEY_PREF_TINT_NOTIFICATION = "key_tint_notification";
+	public static final String KEY_PREF_QUICKANIM_CONTENT = "key_quickanim_content";
 
 	
 

@@ -16,5 +16,7 @@
     <string name="about_app">About Immersed Statusbar for MIUI6</string>
     <string name="author_inform">Author: kqstone (kqstone@163.com)</string>
     <string name="acknow_inform">Acknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
+    <string name="title_quickanim_content">Quick Animate Statusbar Content</string>
+    <string name="summary_quickanim_content">Fast the statusbar content animation when darkmode change</string>
     
 </resources>

@@ -76,6 +76,24 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		}
 		
 	};
+	
+	private void updateDarkMode(Context context) {
+		boolean darkMode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mDarkMode");
+		boolean targetDarkMode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
+		if (darkMode == targetDarkMode)
+			return;
+		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mDarkMode", targetDarkMode);
+		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
+		if (simpleStatusbar != null) {			
+			boolean fastAnim = Settings.System.getInt(context.getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false;
+			Utils.log("Is fast Animate Statusbar Content: " + fastAnim);
+			long duration = 500L;
+			if (fastAnim)
+				duration = 5L;
+			XposedHelpers.callMethod(simpleStatusbar, "updateDarkMode");
+			ObjectAnimator.ofFloat(simpleStatusbar, "transitionAlpha", new float[] { 0.0F, 1.0F }).setDuration(duration).start();
+		}
+	}
 
 	private void updateStatusBarContent(boolean darkmode) {
 		Utils.log("darkmode: " + darkmode);
@@ -181,6 +199,14 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 					mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
 					
+					Runnable darkModeRunnable = new Runnable() {
+
+						@Override
+						public void run() {
+							updateDarkMode(mContext);
+						}
+					};
+					XposedHelpers.setObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable", darkModeRunnable);	
 				}
 				
 			});
@@ -224,6 +250,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					} 
 				}
 			});	
+			
 		}
 		 
 	}

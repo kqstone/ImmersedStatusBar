@@ -17,6 +17,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private Preference mPrefAbout;
 	private CheckBoxPreference mPrefForceTint;
 	private CheckBoxPreference mPreTintNotification;
+	private CheckBoxPreference mPreQuickAnimContent;
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -32,6 +33,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		mPreTintNotification = (CheckBoxPreference) findPreference(Constant.KEY_PREF_TINT_NOTIFICATION);
 		mPreTintNotification.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false);
 		mPreTintNotification.setOnPreferenceChangeListener(this);
+		mPreQuickAnimContent = (CheckBoxPreference) findPreference(Constant.KEY_PREF_QUICKANIM_CONTENT);
+		mPreQuickAnimContent.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false);
+		mPreQuickAnimContent.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -58,6 +62,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			this.mPreTintNotification.setChecked(checked);
 //			Intent intent = new Intent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 //			this.sendBroadcast(intent);
+		} else if (key.equals(Constant.KEY_PREF_QUICKANIM_CONTENT)) {
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, checked ? 1 : 0);
+			this.mPreQuickAnimContent.setChecked(checked);
 		}
 		
 		return false;
