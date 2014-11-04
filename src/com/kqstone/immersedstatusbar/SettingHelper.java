@@ -12,6 +12,7 @@ public class SettingHelper {
 	private static final String KEY_COLOR = "color";
 	private static final String KEY_OFFSET = "offset";
 	private static final String KEY_TRANSLUCENT = "translucent";
+	private static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture
 	private XSharedPreferences mXPreferences;
 	private SharedPreferences mPreferences;
 	private Context mContext;
@@ -23,6 +24,10 @@ public class SettingHelper {
 	public SettingHelper(Context context, String pkgName) {
 		mContext = context;
 		mPreferences = context.getSharedPreferences(pkgName, Context.MODE_WORLD_READABLE);
+	}
+	
+	public int getBackgroundType(String actName) {
+		return mXPreferences.getInt(getKey(actName, KEY_BACKGROUNDTYPE), 0);
 	}
 	
 	public int getColor(String actName) {
@@ -40,6 +45,13 @@ public class SettingHelper {
 	
 	public boolean getTranslucent(String actName) {
 		return mXPreferences.getBoolean(getKey(actName, KEY_TRANSLUCENT ), false);
+	}
+	
+	public void writeBackgroundType(String actName, int type) {
+		Editor edit = mPreferences.edit();
+		edit.putInt(getKey(actName, KEY_BACKGROUNDTYPE), type);
+		edit.commit();
+		reload();
 	}
 	
 	public void writeColor(String actName, int color) {
