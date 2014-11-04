@@ -1,11 +1,17 @@
 package com.kqstone.immersedstatusbar;
 
+import java.io.File;
+
 import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Environment;
 import de.robv.android.xposed.XSharedPreferences;
 
 public class SettingHelper {
@@ -13,6 +19,9 @@ public class SettingHelper {
 	private static final String KEY_OFFSET = "offset";
 	private static final String KEY_TRANSLUCENT = "translucent";
 	private static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture
+	private static final String KEY_BACKGROUNDFILE = "backgroundfile";
+	
+	private static final String DIR_IMG = "/isb/img/";
 	private XSharedPreferences mXPreferences;
 	private SharedPreferences mPreferences;
 	private Context mContext;
@@ -37,6 +46,23 @@ public class SettingHelper {
 		} else {
 			return Constant.UNKNOW_COLOR;
 		}
+	}
+	
+	public String getBackgroundPath(String actName) {
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+		Utils.log("external storage path: " + path);
+		path = path + DIR_IMG;
+		String filename = mXPreferences.getString(getKey(actName, KEY_BACKGROUNDFILE), null);
+		if (filename != null) {
+			path = path + filename + ".png";
+		} else {
+			path = path + actName + ".png";
+		}
+		return path;
+	}
+	
+	public Bitmap getBitmap(String actName) {
+		return BitmapFactory.decodeFile(getBackgroundPath(actName));
 	}
 	
 	public int getPaddingOffset(String actName) {

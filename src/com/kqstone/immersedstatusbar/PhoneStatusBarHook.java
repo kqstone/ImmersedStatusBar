@@ -11,9 +11,12 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -42,33 +45,50 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR)) {
-				boolean darkHandled = intent.getBooleanExtra(
-						Constant.DARKMODE_HANDLE, false);
-				boolean darkMode;
-				if (darkHandled) {
+				int type = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_TYPE, 0);
+				switch (type) {
+				case 0:
+					boolean darkHandled = intent.getBooleanExtra(
+							Constant.DARKMODE_HANDLE, false);
+					boolean darkMode;
+					if (darkHandled) {
+						darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
+								false);
+						if (darkMode != mPreDarkMode) {
+							updateStatusBarContent(darkMode);
+							mPreDarkMode = darkMode;
+						}
+
+					} else {
+						int disabled = XposedHelpers.getIntField(
+								instancePhoneStatusBar, "mDisabled");
+						Utils.log("mDisabled: " + disabled);
+						if ((disabled == 0 || disabled == 128 || disabled == 8388608)
+								&& mPreDarkMode) {
+							updateStatusBarContent(false);
+							mPreDarkMode = false;
+						}
+					}
+					int color = intent.getIntExtra(
+							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
+					if (color != mPreColor) {
+						updateStatusBarBackground(new ColorDrawable(color));
+						mPreColor = color;
+					}
+					break;
+				case 1:
 					darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
 							false);
 					if (darkMode != mPreDarkMode) {
 						updateStatusBarContent(darkMode);
 						mPreDarkMode = darkMode;
 					}
-
-				} else {
-					int disabled = XposedHelpers.getIntField(
-							instancePhoneStatusBar, "mDisabled");
-					Utils.log("mDisabled: " + disabled);
-					if ((disabled == 0 || disabled == 128 || disabled == 8388608)
-							&& mPreDarkMode) {
-						updateStatusBarContent(false);
-						mPreDarkMode = false;
-					}
+					String path = intent.getStringExtra(Constant.STATUSBAR_BACKGROUND_PATH);
+					Bitmap bitmap = BitmapFactory.decodeFile(path);
+					updateStatusBarBackground(new BitmapDrawable(bitmap));
+					mPreColor = Constant.UNKNOW_COLOR;
 				}
-				int color = intent.getIntExtra(
-						Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
-				if (color != mPreColor) {
-					updateStatusBarBackground(color);
-					mPreColor = color;
-				}
+				
 			} else if (intent.getAction().equals(
 					Constant.INTENT_UPDATE_NOTIFICATION_ICONS)) {
 				refreshNotificationIcons();
@@ -101,11 +121,11 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		XposedHelpers.callMethod(XposedHelpers.getObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable"), "run");
 	}
 	
-	private void updateStatusBarBackground(int color) {
+	private void updateStatusBarBackground(Drawable drawable) {
 		View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
 		ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.1F, 1.0F })
 			.setDuration(Constant.TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION).start();
-		statusBarView.setBackgroundColor(color);
+		statusBarView.setBackground(drawable);
 	}
 	
 	private void updateNotificationIcons() {
@@ -140,7 +160,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		XposedHelpers.callMethod(instancePhoneStatusBar, "updateViewsInStatusBar");	
 	}
 	
-    public static Drawable getIcon(Context context, Object icon) {
+    private Drawable getIcon(Context context, Object icon) {
         Resources r = null;
         
         String iconPackage = (String) XposedHelpers.getObjectField(icon, "iconPackage");

@@ -18,6 +18,8 @@ public final class Constant {
 	
 	public static final String IS_DARKMODE = "is_darkmode";
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
+	public static final String STATUSBAR_BACKGROUND_TYPE = "background_type";
+	public static final String STATUSBAR_BACKGROUND_PATH = "background_path";
 	public static final String DARKMODE_HANDLE = "dark_handled";
 	
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
@@ -36,6 +38,8 @@ public final class Constant {
 	public final static String KEY_PREF_TINT_NOTIFICATION = "key_tint_notification";
 	public static final String KEY_PREF_QUICKANIM_CONTENT = "key_quickanim_content";
 
+	
+	
 	
 
 }

@@ -30,7 +30,9 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 	}
 	
 	public void sendChangeStatusBarIntent(Activity activity) {
+		int backgroundtype = 0;
 		int color = Color.BLACK;
+		String path = null;
 		boolean colorHandled = false;
 		boolean isdark = false;
 		boolean darkHandled = false;
@@ -57,33 +59,59 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			default:
 				XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",1);
 				darkHandled = true;
-				Object obj = XposedHelpers.getAdditionalInstanceField(activity,
-						"mStatusBarBackground");
-				if (obj != null) {
-					color = (Integer) obj;
-					Utils.log("get color from mStatusBarBackground:" + color);
+				backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,
+						"mBackgroundType");
+				switch (backgroundtype) {
+				case 1:
+					path = (String) XposedHelpers.getAdditionalInstanceField(activity,
+							"mBackgroundPath");
 					isdark = (Boolean) XposedHelpers
 							.getAdditionalInstanceField(activity, "mDarkMode");
 					colorHandled = true;
-					XposedHelpers.setAdditionalInstanceField(activity,
-							"mNeedGetColorFromBackground", false);
+					break;
+				case 0:
+					Object obj = XposedHelpers.getAdditionalInstanceField(activity,
+							"mStatusBarBackground");
+					if (obj != null) {
+						color = (Integer) obj;
+						Utils.log("get color from mStatusBarBackground:" + color);
+						isdark = (Boolean) XposedHelpers
+								.getAdditionalInstanceField(activity, "mDarkMode");
+						colorHandled = true;
+						XposedHelpers.setAdditionalInstanceField(activity,
+								"mNeedGetColorFromBackground", false);
+					break;
+					}
 				}
 				if (!colorHandled) {
 					if (mSettingHelper == null) {
 						mSettingHelper = new SettingHelper(activity.getPackageName());
 					}
-					int i = mSettingHelper.getColor(activity.getLocalClassName());
-					if (i != Constant.UNKNOW_COLOR) {
-						color = i;
-						XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground",color);
-						XposedHelpers.setAdditionalInstanceField(activity, "mHasProfile",true);
-						isdark = Utils.getDarkMode(color);
+					backgroundtype = mSettingHelper.getBackgroundType(activity.getLocalClassName());
+					switch (backgroundtype) {
+					case 0:
+						int i = mSettingHelper.getColor(activity.getLocalClassName());
+						if (i != Constant.UNKNOW_COLOR) {
+							color = i;
+							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground",color);
+							XposedHelpers.setAdditionalInstanceField(activity, "mHasProfile",true);
+							isdark = Utils.getDarkMode(color);
+							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
+							colorHandled = true;
+							int k = mSettingHelper.getPaddingOffset(activity.getLocalClassName());
+							if (k != 0) {
+								Utils.resetPadding(activity, k);
+							}
+						}
+						break;
+					case 1:
+						path = mSettingHelper.getBackgroundPath(activity.getLocalClassName());
+						XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundPath",path);
+						Bitmap tempmap = mSettingHelper.getBitmap(activity.getLocalClassName());
+						isdark = Utils.getDarkMode(Utils.getBitmapColor(tempmap).Color);
 						XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
 						colorHandled = true;
-						int k = mSettingHelper.getPaddingOffset(activity.getLocalClassName());
-						if (k != 0) {
-							Utils.resetPadding(activity, k);
-						}
+						break;
 					}
 				}
 				if (!colorHandled) {
@@ -130,12 +158,14 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		
 
 		Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+		intent.putExtra(Constant.STATUSBAR_BACKGROUND_TYPE, backgroundtype);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
+		intent.putExtra(Constant.STATUSBAR_BACKGROUND_PATH, path);
 		intent.putExtra(Constant.IS_DARKMODE, isdark);
 		intent.putExtra(Constant.DARKMODE_HANDLE, darkHandled);
 		
-		Utils.log("statusbar_background:" + color + "; " + 
-		"dark_mode:" + isdark + "; " + "dark_handled:" + darkHandled);
+		Utils.log("backgroundtype:" + backgroundtype + ";" + "statusbar_background:" + color + "; " + 
+		"path:" + path + ";" + "dark_mode:" + isdark + "; " + "dark_handled:" + darkHandled);
 
 		activity.sendBroadcast(intent);
 	}
