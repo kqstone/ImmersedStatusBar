@@ -95,6 +95,8 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 						mProfileHelper.initiateProfile(activity
 								.getLocalClassName());
 						backgroundtype = mProfileHelper.getBackgroundType();
+						XposedHelpers.setAdditionalInstanceField(activity,
+								"mBackgroundType", backgroundtype);
 						switch (backgroundtype) {
 						case 0:
 							int i = mProfileHelper.getColor();
