@@ -10,6 +10,8 @@
     <string name="summary_force_tint">对顶栏非单一色或渐变色应用强制变色</string>
     <string name="title_tint_notification">变色通知图标（需重启）</string>
     <string name="summary_tint_notification">将通知图标变色以适应沉浸模式下的不同背景色，需重启生效</string>
+    <string name="title_quickanim_content">加快状态栏文字图标变色速度</string>
+    <string name="summary_quickanim_content">加快状态栏文字图标变色速度以使背景和内容变色同步</string>
     
     <!--about  -->
     <string name="about">关于</string>
