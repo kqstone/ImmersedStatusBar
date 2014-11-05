@@ -1,5 +1,9 @@
 package com.kqstone.immersedstatusbar;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import de.robv.android.xposed.XposedHelpers;
 import android.content.Intent;
 import android.os.Bundle;

@@ -3,6 +3,10 @@ package com.kqstone.immersedstatusbar;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getStaticIntField;
 
+import java.io.IOException;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import com.kqstone.immersedstatusbar.Utils.WindowType;
 
 import android.app.ActionBar;
@@ -19,7 +23,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityOnResumeHook extends XC_MethodHook {
-	private SettingHelper mSettingHelper; 
+	private ProfileHelper mProfileHelper;
 	
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -84,34 +88,52 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 					}
 				}
 				if (!colorHandled) {
-					if (mSettingHelper == null) {
-						mSettingHelper = new SettingHelper(activity.getPackageName());
-					}
-					backgroundtype = mSettingHelper.getBackgroundType(activity.getLocalClassName());
-					switch (backgroundtype) {
-					case 0:
-						int i = mSettingHelper.getColor(activity.getLocalClassName());
-						if (i != Constant.UNKNOW_COLOR) {
-							color = i;
-							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground",color);
-							XposedHelpers.setAdditionalInstanceField(activity, "mHasProfile",true);
-							isdark = Utils.getDarkMode(color);
-							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
-							colorHandled = true;
-							int k = mSettingHelper.getPaddingOffset(activity.getLocalClassName());
-							if (k != 0) {
-								Utils.resetPadding(activity, k);
+					if (mProfileHelper == null)
+						mProfileHelper = new ProfileHelper(
+								activity.getPackageName());
+					try {
+						mProfileHelper.initiateProfile(activity
+								.getLocalClassName());
+						backgroundtype = mProfileHelper.getBackgroundType();
+						switch (backgroundtype) {
+						case 0:
+							int i = mProfileHelper.getColor();
+							if (i != Constant.UNKNOW_COLOR) {
+								color = i;
+								XposedHelpers
+										.setAdditionalInstanceField(activity,
+												"mStatusBarBackground", color);
+								XposedHelpers.setAdditionalInstanceField(
+										activity, "mHasProfile", true);
+								isdark = Utils.getDarkMode(color);
+								XposedHelpers.setAdditionalInstanceField(
+										activity, "mDarkMode", isdark);
+								colorHandled = true;
+								int k = mProfileHelper.getPaddingOffset();
+								if (k != 0) {
+									Utils.resetPadding(activity, k);
+								}
 							}
+							break;
+						case 1:
+							path = mProfileHelper.getBackgroundPath();
+							XposedHelpers.setAdditionalInstanceField(activity,
+									"mBackgroundPath", path);
+							Bitmap tempmap = mProfileHelper.getBitmap();
+							isdark = Utils.getDarkMode(Utils
+									.getBitmapColor(tempmap).Color);
+							XposedHelpers.setAdditionalInstanceField(activity,
+									"mDarkMode", isdark);
+							colorHandled = true;
+							break;
 						}
-						break;
-					case 1:
-						path = mSettingHelper.getBackgroundPath(activity.getLocalClassName());
-						XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundPath",path);
-						Bitmap tempmap = mSettingHelper.getBitmap(activity.getLocalClassName());
-						isdark = Utils.getDarkMode(Utils.getBitmapColor(tempmap).Color);
-						XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
-						colorHandled = true;
-						break;
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (XmlPullParserException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						Utils.log("can not get profile...");
+						e.printStackTrace();
 					}
 				}
 				if (!colorHandled) {

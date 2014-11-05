@@ -46,7 +46,6 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityHook implements IXposedHookZygoteInit {
-	private SettingHelper mSettingHelper;
 
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
