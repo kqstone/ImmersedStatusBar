@@ -125,6 +125,10 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 							XposedHelpers.setAdditionalInstanceField(activity,
 									"mDarkMode", isdark);
 							colorHandled = true;
+							int k = mProfileHelper.getPaddingOffset();
+							if (k != 0) {
+								Utils.resetPadding(activity, k);
+							}
 							break;
 						}
 					} catch (NumberFormatException e) {
