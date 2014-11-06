@@ -12,6 +12,9 @@
     <string name="summary_tint_notification">将通知图标变色以适应沉浸模式下的不同背景色，需重启生效</string>
     <string name="title_quickanim_content">加快状态栏文字图标变色速度</string>
     <string name="summary_quickanim_content">加快状态栏文字图标变色速度以使背景和内容变色同步</string>
+    <string name="debug">调试</string>
+    <string name="title_export_inform">输出程序信息</string>
+    <string name="summary_export_inform">输出程序和界面信息以方便改写配置文件\n用法：开启选项后使用adb logcat输出\n命令：adb logcat -v raw *:S ISB:D</string>
     
     <!--about  -->
     <string name="about">关于</string>

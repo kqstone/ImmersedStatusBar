@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.app.AndroidAppHelper;
 import android.content.Context;
@@ -20,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Xml;
 import de.robv.android.xposed.XSharedPreferences;
 
 public class ProfileHelper {
@@ -126,6 +129,58 @@ public class ProfileHelper {
 	
 //	public boolean getTranslucent(String actName) {
 //	}
+
+	public static String genStandXml(String pkgName, String actName) {
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		try {
+			serializer.setOutput(writer);
+			// <?xml version="1.0" encoding=¡±UTF-8¡å standalone=¡±yes¡±?>
+			serializer.startDocument("UTF-8", true);
+			writer.append("\n");
+			// <activity name="actName">
+			serializer.startTag(null, "activity");
+			serializer.attribute(null, ProfileHelper.KEY_NAME, actName);
+			// <backgroundtype>Android XML</backgroundtype>
+			serializer.startTag(null, ProfileHelper.KEY_BACKGROUNDTYPE);
+			serializer
+					.text("replace this text with 0 or 1 (0 = color, 1=image)");
+			serializer.endTag(null, ProfileHelper.KEY_BACKGROUNDTYPE);
+			// <color>Android XML</color>
+			serializer.startTag(null, ProfileHelper.KEY_COLOR);
+			serializer.text("replace this text with RGB(like c6c6c6)");
+			serializer.endTag(null, ProfileHelper.KEY_COLOR);
+			// <offset>Android XML</offset>
+			serializer.startTag(null, ProfileHelper.KEY_OFFSET);
+			serializer.text("replace this text with offset value (like 5)");
+			serializer.endTag(null, ProfileHelper.KEY_OFFSET);
+			// </activity>
+			serializer.endTag(null, "activity");
+			serializer.endDocument();
+			return writer.toString();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static String genStandXmls(String pkgName, String actName) {
+		StringWriter writer = new StringWriter();
+		writer.append("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>");
+		writer.append("\n");
+		writer.append("<activity name=\"" + actName + "\"");
+		writer.append("\n");
+		writer.append("\t");
+		writer.append("<backgroundtype>replace with 0 or 1</backgroundtype>");
+		writer.append("\n");
+		writer.append("\t");
+		writer.append("<color>replace with RGB value</color>");
+		writer.append("\n");
+		writer.append("\t");
+		writer.append("<offset>replace with offset value</offset>");
+		writer.append("\n");
+		writer.append("</activity>");
+			return writer.toString();
+	}
 	
 	private String buildPath(String relativePath, String filename, String extension) {
 		if (Environment.getExternalStorageState().equals(

@@ -1,7 +1,14 @@
 package com.kqstone.immersedstatusbar;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+
+import org.xmlpull.v1.XmlSerializer;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -23,7 +30,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.util.Log;
+import android.util.Xml;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -249,7 +258,50 @@ public class Utils {
 		return bitmap;
 	}
 	
-	private static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
+	public static void logStandXml(Activity activity) {
+		Log.d(Constant.MODULE,
+				"\n\n\n" +
+				"-------------------------------------------------------------");
+		String pkgName = activity.getPackageName();
+		String actName = activity.getLocalClassName();
+		Log.d(Constant.MODULE, "PackageName:" + pkgName);
+		Log.d(Constant.MODULE, "ActivityName:" + actName);
+		Log.d(Constant.MODULE, "Copy the following text and stored as "
+				+ pkgName + ".xml file.");
+		Log.d(Constant.MODULE,
+				"*************************************************************");
+		
+		Log.d(Constant.MODULE, ProfileHelper.genStandXmls(pkgName, actName));
+		Log.d(Constant.MODULE,
+				"*************************************************************");
+	}
+
+	public static boolean exportStandXml(Activity activity) {
+		try {
+			String path = Environment.getExternalStorageDirectory()
+					.getAbsolutePath()
+					+ "/isb/log/";
+			File dir = new File(path);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			path = path + activity.getPackageName() + ".xml";
+			FileOutputStream os = new FileOutputStream(path);
+			OutputStreamWriter osw = new OutputStreamWriter(os);
+			String log = ProfileHelper.genStandXml(activity.getPackageName(),
+					activity.getLocalClassName());
+			osw.write(log);
+			osw.close();
+			os.close();
+		} catch (FileNotFoundException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+
+private static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
 		if (!Constant.DBG_IMAGE)
 			return;
 

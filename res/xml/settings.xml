@@ -5,6 +5,10 @@
     <CheckBoxPreference android:title="@string/title_tint_notification" android:key="key_tint_notification" android:summary="@string/summary_tint_notification"/>
     <CheckBoxPreference android:title="@string/title_quickanim_content" android:key="key_quickanim_content" android:summary="@string/summary_quickanim_content"/>
     
+    <PreferenceCategory android:title="@string/debug">
+        <CheckBoxPreference android:title="@string/title_export_inform" android:key="key_export_inform" android:summary="@string/summary_export_inform"/>
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="@string/about">
         <Preference android:title="@string/about_app" android:key="about" />
     </PreferenceCategory>

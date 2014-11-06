@@ -5,7 +5,9 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import de.robv.android.xposed.XposedHelpers;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -17,11 +19,11 @@ import android.provider.Settings;
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener{
 	private final static String KEY_PREF_ABOUT = "about";
 	
-	
 	private Preference mPrefAbout;
 	private CheckBoxPreference mPrefForceTint;
 	private CheckBoxPreference mPreTintNotification;
 	private CheckBoxPreference mPreQuickAnimContent;
+	private CheckBoxPreference mPreExptInform;
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -40,6 +42,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		mPreQuickAnimContent = (CheckBoxPreference) findPreference(Constant.KEY_PREF_QUICKANIM_CONTENT);
 		mPreQuickAnimContent.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false);
 		mPreQuickAnimContent.setOnPreferenceChangeListener(this);
+		mPreExptInform = (CheckBoxPreference) findPreference(Constant.KEY_PREF_EXPORT_INFORM);
+		mPreExptInform.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false);
+		mPreExptInform.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -69,6 +74,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		} else if (key.equals(Constant.KEY_PREF_QUICKANIM_CONTENT)) {
 			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, checked ? 1 : 0);
 			this.mPreQuickAnimContent.setChecked(checked);
+		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM)) {
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, checked ? 1 : 0);
+			this.mPreExptInform.setChecked(checked);
 		}
 		
 		return false;

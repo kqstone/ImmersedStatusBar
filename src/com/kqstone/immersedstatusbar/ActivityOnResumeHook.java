@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import de.robv.android.xposed.XC_MethodHook;
@@ -61,6 +62,11 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				Utils.log("Translucent activity, need get darkmode after window focus changed");
 				return;
 			default:
+				boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
+				if (exinform) {
+					Utils.logStandXml(activity);
+					Utils.exportStandXml(activity);
+				}
 				XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",1);
 				darkHandled = true;
 				backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,

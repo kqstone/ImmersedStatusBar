@@ -12,6 +12,9 @@
     <string name="summary_tint_notification">Tint Notification Icons to adapt darkmode, need restart system.</string>
     <string name="title_quickanim_content">Quick Animate Statusbar Content</string>
     <string name="summary_quickanim_content">Fast the statusbar content animation when darkmode change</string>
+    <string name="debug">Debug</string>
+    <string name="title_export_inform">Export activity information</string>
+    <string name="summary_export_inform">Export package and activity information for profile generation</string>
     
     <!--about  -->
     <string name="about">About</string>
