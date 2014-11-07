@@ -137,7 +137,8 @@ public class ProfileHelper {
 			serializer.setOutput(writer);
 			// <?xml version="1.0" encoding=¡±UTF-8¡å standalone=¡±yes¡±?>
 			serializer.startDocument("UTF-8", true);
-			writer.append("\n");
+			// <profile>
+			serializer.startTag(null, "profile");
 			// <activity name="actName">
 			serializer.startTag(null, "activity");
 			serializer.attribute(null, ProfileHelper.KEY_NAME, actName);
@@ -156,6 +157,8 @@ public class ProfileHelper {
 			serializer.endTag(null, ProfileHelper.KEY_OFFSET);
 			// </activity>
 			serializer.endTag(null, "activity");
+			// </profile>
+			serializer.startTag(null, "profile");
 			serializer.endDocument();
 			return writer.toString();
 		} catch (Exception e) {
@@ -166,6 +169,8 @@ public class ProfileHelper {
 	public static String genStandXmls(String pkgName, String actName) {
 		StringWriter writer = new StringWriter();
 		writer.append("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>");
+		writer.append("\n");
+		writer.append("<profile>");
 		writer.append("\n");
 		writer.append("<activity name=\"" + actName + "\"");
 		writer.append("\n");
@@ -179,7 +184,9 @@ public class ProfileHelper {
 		writer.append("<offset>replace with offset value</offset>");
 		writer.append("\n");
 		writer.append("</activity>");
-			return writer.toString();
+		writer.append("\n");
+		writer.append("</profile>");
+		return writer.toString();
 	}
 	
 	private String buildPath(String relativePath, String filename, String extension) {
