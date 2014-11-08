@@ -172,7 +172,7 @@ public class ProfileHelper {
 		writer.append("\n");
 		writer.append("<profile>");
 		writer.append("\n");
-		writer.append("<activity name=\"" + actName + "\"");
+		writer.append("<activity name=\"" + actName + "\">");
 		writer.append("\n");
 		writer.append("\t");
 		writer.append("<backgroundtype>replace with 0 or 1</backgroundtype>");
