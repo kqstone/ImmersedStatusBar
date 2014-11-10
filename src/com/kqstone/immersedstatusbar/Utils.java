@@ -35,6 +35,7 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 public class Utils {
@@ -300,8 +301,15 @@ public class Utils {
 		}
 		return true;
 	}
+	
+	public static void setTranslucentStatus(Activity activity) {
+		Window win = activity.getWindow();
+		WindowManager.LayoutParams winParams = win.getAttributes();
+		winParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+		win.setAttributes(winParams);
+	}
 
-private static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
+	private static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
 		if (!Constant.DBG_IMAGE)
 			return;
 

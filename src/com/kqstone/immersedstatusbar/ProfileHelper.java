@@ -29,7 +29,6 @@ public class ProfileHelper {
 	private static final String KEY_NAME = "name";
 	private static final String KEY_COLOR = "color";
 	private static final String KEY_OFFSET = "offset";
-	private static final String KEY_TRANSLUCENT = "translucent";
 	private static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture
 	private static final String KEY_BACKGROUNDFILE = "backgroundfile";
 	

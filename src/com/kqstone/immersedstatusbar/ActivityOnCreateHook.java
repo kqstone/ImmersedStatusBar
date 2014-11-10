@@ -24,6 +24,9 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 		ProfileHelper helper = new ProfileHelper(activity.getPackageName());
 		helper.initiateProfile(activity.getLocalClassName());
 		XposedHelpers.setAdditionalInstanceField(activity, "mProfileHelper", helper);
+		int backgroundtype = helper.getBackgroundType();
+		if (backgroundtype == 2)
+			Utils.setTranslucentStatus(activity);
 	}
 
 }
