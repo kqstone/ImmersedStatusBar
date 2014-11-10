@@ -20,6 +20,10 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 		XposedHelpers.setAdditionalInstanceField(param.thisObject,
 				"mIsSystemApp", issysapp);
 		Utils.log(activity.getLocalClassName() + ": is sys app:" + issysapp);
+		
+		ProfileHelper helper = new ProfileHelper(activity.getPackageName());
+		helper.initiateProfile(activity.getLocalClassName());
+		XposedHelpers.setAdditionalInstanceField(activity, "mProfileHelper", helper);
 	}
 
 }

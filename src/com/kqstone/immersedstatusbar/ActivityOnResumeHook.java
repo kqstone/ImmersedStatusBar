@@ -24,7 +24,6 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class ActivityOnResumeHook extends XC_MethodHook {
-	private ProfileHelper mProfileHelper;
 	
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -94,18 +93,15 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 					}
 				}
 				if (!colorHandled) {
-					if (mProfileHelper == null)
-						mProfileHelper = new ProfileHelper(
-								activity.getPackageName());
+					ProfileHelper helper = (ProfileHelper) XposedHelpers.getAdditionalInstanceField(activity, "mProfileHelper");
+					if (helper != null) {
 					try {
-						mProfileHelper.initiateProfile(activity
-								.getLocalClassName());
-						backgroundtype = mProfileHelper.getBackgroundType();
+						backgroundtype = helper.getBackgroundType();
 						XposedHelpers.setAdditionalInstanceField(activity,
 								"mBackgroundType", backgroundtype);
 						switch (backgroundtype) {
 						case 0:
-							int i = mProfileHelper.getColor();
+							int i = helper.getColor();
 							if (i != Constant.UNKNOW_COLOR) {
 								color = i;
 								XposedHelpers
@@ -117,23 +113,23 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 								XposedHelpers.setAdditionalInstanceField(
 										activity, "mDarkMode", isdark);
 								colorHandled = true;
-								int k = mProfileHelper.getPaddingOffset();
+								int k = helper.getPaddingOffset();
 								if (k != 0) {
 									Utils.resetPadding(activity, k);
 								}
 							}
 							break;
 						case 1:
-							path = mProfileHelper.getBackgroundPath();
+							path = helper.getBackgroundPath();
 							XposedHelpers.setAdditionalInstanceField(activity,
 									"mBackgroundPath", path);
-							Bitmap tempmap = mProfileHelper.getBitmap();
+							Bitmap tempmap = helper.getBitmap();
 							isdark = Utils.getDarkMode(Utils
 									.getBitmapColor(tempmap).Color);
 							XposedHelpers.setAdditionalInstanceField(activity,
 									"mDarkMode", isdark);
 							colorHandled = true;
-							int k = mProfileHelper.getPaddingOffset();
+							int k = helper.getPaddingOffset();
 							if (k != 0) {
 								Utils.resetPadding(activity, k);
 							}
@@ -141,11 +137,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 						}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
-					} catch (XmlPullParserException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						Utils.log("can not get profile...");
-						e.printStackTrace();
+					}
 					}
 				}
 				if (!colorHandled) {
