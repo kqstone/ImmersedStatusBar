@@ -71,7 +71,7 @@ public class ProfileHelper {
         				if (tag.equalsIgnoreCase(KEY_BACKGROUNDTYPE))
         					profile.setBgType(Integer.parseInt(xpp.nextText()));
         				if (tag.equalsIgnoreCase(KEY_BACKGROUNDFILE))
-        					profile.setBgPath(xpp.nextText());
+        					profile.setBgFileName(xpp.nextText());
         				if (tag.equalsIgnoreCase(KEY_COLOR))
         					profile.setBgColor(xpp.nextText());
         				if (tag.equalsIgnoreCase(KEY_OFFSET))
@@ -108,11 +108,12 @@ public class ProfileHelper {
 	}
 	
 	public String getBackgroundPath() {
-		String path = mProfile.getBgPath();
-		if (path == null) {
-			path = mActName;
+		String filename = mProfile.getBgFileName();
+		if (filename == null) {
+			filename = mActName;
 		}
-		return buildPath(DIR_IMG, path, "png");
+		filename = mProfileName + "/" + filename;
+		return buildPath(DIR_IMG, filename, "png");
 	}
 	
 	public Bitmap getBitmap() {
