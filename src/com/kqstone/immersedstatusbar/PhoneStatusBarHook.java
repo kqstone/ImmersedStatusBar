@@ -2,6 +2,7 @@ package com.kqstone.immersedstatusbar;
 
 import java.util.ArrayList;
 
+
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.XModuleResources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -26,12 +28,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_InitPackageResources.InitPackageResourcesParam;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class PhoneStatusBarHook implements IXposedHookLoadPackage {
@@ -39,6 +43,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private Context mContext;
 	private int mPreColor = Color.BLACK;
 	private boolean mPreDarkMode = false;
+	private int[] mIconColors = {Color.parseColor("#80000000"),Color.parseColor("#99ffffff")};
 	
 	private BroadcastReceiver mActivityResumeReceiver = new BroadcastReceiver() {
 
@@ -143,7 +148,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		ViewGroup notificationIcons = (ViewGroup) XposedHelpers.getObjectField(simpleStatusbar, "mNotificationIcons");
 		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
-		int color = darkmode ? Color.parseColor("#505050") : Color.parseColor("#E0E0E0");
+		int color = mIconColors[darkmode ? 0 : 1];
 		int k = notificationIcons.getChildCount();
 		for (int i=0; i<k; i++) {
 			View icon = notificationIcons.getChildAt(i);
@@ -219,6 +224,21 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					intentFilter.addAction(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 					mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
+					
+					Resources res = mContext.getResources();
+					String[] resNames = {"status_bar_textColor_darkmode", "status_bar_textColor"};
+					int k;
+					for (int i=0; i<2; i++) {
+						try {
+							k = res.getIdentifier(resNames[i], "color", "com.android.systemui");
+							if (k > 0)
+								mIconColors[i] = res.getColor(k);
+							Utils.log("mIconColor: " + mIconColors[i]);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}					
 					
 					Runnable darkModeRunnable = new Runnable() {
 
