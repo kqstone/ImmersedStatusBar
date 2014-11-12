@@ -18,6 +18,7 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.view.View;
@@ -109,7 +110,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			Utils.log("Is fast Animate Statusbar Content: " + fastAnim);
 			long duration = 500L;
 			if (fastAnim)
-				duration = 5L;
+				duration = 100L;
 			XposedHelpers.callMethod(simpleStatusbar, "updateDarkMode");
 			ObjectAnimator.ofFloat(simpleStatusbar, "transitionAlpha", new float[] { 0.0F, 1.0F }).setDuration(duration).start();
 		}
@@ -268,6 +269,40 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 						Drawable drawable = getIcon(mContext, param.args[0]);
 						((ImageView)param.thisObject).setImageDrawable(drawable);
 					} 
+				}
+			});	
+			
+			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader), 
+					"disable", int.class, new XC_MethodHook(){
+
+				@Override
+				protected void beforeHookedMethod(MethodHookParam param)
+						throws Throwable {
+					if (instancePhoneStatusBar == null)
+						return;
+					int disable = XposedHelpers.getIntField(instancePhoneStatusBar, "mDisabled");
+					int targetDisable = (Integer) param.args[0];
+					Utils.log("disable: " + disable + "/" + targetDisable);
+					int j = targetDisable ^ disable;
+					if ((j & 0x40) != 0) {
+						XposedHelpers.setObjectField(instancePhoneStatusBar, "mTargetDarkMode", true);
+						if ((0x40 & disable) != 0) {
+							XposedHelpers.setObjectField(instancePhoneStatusBar, "mTargetDarkMode", false);
+						}
+						long time = 300L;
+						boolean fastAnim = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false;
+						Utils.log("Is fast Animate Statusbar Content: " + fastAnim);
+						if (fastAnim) {
+							time = 50L;
+						}
+						Handler handler = (Handler) XposedHelpers.getObjectField(instancePhoneStatusBar, "mHandler");
+						handler.postDelayed(new Runnable() {
+
+							@Override
+							public void run() {
+								updateDarkMode(mContext);
+							}}, time);
+					}
 				}
 			});	
 			
