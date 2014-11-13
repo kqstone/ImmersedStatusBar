@@ -52,8 +52,10 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			darkHandled = true;
 			break;
 		case Translucent:
+			color = Color.TRANSPARENT;
+			colorHandled = true;
 			Utils.log("Translucent activity, need get darkmode after window focus changed");
-			return;
+			break;
 		default:
 			boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
 			if (exinform) {

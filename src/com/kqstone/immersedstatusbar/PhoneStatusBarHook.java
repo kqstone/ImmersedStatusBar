@@ -65,15 +65,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 							mPreDarkMode = darkMode;
 						}
 
-					} else {
-						int disabled = XposedHelpers.getIntField(
-								instancePhoneStatusBar, "mDisabled");
-						Utils.log("mDisabled: " + disabled);
-						if ((disabled == 0 || disabled == 128 || disabled == 8388608)
-								&& mPreDarkMode) {
-							updateStatusBarContent(false);
-							mPreDarkMode = false;
-						}
 					}
 					int color = intent.getIntExtra(
 							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
