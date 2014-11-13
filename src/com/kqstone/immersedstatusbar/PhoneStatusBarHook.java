@@ -292,40 +292,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				}
 			});	
 			
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader), 
-					"disable", int.class, new XC_MethodHook(){
-
-				@Override
-				protected void beforeHookedMethod(MethodHookParam param)
-						throws Throwable {
-					if (instancePhoneStatusBar == null)
-						return;
-					int disable = XposedHelpers.getIntField(instancePhoneStatusBar, "mDisabled");
-					int targetDisable = (Integer) param.args[0];
-					Utils.log("disable: " + disable + "/" + targetDisable);
-					int j = targetDisable ^ disable;
-					if ((j & 0x40) != 0) {
-						XposedHelpers.setObjectField(instancePhoneStatusBar, "mTargetDarkMode", true);
-						if ((0x40 & disable) != 0) {
-							XposedHelpers.setObjectField(instancePhoneStatusBar, "mTargetDarkMode", false);
-						}
-						long time = 300L;
-						boolean fastAnim = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false;
-						Utils.log("Is fast Animate Statusbar Content: " + fastAnim);
-						if (fastAnim) {
-							time = 50L;
-						}
-						Handler handler = (Handler) XposedHelpers.getObjectField(instancePhoneStatusBar, "mHandler");
-						handler.postDelayed(new Runnable() {
-
-							@Override
-							public void run() {
-								updateDarkMode(mContext);
-							}}, time);
-					}
-				}
-			});	
-			
 		}
 		 
 	}

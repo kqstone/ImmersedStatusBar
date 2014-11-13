@@ -16,10 +16,6 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 		Activity activity = (Activity) param.thisObject;
-		boolean issysapp = Utils.isSystemApp(activity);
-		XposedHelpers.setAdditionalInstanceField(param.thisObject,
-				"mIsSystemApp", issysapp);
-		Utils.log(activity.getLocalClassName() + ": is sys app:" + issysapp);
 		
 		ProfileHelper helper = new ProfileHelper(activity.getPackageName());
 		helper.initiateProfile(activity.getLocalClassName());

@@ -28,12 +28,6 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 	}
 	
 	public void sendChangeStatusBarIntent(final Activity activity) {
-		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
-		if (isSysApp) {
-			Utils.log("System app, change color to transparent");
-			return;
-		} 
-		
 		WindowType type = Utils.getWindowType(activity);
 		switch (type) {
 		case Normal:
