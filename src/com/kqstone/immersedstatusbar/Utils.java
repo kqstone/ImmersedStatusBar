@@ -308,6 +308,26 @@ public class Utils {
 		winParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
 		win.setAttributes(winParams);
 	}
+	
+	public static String getHexFromColor(int color) {
+		String r = Integer.toHexString(Color.red(color));
+		if (r.length() ==1)
+			r = "0"+r;
+		String g = Integer.toHexString(Color.green(color));
+		if (g.length() ==1)
+			g = "0"+g;
+		String b = Integer.toHexString(Color.blue(color));
+		if (b.length() ==1)
+			b = "0"+b;
+		return r+g+b;
+	}
+	
+	public static int getRGBFromARGB(int argbColor) {
+		int r = Color.red(argbColor);
+		int b = Color.blue(argbColor);
+		int g = Color.green(argbColor);
+		return Color.rgb(r, g, b);
+	}
 
 	private static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
 		if (!Constant.DBG_IMAGE)

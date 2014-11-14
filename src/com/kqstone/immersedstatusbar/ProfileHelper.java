@@ -207,18 +207,5 @@ public class ProfileHelper {
 		}
 		return null;
 	}
-	
-	private String getHexFromColor(int color) {
-		String r = Integer.toHexString(Color.red(color));
-		if (r.length() ==1)
-			r = "0"+r;
-		String g = Integer.toHexString(Color.green(color));
-		if (g.length() ==1)
-			g = "0"+g;
-		String b = Integer.toHexString(Color.blue(color));
-		if (b.length() ==1)
-			b = "0"+b;
-		return r+g+b;
-	}
 
 }

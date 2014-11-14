@@ -139,14 +139,15 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		ViewGroup notificationIcons = (ViewGroup) XposedHelpers.getObjectField(simpleStatusbar, "mNotificationIcons");
 		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
-		int color = mIconColors[darkmode ? 0 : 1];
+		int color = Utils.getRGBFromARGB(mIconColors[darkmode ? 0 : 1]);
+		int alpha = Color.alpha(mIconColors[darkmode ? 0 : 1]);
 		int k = notificationIcons.getChildCount();
 		for (int i=0; i<k; i++) {
 			View icon = notificationIcons.getChildAt(i);
 			if (icon != null && (icon instanceof ImageView)) {
 				ImageView iconimage = (ImageView)icon;
 				iconimage.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-				iconimage.setAlpha(0.8F);
+				iconimage.setAlpha(alpha);
 			}
 		}
 	}
