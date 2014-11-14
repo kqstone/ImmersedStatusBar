@@ -5,22 +5,31 @@ import com.kqstone.immersedstatusbar.Utils.WindowType;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.os.Handler;
 import android.view.WindowManager;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnContentChangedHook extends XC_MethodHook {
+	
+	private Handler mHandler = new Handler();
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 		final Activity activity = (Activity) param.thisObject;	
-		boolean isSysApp = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mIsSystemApp");
-		if (isSysApp) {
-			Utils.log("System app, change color to transparent");
-			return;
-		} 
+		mHandler.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				update(activity);
+			}}, 100L);
+
+	}
+	
+	private void update(Activity activity) {
 		WindowType type = Utils.getWindowType(activity);
+		Utils.log("Content Changed: Window type: " + type);
 		if (type != WindowType.Normal)
 			return;
 		boolean hasProfile = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mHasProfile");
@@ -28,7 +37,7 @@ public class OnContentChangedHook extends XC_MethodHook {
 			return;
 		int changeTimes = (Integer) XposedHelpers.getAdditionalInstanceField(activity, "mContentChangeTimes");
 		XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes", changeTimes+1);
-		if (changeTimes == 0) {
+		if (changeTimes <= 1) {
 			return;
 		}
 		

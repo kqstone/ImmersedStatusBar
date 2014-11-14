@@ -190,6 +190,9 @@ public class Utils {
 	}
 	
 	public static WindowType getWindowType(Activity activity) {
+		if (activity.getPackageName().equals("cn.wps.moffice_eng")) {
+			return WindowType.Normal;
+		}
 		Intent activityIntent = activity.getIntent();
 		int flags = activity.getWindow().getAttributes().flags;
 		if ((flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) {

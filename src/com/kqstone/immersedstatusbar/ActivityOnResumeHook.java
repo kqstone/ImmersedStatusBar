@@ -42,6 +42,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		boolean darkHandled = false;
 
 		WindowType type = Utils.getWindowType(activity);
+		Utils.log("Resume: Window type: " + type);
 		switch (type) {
 		case Float:
 			return;
@@ -62,7 +63,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				Utils.logStandXml(activity);
 				Utils.exportStandXml(activity);
 			}
-			XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",1);
+			XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",0);
 			darkHandled = true;
 			backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,
 					"mBackgroundType");
