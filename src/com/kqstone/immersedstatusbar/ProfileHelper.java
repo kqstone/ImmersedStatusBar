@@ -29,11 +29,11 @@ public class ProfileHelper {
 	private static final String KEY_NAME = "name";
 	private static final String KEY_COLOR = "color";
 	private static final String KEY_OFFSET = "offset";
-	private static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture
-	private static final String KEY_BACKGROUNDFILE = "backgroundfile";
-	
+	private static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture, 2= translucent status;
+	private static final String NAME_ALL_ACTIVITIES = "AllActivities";
 	private static final String DIR_IMG = "/isb/img/";
 	private static final String DIR_PROFILE = "/isb/profile/";
+	
 	
 	private String mProfileName;
 	private String mActName;
@@ -55,33 +55,46 @@ public class ProfileHelper {
         xpp.setInput(slideInputStream, "UTF-8");  
         int eventType = xpp.getEventType();  
         ActivityProfile profile = null;
+        ActivityProfile profileAll = null;
         while (eventType != XmlPullParser.END_DOCUMENT) {
         	switch (eventType) {
         	case XmlPullParser.START_TAG:
         		String tag = xpp.getName(); 
         		if (tag.equalsIgnoreCase("activity")) {
         			String actName = xpp.getAttributeValue(null, KEY_NAME);
-        			if (!activityName.equalsIgnoreCase(actName))
-        				break;
-                	profile = new ActivityProfile();
-        			profile.setActName(actName);
+        			if (activityName.equalsIgnoreCase(actName)){
+        				profile = new ActivityProfile();
+        				profile.setActName(actName);
+        			} else if (actName.equalsIgnoreCase(NAME_ALL_ACTIVITIES)) {
+        				profileAll = new ActivityProfile();
+        				profileAll.setActName(NAME_ALL_ACTIVITIES);
+        			}
+        			
         		} else {
         			if (profile != null) {
         				if (tag.equalsIgnoreCase(KEY_BACKGROUNDTYPE))
         					profile.setBgType(Integer.parseInt(xpp.nextText()));
-        				if (tag.equalsIgnoreCase(KEY_BACKGROUNDFILE))
-        					profile.setBgFileName(xpp.nextText());
         				if (tag.equalsIgnoreCase(KEY_COLOR))
         					profile.setBgColor(xpp.nextText());
         				if (tag.equalsIgnoreCase(KEY_OFFSET))
         					profile.setOffset(Integer.parseInt(xpp.nextText()));
+        			} else if (profileAll != null) {
+        				if (tag.equalsIgnoreCase(KEY_BACKGROUNDTYPE))
+        					profileAll.setBgType(Integer.parseInt(xpp.nextText()));
+        				if (tag.equalsIgnoreCase(KEY_COLOR))
+        					profileAll.setBgColor(xpp.nextText());
+        				if (tag.equalsIgnoreCase(KEY_OFFSET))
+        					profileAll.setOffset(Integer.parseInt(xpp.nextText()));
         			}
         		}
         		break;
         	case XmlPullParser.END_TAG:
         		String endtag = xpp.getName();
         		if (endtag.equalsIgnoreCase("activity")) {
-        			if (profile != null) {
+        			if (mProfile == null && profileAll != null) {
+        				mProfile = profileAll;
+        				profileAll = null;
+        			} else if (profile != null) {
         				mProfile = profile;
         				profile = null;
         			}
@@ -107,10 +120,7 @@ public class ProfileHelper {
 	}
 	
 	public String getBackgroundPath() {
-		String filename = mProfile.getBgFileName();
-		if (filename == null) {
-			filename = mActName;
-		}
+		String filename = mActName;
 		filename = mProfileName + "/" + filename;
 		return buildPath(DIR_IMG, filename, "png");
 	}

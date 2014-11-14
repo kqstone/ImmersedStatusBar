@@ -4,7 +4,6 @@ public class ActivityProfile {
 	private String mActName;
 	private int mBgType;
 	private String mColor;
-	private String mBgFileName;
 	private int mOffset;
 	
 	public String getActName() {
@@ -17,10 +16,6 @@ public class ActivityProfile {
 	
 	public String getBgColor() {
 		return mColor;
-	}
-	
-	public String getBgFileName() {
-		return mBgFileName;
 	}
 	
 	public int getOffset() {
@@ -38,11 +33,7 @@ public class ActivityProfile {
 	public void setBgColor(String bgColor) {
 		this.mColor = bgColor;
 	}
-	
-	public void setBgFileName(String bgFileName) {
-		this.mBgFileName = bgFileName;
-	}
-	
+
 	public void setOffset(int offset) {
 		this.mOffset = offset;
 	}
