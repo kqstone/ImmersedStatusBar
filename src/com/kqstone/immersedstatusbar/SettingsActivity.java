@@ -46,9 +46,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		mPreExptInform = (CheckBoxPreference) findPreference(Constant.KEY_PREF_EXPORT_INFORM);
 		mPreExptInform.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false);
 		mPreExptInform.setOnPreferenceChangeListener(this);
-		mPreExptInform = (CheckBoxPreference) findPreference(Constant.KEY_PREF_EXPORT_INFORM_TOFILE);
-		mPreExptInform.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false);
-		mPreExptInform.setOnPreferenceChangeListener(this);
+		mPreExptInformToFile = (CheckBoxPreference) findPreference(Constant.KEY_PREF_EXPORT_INFORM_TOFILE);
+		mPreExptInformToFile.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false);
+		mPreExptInformToFile.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			this.mPreExptInform.setChecked(checked);
 		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM_TOFILE)) {
 			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, checked ? 1 : 0);
-			this.mPreExptInform.setChecked(checked);
+			this.mPreExptInformToFile.setChecked(checked);
 		}
 		
 		return false;
