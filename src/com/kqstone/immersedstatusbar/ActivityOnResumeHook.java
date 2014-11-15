@@ -92,48 +92,41 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			if (!colorHandled) {
 				ProfileHelper helper = (ProfileHelper) XposedHelpers.getAdditionalInstanceField(activity, "mProfileHelper");
 				if (helper != null) {
-					try {
-						backgroundtype = helper.getBackgroundType();
+					XposedHelpers.setAdditionalInstanceField(activity,
+							"mHasProfile", true);
+					backgroundtype = helper.getBackgroundType();
+					XposedHelpers.setAdditionalInstanceField(activity,
+							"mBackgroundType", backgroundtype);
+					switch (backgroundtype) {
+					case 0:
+						color = helper.getColor();
 						XposedHelpers.setAdditionalInstanceField(activity,
-								"mBackgroundType", backgroundtype);
-						switch (backgroundtype) {
-						case 0:
-							int i = helper.getColor();
-							if (i != Constant.UNKNOW_COLOR) {
-								color = i;
-								XposedHelpers
-										.setAdditionalInstanceField(activity,
-												"mStatusBarBackground", color);
-								XposedHelpers.setAdditionalInstanceField(
-										activity, "mHasProfile", true);
-								isdark = Utils.getDarkMode(color);
-								XposedHelpers.setAdditionalInstanceField(
-										activity, "mDarkMode", isdark);
-								colorHandled = true;
-								int k = helper.getPaddingOffset();
-								if (k != 0) {
-									Utils.resetPadding(activity, k);
-								}
-							}
-							break;
-						case 1:
-							path = helper.getBackgroundPath();
-							XposedHelpers.setAdditionalInstanceField(activity,
-									"mBackgroundPath", path);
-							Bitmap tempmap = helper.getBitmap();
-							isdark = Utils.getDarkMode(Utils
-									.getBitmapColor(tempmap).Color);
-							XposedHelpers.setAdditionalInstanceField(activity,
-									"mDarkMode", isdark);
-							colorHandled = true;
-							int k = helper.getPaddingOffset();
-							if (k != 0) {
-								Utils.resetPadding(activity, k);
-							}
-							break;
+								"mStatusBarBackground", color);
+
+						isdark = Utils.getDarkMode(color);
+						XposedHelpers.setAdditionalInstanceField(activity,
+								"mDarkMode", isdark);
+						colorHandled = true;
+						int k = helper.getPaddingOffset();
+						if (k != 0) {
+							Utils.resetPadding(activity, k);
 						}
-					} catch (NumberFormatException e) {
-						e.printStackTrace();
+						break;
+					case 1:
+						path = helper.getBackgroundPath();
+						XposedHelpers.setAdditionalInstanceField(activity,
+								"mBackgroundPath", path);
+						Bitmap tempmap = helper.getBitmap();
+						isdark = Utils.getDarkMode(Utils
+								.getBitmapColor(tempmap).Color);
+						XposedHelpers.setAdditionalInstanceField(activity,
+								"mDarkMode", isdark);
+						colorHandled = true;
+						int j = helper.getPaddingOffset();
+						if (j != 0) {
+							Utils.resetPadding(activity, j);
+						}
+						break;
 					}
 				}
 			}

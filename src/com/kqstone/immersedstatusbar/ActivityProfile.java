@@ -2,15 +2,22 @@ package com.kqstone.immersedstatusbar;
 
 public class ActivityProfile {
 	private String mActName;
-	private int mBgType;
+	private Integer mBgType;
 	private String mColor;
-	private int mOffset;
+	private Integer mOffset;
+	
+	public ActivityProfile() {
+		mActName = null;
+		mBgType = null;
+		mColor = null;
+		mOffset = null;
+	}
 	
 	public String getActName() {
 		return mActName;
 	}
 	
-	public int getBgType() {
+	public Integer getBgType() {
 		return mBgType;
 	}
 	
@@ -18,7 +25,7 @@ public class ActivityProfile {
 		return mColor;
 	}
 	
-	public int getOffset() {
+	public Integer getOffset() {
 		return mOffset;
 	}
 	
