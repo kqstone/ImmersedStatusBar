@@ -59,10 +59,12 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			break;
 		default:
 			boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
-			if (exinform) {
+			if (exinform)
 				Utils.logStandXml(activity);
+			boolean exinformtofile = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false;
+			if (exinformtofile)
 				Utils.exportStandXml(activity);
-			}
+			
 			XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",0);
 			darkHandled = true;
 			backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,

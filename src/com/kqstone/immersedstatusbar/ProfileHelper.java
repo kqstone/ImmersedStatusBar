@@ -26,11 +26,11 @@ import android.util.Xml;
 import de.robv.android.xposed.XSharedPreferences;
 
 public class ProfileHelper {
-	private static final String KEY_NAME = "name";
-	private static final String KEY_COLOR = "color";
-	private static final String KEY_OFFSET = "offset";
-	private static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture, 2= translucent status;
-	private static final String NAME_ALL_ACTIVITIES = "AllActivities";
+	public static final String KEY_NAME = "name";
+	public static final String KEY_COLOR = "color";
+	public static final String KEY_OFFSET = "offset";
+	public static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture, 2= translucent status;
+	public static final String NAME_ALL_ACTIVITIES = "AllActivities";
 	private static final String DIR_IMG = "/isb/img/";
 	private static final String DIR_PROFILE = "/isb/profile/";
 	private static final String DIR_USERPROFILE = "/isb/usrprofile/";
@@ -128,65 +128,6 @@ public class ProfileHelper {
 	
 //	public boolean getTranslucent(String actName) {
 //	}
-
-	public static String genStandXml(String pkgName, String actName) {
-		XmlSerializer serializer = Xml.newSerializer();
-		StringWriter writer = new StringWriter();
-		try {
-			serializer.setOutput(writer);
-			// <?xml version="1.0" encoding=¡±UTF-8¡å standalone=¡±yes¡±?>
-			serializer.startDocument("UTF-8", true);
-			// <profile>
-			serializer.startTag(null, "profile");
-			// <activity name="actName">
-			serializer.startTag(null, "activity");
-			serializer.attribute(null, ProfileHelper.KEY_NAME, actName);
-			// <backgroundtype>Android XML</backgroundtype>
-			serializer.startTag(null, ProfileHelper.KEY_BACKGROUNDTYPE);
-			serializer
-					.text("replace this text with 0 or 1 (0 = color, 1=image)");
-			serializer.endTag(null, ProfileHelper.KEY_BACKGROUNDTYPE);
-			// <color>Android XML</color>
-			serializer.startTag(null, ProfileHelper.KEY_COLOR);
-			serializer.text("replace this text with RGB(like c6c6c6)");
-			serializer.endTag(null, ProfileHelper.KEY_COLOR);
-			// <offset>Android XML</offset>
-			serializer.startTag(null, ProfileHelper.KEY_OFFSET);
-			serializer.text("replace this text with offset value (like 5)");
-			serializer.endTag(null, ProfileHelper.KEY_OFFSET);
-			// </activity>
-			serializer.endTag(null, "activity");
-			// </profile>
-			serializer.startTag(null, "profile");
-			serializer.endDocument();
-			return writer.toString();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static String genStandXmls(String pkgName, String actName) {
-		StringWriter writer = new StringWriter();
-		writer.append("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>");
-		writer.append("\n");
-		writer.append("<profile>");
-		writer.append("\n");
-		writer.append("<activity name=\"" + actName + "\">");
-		writer.append("\n");
-		writer.append("\t");
-		writer.append("<backgroundtype>replace with 0 or 1</backgroundtype>");
-		writer.append("\n");
-		writer.append("\t");
-		writer.append("<color>replace with RGB value</color>");
-		writer.append("\n");
-		writer.append("\t");
-		writer.append("<offset>replace with offset value</offset>");
-		writer.append("\n");
-		writer.append("</activity>");
-		writer.append("\n");
-		writer.append("</profile>");
-		return writer.toString();
-	}
 	
 	private ActivityProfile getProfileFromXml(String activityName, String filePath) throws XmlPullParserException, NumberFormatException, IOException {
 		FileInputStream slideInputStream = new FileInputStream(filePath);  

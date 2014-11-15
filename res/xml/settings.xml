@@ -7,6 +7,7 @@
     
     <PreferenceCategory android:title="@string/debug">
         <CheckBoxPreference android:title="@string/title_export_inform" android:key="key_export_inform" android:summary="@string/summary_export_inform"/>
+        <CheckBoxPreference android:title="@string/title_export_inform_tofile" android:key="key_export_inform_tofile" android:summary="@string/summary_export_inform_tofile"/>
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/about">

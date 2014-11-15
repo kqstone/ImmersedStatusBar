@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.provider.Settings;
+import android.view.View;
 import android.view.WindowManager;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -31,20 +32,21 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 		WindowType type = Utils.getWindowType(activity);
 		switch (type) {
 		case Normal:
+			boolean exinformtofile = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false;
+			if (exinformtofile) {
+				View view = activity.getWindow().getDecorView();
+				view.destroyDrawingCache();
+				view.setDrawingCacheEnabled(true);
+				Bitmap bitmap = view.getDrawingCache();	
+				if (bitmap != null)
+					Utils.outputBitmapToFile(bitmap, activity);
+			}
+			
 			boolean needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
 			if (!needGetColorFromBackground)
 				return;
-			int delay = Constant.DELAY_GET_CACHEDRAWABLE;
-			String activityName = activity.getLocalClassName();
-			if (activityName.equals("com.uc.browser.InnerUCMobile")) {
-				delay = 800;
-			} else if (activityName.equals("activity.SplashActivity") && activity.getPackageName().equals("com.tencent.mobileqq")) {
-				delay = 300;
-			}
-			
+			int delay = Constant.DELAY_GET_CACHEDRAWABLE;			
 			Handler handler = new Handler();
-			
-			
 			handler.postDelayed(new Runnable(){
 
 				@Override

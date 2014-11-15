@@ -24,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private CheckBoxPreference mPreTintNotification;
 	private CheckBoxPreference mPreQuickAnimContent;
 	private CheckBoxPreference mPreExptInform;
+	private CheckBoxPreference mPreExptInformToFile;
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -44,6 +45,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		mPreQuickAnimContent.setOnPreferenceChangeListener(this);
 		mPreExptInform = (CheckBoxPreference) findPreference(Constant.KEY_PREF_EXPORT_INFORM);
 		mPreExptInform.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false);
+		mPreExptInform.setOnPreferenceChangeListener(this);
+		mPreExptInform = (CheckBoxPreference) findPreference(Constant.KEY_PREF_EXPORT_INFORM_TOFILE);
+		mPreExptInform.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false);
 		mPreExptInform.setOnPreferenceChangeListener(this);
 	}
 
@@ -76,6 +80,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			this.mPreQuickAnimContent.setChecked(checked);
 		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM)) {
 			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, checked ? 1 : 0);
+			this.mPreExptInform.setChecked(checked);
+		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM_TOFILE)) {
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, checked ? 1 : 0);
 			this.mPreExptInform.setChecked(checked);
 		}
 		

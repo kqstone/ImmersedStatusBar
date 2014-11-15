@@ -21,6 +21,8 @@
     <string name="about_app">About Immersed Statusbar for MIUI6</string>
     <string name="author_inform">Author: kqstone (kqstone@163.com)</string>
     <string name="acknow_inform">Acknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
+    <string name="title_export_inform_tofile">Export informmation to sdcard</string>
+    <string name="summary_export_inform_tofile">Export activity informmation and cache drawable to sdcard</string>
     
     
 </resources>

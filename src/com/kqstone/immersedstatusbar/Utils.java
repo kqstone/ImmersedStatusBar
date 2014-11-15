@@ -190,7 +190,8 @@ public class Utils {
 	}
 	
 	public static WindowType getWindowType(Activity activity) {
-		if (activity.getPackageName().equals("cn.wps.moffice_eng")) {
+		String pkgName = activity.getPackageName();
+		if (pkgName.equals("cn.wps.moffice_eng") || pkgName.equals("com.tencent.mobileqq")) {
 			return WindowType.Normal;
 		}
 		Intent activityIntent = activity.getIntent();
@@ -275,7 +276,7 @@ public class Utils {
 		Log.d(Constant.MODULE,
 				"*************************************************************");
 		
-		Log.d(Constant.MODULE, ProfileHelper.genStandXmls(pkgName, actName));
+		Log.d(Constant.MODULE, genStandXmls(pkgName, actName));
 		Log.d(Constant.MODULE,
 				"*************************************************************");
 	}
@@ -284,15 +285,15 @@ public class Utils {
 		try {
 			String path = Environment.getExternalStorageDirectory()
 					.getAbsolutePath()
-					+ "/isb/log/";
+					+ "/isb/log/profile/";
 			File dir = new File(path);
 			if (!dir.exists()) {
-				dir.mkdir();
+				dir.mkdirs();
 			}
 			path = path + activity.getPackageName() + ".xml";
 			FileOutputStream os = new FileOutputStream(path);
 			OutputStreamWriter osw = new OutputStreamWriter(os);
-			String log = ProfileHelper.genStandXml(activity.getPackageName(),
+			String log = genStandXmls(activity.getPackageName(),
 					activity.getLocalClassName());
 			osw.write(log);
 			osw.close();
@@ -332,11 +333,15 @@ public class Utils {
 		return Color.rgb(r, g, b);
 	}
 
-	private static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
-		if (!Constant.DBG_IMAGE)
-			return;
+	public static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/isb/log/img/";
+		path = path + activity.getPackageName() + "/";
+		File dir = new File(path);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
 
-		final String fname = "/sdcard/debug/" + activity.getLocalClassName() + ".png";
+		final String fname = path + activity.getLocalClassName() + ".png";
 		new Thread(){
 			@Override
 			public void run() {
@@ -353,6 +358,66 @@ public class Utils {
 			}
 		}.start();
 
+	}
+	
+
+	public static String genStandXml(String pkgName, String actName) {
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		try {
+			serializer.setOutput(writer);
+			// <?xml version="1.0" encoding=¡±UTF-8¡å standalone=¡±yes¡±?>
+			serializer.startDocument("UTF-8", true);
+			// <profile>
+			serializer.startTag(null, "profile");
+			// <activity name="actName">
+			serializer.startTag(null, "activity");
+			serializer.attribute(null, ProfileHelper.KEY_NAME, actName);
+			// <backgroundtype>Android XML</backgroundtype>
+			serializer.startTag(null, ProfileHelper.KEY_BACKGROUNDTYPE);
+			serializer
+					.text("replace this text with 0 or 1 (0 = color, 1=image)");
+			serializer.endTag(null, ProfileHelper.KEY_BACKGROUNDTYPE);
+			// <color>Android XML</color>
+			serializer.startTag(null, ProfileHelper.KEY_COLOR);
+			serializer.text("replace this text with RGB(like c6c6c6)");
+			serializer.endTag(null, ProfileHelper.KEY_COLOR);
+			// <offset>Android XML</offset>
+			serializer.startTag(null, ProfileHelper.KEY_OFFSET);
+			serializer.text("replace this text with offset value (like 5)");
+			serializer.endTag(null, ProfileHelper.KEY_OFFSET);
+			// </activity>
+			serializer.endTag(null, "activity");
+			// </profile>
+			serializer.startTag(null, "profile");
+			serializer.endDocument();
+			return writer.toString();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static String genStandXmls(String pkgName, String actName) {
+		StringWriter writer = new StringWriter();
+		writer.append("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>");
+		writer.append("\n");
+		writer.append("<profile>");
+		writer.append("\n");
+		writer.append("<activity name=\"" + actName + "\">");
+		writer.append("\n");
+		writer.append("\t");
+		writer.append("<backgroundtype>replace with 0 or 1</backgroundtype>");
+		writer.append("\n");
+		writer.append("\t");
+		writer.append("<color>replace with RGB value</color>");
+		writer.append("\n");
+		writer.append("\t");
+		writer.append("<offset>replace with offset value</offset>");
+		writer.append("\n");
+		writer.append("</activity>");
+		writer.append("\n");
+		writer.append("</profile>");
+		return writer.toString();
 	}
 	
 	enum WindowType {

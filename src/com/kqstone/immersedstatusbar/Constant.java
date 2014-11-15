@@ -4,8 +4,6 @@ import android.graphics.Color;
 
 public final class Constant {
 	public static final boolean DEBUG = true;
-
-	public static final boolean DBG_IMAGE = false;
 	
 	public static final String MODULE = "ISB";
 	public static final String PKG_NAME = "com.kqstone.immersedstatusbar";	
@@ -38,6 +36,7 @@ public final class Constant {
 	public final static String KEY_PREF_TINT_NOTIFICATION = "key_tint_notification";
 	public static final String KEY_PREF_QUICKANIM_CONTENT = "key_quickanim_content";
 	public static final String KEY_PREF_EXPORT_INFORM = "key_export_inform";
+	public static final String KEY_PREF_EXPORT_INFORM_TOFILE = "key_export_inform_tofile";
 
 	
 	
