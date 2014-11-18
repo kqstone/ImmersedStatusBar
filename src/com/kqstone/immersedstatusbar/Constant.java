@@ -13,17 +13,20 @@ public final class Constant {
 	public static final String INTENT_CHANGE_STATUSBAR_COLOR = "com.kqstone.immersedstatusbar.CHANGESTATUSBARCOLOR";
 	public static final String INTENT_UPDATE_NOTIFICATION_ICONS = "com.kqstone.immersedstatusbar.UPDATENOTIFICATIONICONS";
 	public static final String INTENT_UPDATE_SETTINGS = "com.kqstone.immersedstatusbar.UPDATESETTINGS";
+	public static final String INTENT_UPDATE_TRANSANIMASCALE = "com.kqstone.immersedstatusbar.UPDATETRANSANIMSCALE";
 	
+	public static final String PKG_ACT_NAME = "pkg_act_name";
 	public static final String IS_DARKMODE = "is_darkmode";
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
 	public static final String STATUSBAR_BACKGROUND_TYPE = "background_type";
 	public static final String STATUSBAR_BACKGROUND_PATH = "background_path";
 	public static final String DARKMODE_HANDLE = "dark_handled";
+	public static final String TRANS_ANIM_SCALE = "trans_anim_scale";
 	
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
 	public static final int DELAY_GET_CACHEDRAWABLE = 0;
 	
-	public static final int TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION = 0;
+	public static final long TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION = 100;
 	
 //	public static final int DISPLAY_HEIGHT = 1280;
 //	public static final int DISPLAY_WIDTH = 720;

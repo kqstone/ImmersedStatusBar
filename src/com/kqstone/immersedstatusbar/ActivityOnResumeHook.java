@@ -174,6 +174,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 
 
 		Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+		intent.putExtra(Constant.PKG_ACT_NAME, activity.getPackageName() + "_" + activity.getLocalClassName());
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_TYPE, backgroundtype);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_PATH, path);

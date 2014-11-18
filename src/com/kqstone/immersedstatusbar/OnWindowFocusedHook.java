@@ -95,6 +95,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 					}
 					
 					Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+					intent.putExtra(Constant.PKG_ACT_NAME, activity.getPackageName() + "_" + activity.getLocalClassName());
 					intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
 					intent.putExtra(Constant.IS_DARKMODE, isdark);
 					intent.putExtra(Constant.DARKMODE_HANDLE, darkHandled);
@@ -114,6 +115,8 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			}
 			Intent intent = new Intent(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+			intent.putExtra(Constant.PKG_ACT_NAME, 
+					activity.getPackageName() + "_" + activity.getLocalClassName());
 			intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR,
 					Color.TRANSPARENT);
 			intent.putExtra(Constant.IS_DARKMODE, mDarkModeTranslucent);

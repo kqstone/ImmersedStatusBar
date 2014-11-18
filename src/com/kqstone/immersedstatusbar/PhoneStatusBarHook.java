@@ -44,6 +44,9 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private int mPreColor = Color.BLACK;
 	private boolean mPreDarkMode = false;
 	private int[] mIconColors = {Color.parseColor("#80000000"),Color.parseColor("#99ffffff")};
+	private long mDelayTime = 1L;
+	
+	private Handler handler;
 	
 	private BroadcastReceiver mActivityResumeReceiver = new BroadcastReceiver() {
 
@@ -51,6 +54,8 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR)) {
+				String pkgActName = intent.getStringExtra(Constant.PKG_ACT_NAME);
+				int pkgActType = (pkgActName != null && pkgActName.equals("com.miui.home_launcher.Launcher")) ? 1:0;
 				int type = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_TYPE, 0);
 				switch (type) {
 				case 0:
@@ -61,7 +66,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 						darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
 								false);
 						if (darkMode != mPreDarkMode) {
-							updateStatusBarContent(darkMode);
+							updateStatusBarContent(darkMode, pkgActType);
 							mPreDarkMode = darkMode;
 						}
 
@@ -69,7 +74,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					int color = intent.getIntExtra(
 							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 					if (color != mPreColor) {
-						updateStatusBarBackground(new ColorDrawable(color));
+						updateStatusBarBackground(new ColorDrawable(color), pkgActType);
 						mPreColor = color;
 					}
 					break;
@@ -77,18 +82,22 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
 							false);
 					if (darkMode != mPreDarkMode) {
-						updateStatusBarContent(darkMode);
+						updateStatusBarContent(darkMode, pkgActType);
 						mPreDarkMode = darkMode;
 					}
 					String path = intent.getStringExtra(Constant.STATUSBAR_BACKGROUND_PATH);
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
-					updateStatusBarBackground(new BitmapDrawable(bitmap));
+					updateStatusBarBackground(new BitmapDrawable(bitmap), pkgActType);
 					mPreColor = Constant.UNKNOW_COLOR;
 				}
 				
 			} else if (intent.getAction().equals(
 					Constant.INTENT_UPDATE_NOTIFICATION_ICONS)) {
 				refreshNotificationIcons();
+			} else if (intent.getAction().equals(
+					Constant.INTENT_UPDATE_TRANSANIMASCALE)) {
+				float scale = intent.getFloatExtra(Constant.TRANS_ANIM_SCALE, 1F);
+				mDelayTime = getDelayTime(scale);
 			}
 		}
 		
@@ -112,17 +121,28 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		}
 	}
 
-	private void updateStatusBarContent(boolean darkmode) {
+	private void updateStatusBarContent(boolean darkmode, int pkgActType) {
 		Utils.log("darkmode: " + darkmode);
 		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mTargetDarkMode", darkmode);
-		XposedHelpers.callMethod(XposedHelpers.getObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable"), "run");
+		Runnable runnable = (Runnable) XposedHelpers.getObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable");
+		long delaytime = pkgActType == 1 ? 50 : mDelayTime;
+		handler.postDelayed(runnable, delaytime);
 	}
 	
-	private void updateStatusBarBackground(Drawable drawable) {
-		View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
-		ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.1F, 1.0F })
-			.setDuration(Constant.TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION).start();
-		statusBarView.setBackground(drawable);
+	private void updateStatusBarBackground(final Drawable drawable, int pkgActType) {
+		long delaytime = pkgActType == 1 ? 50 : mDelayTime;
+		final View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
+		Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				statusBarView.setBackground(drawable);
+				ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.5F, 1.0F })
+				.setDuration(Constant.TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION).start();
+			}
+		};
+		handler.postDelayed(r, delaytime);
+		
 	}
 	
 	private void updateNotificationIcons() {
@@ -201,6 +221,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				protected void afterHookedMethod(MethodHookParam param)
 						throws Throwable {
 					instancePhoneStatusBar = param.thisObject;
+					handler = new Handler();
 				}
 			});
 			
@@ -214,6 +235,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					IntentFilter intentFilter = new IntentFilter();
 					intentFilter.addAction(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
 					intentFilter.addAction(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
+					intentFilter.addAction(Constant.INTENT_UPDATE_TRANSANIMASCALE);
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 					mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
 					
@@ -240,6 +262,14 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 						}
 					};
 					XposedHelpers.setObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable", darkModeRunnable);	
+					
+					Class<?> ServiceManager = XposedHelpers.findClass("android.os.ServiceManager", null);
+					Object WindowService = XposedHelpers.callStaticMethod(ServiceManager, "getService", "window");
+					Class<?> IWindowManagerStub = XposedHelpers.findClass("android.view.IWindowManager.Stub", null);
+					Object WindowManager = XposedHelpers.callStaticMethod(IWindowManagerStub, "asInterface", WindowService);
+					float transAnimScal = (Float) XposedHelpers.callMethod(WindowManager, "getAnimationScale", 1);
+					mDelayTime = getDelayTime(transAnimScal);
+					
 				}
 				
 			});
@@ -286,6 +316,9 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			
 		}
 		 
+	}
+	private long getDelayTime(float animscale) {
+		return (long) (animscale*350);
 	}
 
 }
