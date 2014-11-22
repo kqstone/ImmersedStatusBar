@@ -31,7 +31,7 @@ public class ProfileHelper {
 	public static final String KEY_OFFSET = "offset";
 	public static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture, 2= translucent status;
 	public static final String NAME_ALL_ACTIVITIES = "AllActivities";
-	public static final String KEY_BGFILE = "file";
+	public static final String KEY_BGFILE = "backgroundfile";
 	private static final String DIR_IMG = "/isb/img/";
 	private static final String DIR_PROFILE = "/isb/profile/";
 	private static final String DIR_USERPROFILE = "/isb/usrprofile/";
