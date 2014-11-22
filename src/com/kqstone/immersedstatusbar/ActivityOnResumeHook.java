@@ -47,16 +47,14 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		case Float:
 			return;
 		case Fullscreen:
-			color = Color.parseColor("#66000000");
+			color = Color.parseColor("#33000000");
 			colorHandled = true;
 			isdark = false;
 			darkHandled = true;
 			break;
 		case Translucent:
-			color = Color.TRANSPARENT;
-			colorHandled = true;
 			Utils.log("Translucent activity, need get darkmode after window focus changed");
-			break;
+			return;
 		default:
 			boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
 			if (exinform)
@@ -174,7 +172,8 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 
 
 		Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
-		intent.putExtra(Constant.PKG_ACT_NAME, activity.getPackageName() + "_" + activity.getLocalClassName());
+		intent.putExtra(Constant.PKG_NAME, activity.getPackageName());
+		intent.putExtra(Constant.ACT_NAME, activity.getLocalClassName());
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_TYPE, backgroundtype);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_PATH, path);

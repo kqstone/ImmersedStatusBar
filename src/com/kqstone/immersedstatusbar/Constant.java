@@ -6,7 +6,7 @@ public final class Constant {
 	public static final boolean DEBUG = true;
 	
 	public static final String MODULE = "ISB";
-	public static final String PKG_NAME = "com.kqstone.immersedstatusbar";	
+	public static final String PKG_NAME_SELF = "com.kqstone.immersedstatusbar";	
 
 	public final static int UNKNOW_COLOR = 16777216;
 	
@@ -15,7 +15,8 @@ public final class Constant {
 	public static final String INTENT_UPDATE_SETTINGS = "com.kqstone.immersedstatusbar.UPDATESETTINGS";
 	public static final String INTENT_UPDATE_TRANSANIMASCALE = "com.kqstone.immersedstatusbar.UPDATETRANSANIMSCALE";
 	
-	public static final String PKG_ACT_NAME = "pkg_act_name";
+	public static final String PKG_NAME = "package_name";
+	public static final String ACT_NAME = "activity_name";
 	public static final String IS_DARKMODE = "is_darkmode";
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
 	public static final String STATUSBAR_BACKGROUND_TYPE = "background_type";
@@ -41,6 +42,7 @@ public final class Constant {
 	public static final String KEY_PREF_EXPORT_INFORM = "key_export_inform";
 	public static final String KEY_PREF_EXPORT_INFORM_TOFILE = "key_export_inform_tofile";
 
+	
 	
 	
 	

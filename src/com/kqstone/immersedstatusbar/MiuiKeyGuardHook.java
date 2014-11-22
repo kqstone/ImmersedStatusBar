@@ -19,6 +19,8 @@ public class MiuiKeyGuardHook implements IXposedHookLoadPackage {
 			@Override
 			protected void afterHookedMethod(MethodHookParam methodHookParam) throws Throwable {
 				Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+				intent.putExtra(Constant.PKG_NAME, "com.android.keyguard");
+				intent.putExtra(Constant.ACT_NAME, "MiuiKeyGuard");
 				intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Color.TRANSPARENT);
 				intent.putExtra(Constant.IS_DARKMODE, false);
 				intent.putExtra(Constant.DARKMODE_HANDLE, true);

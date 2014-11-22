@@ -41,6 +41,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private Object instancePhoneStatusBar;
 	private Context mContext;
+	private String mPrePkgName = null;
 	private int mPreColor = Color.BLACK;
 	private boolean mPreDarkMode = false;
 	private int[] mIconColors = {Color.parseColor("#80000000"),Color.parseColor("#99ffffff")};
@@ -54,8 +55,23 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR)) {
-				String pkgActName = intent.getStringExtra(Constant.PKG_ACT_NAME);
-				int pkgActType = (pkgActName != null && pkgActName.equals("com.miui.home_launcher.Launcher")) ? 1:0;
+				String pkgName = intent.getStringExtra(Constant.PKG_NAME);
+				String actName = intent.getStringExtra(Constant.ACT_NAME);
+				Utils.log("PKG_NAME:" + pkgName + "; ACT_NAME:" + actName);
+				if (mPrePkgName != null)
+					Utils.log("PRE_PKG_NAME:" + mPrePkgName);
+				int transitionType = 0;
+				if (pkgName != null) {
+					if ((pkgName.equals("com.miui.home") && actName.equals("launcher.Launcher"))
+							|| (pkgName.equals("com.android.keyguard") && actName.equals("MiuiKeyGuard")))
+						transitionType = 1;
+					if (mPrePkgName != null && pkgName.equals(mPrePkgName)) {
+						transitionType = 1;
+					} else {
+						mPrePkgName = pkgName;
+					}
+				}
+				Utils.log("Transition Type: " + transitionType);
 				int type = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_TYPE, 0);
 				switch (type) {
 				case 0:
@@ -66,7 +82,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 						darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
 								false);
 						if (darkMode != mPreDarkMode) {
-							updateStatusBarContent(darkMode, pkgActType);
+							updateStatusBarContent(darkMode, transitionType);
 							mPreDarkMode = darkMode;
 						}
 
@@ -74,7 +90,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					int color = intent.getIntExtra(
 							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 					if (color != mPreColor) {
-						updateStatusBarBackground(new ColorDrawable(color), pkgActType);
+						updateStatusBarBackground(new ColorDrawable(color), transitionType);
 						mPreColor = color;
 					}
 					break;
@@ -82,12 +98,12 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
 							false);
 					if (darkMode != mPreDarkMode) {
-						updateStatusBarContent(darkMode, pkgActType);
+						updateStatusBarContent(darkMode, transitionType);
 						mPreDarkMode = darkMode;
 					}
 					String path = intent.getStringExtra(Constant.STATUSBAR_BACKGROUND_PATH);
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
-					updateStatusBarBackground(new BitmapDrawable(bitmap), pkgActType);
+					updateStatusBarBackground(new BitmapDrawable(bitmap), transitionType);
 					mPreColor = Constant.UNKNOW_COLOR;
 				}
 				
@@ -121,16 +137,16 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		}
 	}
 
-	private void updateStatusBarContent(boolean darkmode, int pkgActType) {
+	private void updateStatusBarContent(boolean darkmode, int transitionType) {
 		Utils.log("darkmode: " + darkmode);
 		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mTargetDarkMode", darkmode);
 		Runnable runnable = (Runnable) XposedHelpers.getObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable");
-		long delaytime = pkgActType == 1 ? 50 : mDelayTime;
+		long delaytime = transitionType == 1 ? 50 : mDelayTime;
 		handler.postDelayed(runnable, delaytime);
 	}
 	
-	private void updateStatusBarBackground(final Drawable drawable, int pkgActType) {
-		long delaytime = pkgActType == 1 ? 50 : mDelayTime;
+	private void updateStatusBarBackground(final Drawable drawable, int transitionType) {
+		long delaytime = transitionType == 1 ? 50 : mDelayTime;
 		final View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
 		Runnable r = new Runnable() {
 
