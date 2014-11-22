@@ -31,6 +31,7 @@ public class ProfileHelper {
 	public static final String KEY_OFFSET = "offset";
 	public static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture, 2= translucent status;
 	public static final String NAME_ALL_ACTIVITIES = "AllActivities";
+	public static final String KEY_BGFILE = "file";
 	private static final String DIR_IMG = "/isb/img/";
 	private static final String DIR_PROFILE = "/isb/profile/";
 	private static final String DIR_USERPROFILE = "/isb/usrprofile/";
@@ -102,7 +103,9 @@ public class ProfileHelper {
 	}
 	
 	public String getBackgroundPath() {
-		String filename = mActName;
+		String filename = mProfile.getBgFile();
+		if (filename == null)
+			filename = mActName;
 		filename = mProfileName + "/" + filename;
 		return buildPath(DIR_IMG, filename, "png");
 	}
@@ -159,6 +162,8 @@ public class ProfileHelper {
         					profile.setBgColor(xpp.nextText());
         				if (tag.equalsIgnoreCase(KEY_OFFSET))
         					profile.setOffset(Integer.parseInt(xpp.nextText()));
+        				if (tag.equalsIgnoreCase(KEY_BGFILE))
+        					profile.setBgFile(xpp.nextText());
         			} else if (profileAll != null) {
         				if (tag.equalsIgnoreCase(KEY_BACKGROUNDTYPE))
         					profileAll.setBgType(Integer.parseInt(xpp.nextText()));
@@ -166,6 +171,8 @@ public class ProfileHelper {
         					profileAll.setBgColor(xpp.nextText());
         				if (tag.equalsIgnoreCase(KEY_OFFSET))
         					profileAll.setOffset(Integer.parseInt(xpp.nextText()));
+        				if (tag.equalsIgnoreCase(KEY_BGFILE))
+        					profile.setBgFile(xpp.nextText());
         			}
         		}
         		break;
