@@ -117,7 +117,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			Utils.log("Is fast Animate Statusbar Content: " + fastAnim);
 			long duration = 500L;
 			if (fastAnim)
-				duration = 100L;
+				duration = 1L;
 			XposedHelpers.callMethod(simpleStatusbar, "updateDarkMode");
 			ObjectAnimator.ofFloat(simpleStatusbar, "transitionAlpha", new float[] { 0.0F, 1.0F }).setDuration(duration).start();
 		}
@@ -132,15 +132,15 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	}
 	
 	private void updateStatusBarBackground(final Drawable drawable, boolean fastTrans) {
-		long delaytime = fastTrans ? 50 : mDelayTime;
+		long delaytime = fastTrans ? 0 : mDelayTime;
 		final View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
 		Runnable r = new Runnable() {
 
 			@Override
 			public void run() {
 				statusBarView.setBackground(drawable);
-				ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.5F, 1.0F })
-				.setDuration(Constant.TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION).start();
+//				ObjectAnimator.ofFloat(statusBarView, "transitionAlpha", new float[] { 0.0F, 0.5F, 1.0F })
+//				.setDuration(Constant.TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION).start();
 			}
 		};
 		handler.postDelayed(r, delaytime);
@@ -320,7 +320,9 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		 
 	}
 	private long getDelayTime(float animscale) {
-		return (long) (animscale*350);
+		if (animscale == 0)
+			return 0;
+		return (long) (animscale*340)+50;
 	}
 
 }
