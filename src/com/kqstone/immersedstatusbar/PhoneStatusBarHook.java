@@ -60,50 +60,36 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				Utils.log("PKG_NAME:" + pkgName + "; ACT_NAME:" + actName);
 				if (mPrePkgName != null)
 					Utils.log("PRE_PKG_NAME:" + mPrePkgName);
-				int transitionType = 0;
+				boolean fastTrans = intent.getBooleanExtra(Constant.FAST_TRANSITION, false);
 				if (pkgName != null) {
-					if ((pkgName.equals("com.miui.home") && actName.equals("launcher.Launcher"))
-							|| (pkgName.equals("com.android.keyguard") && actName.equals("MiuiKeyGuard")))
-						transitionType = 1;
 					if (mPrePkgName != null && pkgName.equals(mPrePkgName)) {
-						transitionType = 1;
+						fastTrans = true;
 					} else {
 						mPrePkgName = pkgName;
 					}
 				}
-				Utils.log("Transition Type: " + transitionType);
+				Utils.log("fastTransition: " + fastTrans);
+				
+				boolean darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
+				if (darkMode != mPreDarkMode) {
+					updateStatusBarContent(darkMode, fastTrans);
+					mPreDarkMode = darkMode;
+				}
+				
 				int type = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_TYPE, 0);
 				switch (type) {
 				case 0:
-					boolean darkHandled = intent.getBooleanExtra(
-							Constant.DARKMODE_HANDLE, false);
-					boolean darkMode;
-					if (darkHandled) {
-						darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
-								false);
-						if (darkMode != mPreDarkMode) {
-							updateStatusBarContent(darkMode, transitionType);
-							mPreDarkMode = darkMode;
-						}
-
-					}
 					int color = intent.getIntExtra(
 							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 					if (color != mPreColor) {
-						updateStatusBarBackground(new ColorDrawable(color), transitionType);
+						updateStatusBarBackground(new ColorDrawable(color), fastTrans);
 						mPreColor = color;
 					}
 					break;
 				case 1:
-					darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE,
-							false);
-					if (darkMode != mPreDarkMode) {
-						updateStatusBarContent(darkMode, transitionType);
-						mPreDarkMode = darkMode;
-					}
 					String path = intent.getStringExtra(Constant.STATUSBAR_BACKGROUND_PATH);
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
-					updateStatusBarBackground(new BitmapDrawable(bitmap), transitionType);
+					updateStatusBarBackground(new BitmapDrawable(bitmap), fastTrans);
 					mPreColor = Constant.UNKNOW_COLOR;
 				}
 				
@@ -137,16 +123,16 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		}
 	}
 
-	private void updateStatusBarContent(boolean darkmode, int transitionType) {
+	private void updateStatusBarContent(boolean darkmode, boolean fastTrans) {
 		Utils.log("darkmode: " + darkmode);
 		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mTargetDarkMode", darkmode);
 		Runnable runnable = (Runnable) XposedHelpers.getObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable");
-		long delaytime = transitionType == 1 ? 50 : mDelayTime;
+		long delaytime = fastTrans ? 50 : mDelayTime;
 		handler.postDelayed(runnable, delaytime);
 	}
 	
-	private void updateStatusBarBackground(final Drawable drawable, int transitionType) {
-		long delaytime = transitionType == 1 ? 50 : mDelayTime;
+	private void updateStatusBarBackground(final Drawable drawable, boolean fastTrans) {
+		long delaytime = fastTrans ? 50 : mDelayTime;
 		final View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
 		Runnable r = new Runnable() {
 

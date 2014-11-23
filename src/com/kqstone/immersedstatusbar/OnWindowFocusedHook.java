@@ -55,7 +55,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 					Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
 					int color = Color.BLACK;
 					boolean isdark = false;
-					boolean darkHandled = false;
+					boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
 					
 					if (bitmap != null) {
 						BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
@@ -65,14 +65,12 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
 							isdark = Utils.getDarkMode(color);
 							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
-							darkHandled = true;
 						} else if (bitmapColor.mType == Type.GRADUAL) {
 							Utils.log("GRADUAL BitMap found, rePadding viewgroup...");
 							color = bitmapColor.Color;
 							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
 							isdark = Utils.getDarkMode(color);
 							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
-							darkHandled = true;
 							if (!(Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mRepaddingHandled")) {
 								Utils.resetPadding(activity, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
 								XposedHelpers.setAdditionalInstanceField(activity, "mRepaddingHandled", true);
@@ -89,7 +87,6 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 								isdark = Utils.getDarkMode(color);
 								XposedHelpers.setAdditionalInstanceField(activity,
 										"mDarkMode", isdark);
-								darkHandled = true;
 							}
 						}
 					}
@@ -99,7 +96,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 					intent.putExtra(Constant.ACT_NAME, activity.getLocalClassName());
 					intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
 					intent.putExtra(Constant.IS_DARKMODE, isdark);
-					intent.putExtra(Constant.DARKMODE_HANDLE, darkHandled);
+					intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
 
 					activity.sendBroadcast(intent);
 					XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
@@ -114,6 +111,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 					mDarkModeTranslucent = Utils.getDarkMode(color);
 				}
 			}
+			boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
 			Intent intent = new Intent(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR);
 			intent.putExtra(Constant.PKG_NAME, activity.getPackageName());
@@ -121,7 +119,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR,
 					Color.TRANSPARENT);
 			intent.putExtra(Constant.IS_DARKMODE, mDarkModeTranslucent);
-			intent.putExtra(Constant.DARKMODE_HANDLE, true);
+			intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
 			activity.sendBroadcast(intent);
 			break;
 		default:

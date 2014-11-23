@@ -32,6 +32,7 @@ public class ProfileHelper {
 	public static final String KEY_BACKGROUNDTYPE = "backgroundtype"; //background type: 0=color, 1=picture, 2= translucent status;
 	public static final String NAME_ALL_ACTIVITIES = "AllActivities";
 	public static final String KEY_BGFILE = "backgroundfile";
+	public static final String KEY_FASTTRANS = "fasttransition";
 	private static final String DIR_IMG = "/isb/img/";
 	private static final String DIR_PROFILE = "/isb/profile/";
 	private static final String DIR_USERPROFILE = "/isb/usrprofile/";
@@ -125,6 +126,17 @@ public class ProfileHelper {
 		return i;
 	}
 	
+	public boolean getFastTrans() {
+		Boolean b = null;
+		if (hasUserProfile())
+			b = mUserProfile.getFastTrans();
+		if (b == null && hasProfile())
+			b = mProfile.getFastTrans();
+		if (b == null)
+			b = false;
+		return b;
+	}
+	
 	public String getActName() {
 		return mActName;
 	}
@@ -164,6 +176,8 @@ public class ProfileHelper {
         					profile.setOffset(Integer.parseInt(xpp.nextText()));
         				if (tag.equalsIgnoreCase(KEY_BGFILE))
         					profile.setBgFile(xpp.nextText());
+        				if (tag.equalsIgnoreCase(KEY_FASTTRANS))
+        					profile.setFastTrans(Boolean.parseBoolean(xpp.nextText()));
         			} else if (profileAll != null) {
         				if (tag.equalsIgnoreCase(KEY_BACKGROUNDTYPE))
         					profileAll.setBgType(Integer.parseInt(xpp.nextText()));
@@ -172,7 +186,9 @@ public class ProfileHelper {
         				if (tag.equalsIgnoreCase(KEY_OFFSET))
         					profileAll.setOffset(Integer.parseInt(xpp.nextText()));
         				if (tag.equalsIgnoreCase(KEY_BGFILE))
-        					profile.setBgFile(xpp.nextText());
+        					profileAll.setBgFile(xpp.nextText());
+        				if (tag.equalsIgnoreCase(KEY_FASTTRANS))
+        					profileAll.setFastTrans(Boolean.parseBoolean(xpp.nextText()));
         			}
         		}
         		break;

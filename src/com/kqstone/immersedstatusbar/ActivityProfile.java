@@ -6,6 +6,7 @@ public class ActivityProfile {
 	private String mColor;
 	private String mBgFile;
 	private Integer mOffset;
+	private Boolean mFastTrans;
 	
 	public ActivityProfile() {
 		mActName = null;
@@ -13,6 +14,7 @@ public class ActivityProfile {
 		mColor = null;
 		mOffset = null;
 		mBgFile = null;
+		mFastTrans = null;
 	}
 	
 	public String getActName() {
@@ -35,6 +37,10 @@ public class ActivityProfile {
 		return mOffset;
 	}
 	
+	public Boolean getFastTrans() {
+		return mFastTrans;
+	}
+	
 	public void setActName(String actName) {
 		mActName = actName;
 	}
@@ -53,6 +59,10 @@ public class ActivityProfile {
 
 	public void setOffset(int offset) {
 		this.mOffset = offset;
+	}
+	
+	public void setFastTrans(boolean fastTrans) {
+		this.mFastTrans = fastTrans;
 	}
 	
 	

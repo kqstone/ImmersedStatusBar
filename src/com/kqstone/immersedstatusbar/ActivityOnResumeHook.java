@@ -39,7 +39,27 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		String path = null;
 		boolean colorHandled = false;
 		boolean isdark = false;
-		boolean darkHandled = false;
+		
+		Boolean fastTrans = null;
+		Object OFastTrans = XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
+		if (OFastTrans != null)
+			fastTrans = (Boolean)OFastTrans;
+		if (fastTrans == null) {
+			for (String s:FastTransApp) {
+				if (s.equals(activity.getPackageName())){
+					fastTrans = true;
+					break;
+				}
+			}
+		}
+		if (fastTrans == null) {
+			ProfileHelper helper = (ProfileHelper) XposedHelpers.getAdditionalInstanceField(activity, "mProfileHelper");
+			if (helper != null) {
+				fastTrans = helper.getFastTrans();
+			}
+		}
+		if (fastTrans == null) fastTrans = false;
+		XposedHelpers.setAdditionalInstanceField(activity, "mFastTrans", fastTrans);		
 
 		WindowType type = Utils.getWindowType(activity);
 		Utils.log("Resume: Window type: " + type);
@@ -50,7 +70,6 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			color = Color.parseColor("#33000000");
 			colorHandled = true;
 			isdark = false;
-			darkHandled = true;
 			break;
 		case Translucent:
 			Utils.log("Translucent activity, need get darkmode after window focus changed");
@@ -64,7 +83,6 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				Utils.exportStandXml(activity);
 			
 			XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",0);
-			darkHandled = true;
 			backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,
 					"mBackgroundType");
 			switch (backgroundtype) {
@@ -131,7 +149,6 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				}
 			}
 			if (!colorHandled) {
-				darkHandled = true;
 				ActionBar actionBar = activity.getActionBar();
 				if (actionBar != null) {
 					FrameLayout container = (FrameLayout) XposedHelpers
@@ -178,12 +195,18 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
 		intent.putExtra(Constant.STATUSBAR_BACKGROUND_PATH, path);
 		intent.putExtra(Constant.IS_DARKMODE, isdark);
-		intent.putExtra(Constant.DARKMODE_HANDLE, darkHandled);
+		intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
 		
 		Utils.log("backgroundtype:" + backgroundtype + ";" + "statusbar_background:" + color + "; " + 
-		"path:" + path + ";" + "dark_mode:" + isdark + "; " + "dark_handled:" + darkHandled);
+		"path:" + path + ";" + "dark_mode:" + isdark + "; " + "fast_transition:" + fastTrans);
 
 		activity.sendBroadcast(intent);
 	}
 	
+	public final String[] FastTransApp = {
+			"com.miui.home",
+			"com.UCMobile",
+			"com.tencent.mm",
+			"com.sina.weibo"
+	};
 }

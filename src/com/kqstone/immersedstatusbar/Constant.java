@@ -21,7 +21,7 @@ public final class Constant {
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
 	public static final String STATUSBAR_BACKGROUND_TYPE = "background_type";
 	public static final String STATUSBAR_BACKGROUND_PATH = "background_path";
-	public static final String DARKMODE_HANDLE = "dark_handled";
+	public static final String FAST_TRANSITION = "fast_transition";
 	public static final String TRANS_ANIM_SCALE = "trans_anim_scale";
 	
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
@@ -41,6 +41,8 @@ public final class Constant {
 	public static final String KEY_PREF_QUICKANIM_CONTENT = "key_quickanim_content";
 	public static final String KEY_PREF_EXPORT_INFORM = "key_export_inform";
 	public static final String KEY_PREF_EXPORT_INFORM_TOFILE = "key_export_inform_tofile";
+
+	
 
 	
 	

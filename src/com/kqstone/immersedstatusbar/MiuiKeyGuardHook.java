@@ -23,7 +23,7 @@ public class MiuiKeyGuardHook implements IXposedHookLoadPackage {
 				intent.putExtra(Constant.ACT_NAME, "MiuiKeyGuard");
 				intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, Color.TRANSPARENT);
 				intent.putExtra(Constant.IS_DARKMODE, false);
-				intent.putExtra(Constant.DARKMODE_HANDLE, true);
+				intent.putExtra(Constant.FAST_TRANSITION, true);
 				Context ctx = (Context) XposedHelpers.getObjectField(methodHookParam.thisObject, "mContext");
 
 				ctx.sendBroadcast(intent);
