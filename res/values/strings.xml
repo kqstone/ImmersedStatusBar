@@ -5,8 +5,8 @@
     <string name="module_desc_full">Immersed Statusbar for Miui6\nAuthor: kqstone (kqstone@163.com)\nAcknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
     
     <string name="begin_download_profiles">Begin to download profiles from interent, please wait!</string>
-    <string name="success">Success</string>
-    <string name="fail">Failed</string>
+    <string name="success">Profiles download success</string>
+    <string name="fail">Profiles download Failed</string>
     
     <!--settings  -->
     <string name="title_settings">Settings</string>
