@@ -3,7 +3,10 @@
     <string name="module_name">MIUI6沉浸状态栏</string>
     <string name="module_desc">miui6第三方程序提供沉浸式状态栏</string>
     <string name="module_desc_full">解决miui6第三方程序不能沉浸状态栏\n\n作者: kqstone (kqstone@qq.com)\n致谢: 特别感谢MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar)提供的诸多代码</string>
-
+    <string name="begin_download_profiles">开始下载配置文件，请稍后!</string>
+    <string name="success">成功</string>
+    <string name="fail">失败</string>
+    
     <!--settings  -->
     <string name="title_settings">设置</string>
     <string name="title_force_tint">强制变色</string>
@@ -15,10 +18,17 @@
     <string name="debug">调试</string>
     <string name="title_export_inform">输出程序信息</string>
     <string name="summary_export_inform">输出程序和界面信息以方便改写配置文件\n用法：开启选项后使用adb logcat输出\n命令：adb logcat -v raw *:S ISB:D</string>
+    <string name="profile">配置文件</string>
+    <string name="profile_download">点击从Internet下载配置文件</string>
     
     <!--about  -->
     <string name="about">关于</string>
     <string name="about_app">关于MIUI6版沉浸状态栏</string>
-    <string name="author_inform">作者: kqstone (kqstone@163.com)</string>
-    <string name="acknow_inform">致谢: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
+    <string name="author_inform">作者:</string>    
+    <string name="author_content">kqstone (kqstone@163.com)</string>
+    <string name="acknow_inform">致谢: </string>
+    <string name="acknow_content">Great thanks to MohammadAG for lots of sources. \n(https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) </string>
+    <string name="about_profile">关于配置文件</string>
+    <string name="about_profile_content">针对某些特殊app制作配置文件，使得ISB更准确高效, 可在设置界面中下载. \n大部分的配置文件为 watcgfw制作, 感谢! \nhttps://github.com/watcgfw/ISBpreferences</string>
+    
 </resources>
