@@ -6,34 +6,74 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import de.robv.android.xposed.XposedHelpers;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.provider.Settings;
+import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener{
 	private final static String KEY_PREF_ABOUT = "about";
+	private final static String KEY_PREF_PROFILE = "profile";
 	
+	private Context mContext;
 	private Preference mPrefAbout;
+	private Preference mPrefDownoadProfile;
 	private CheckBoxPreference mPrefForceTint;
 	private CheckBoxPreference mPreTintNotification;
 	private CheckBoxPreference mPreQuickAnimContent;
 	private CheckBoxPreference mPreExptInform;
 	private CheckBoxPreference mPreExptInformToFile;
 	
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			boolean success = msg.what == 1 ? true : false;
+			String text;
+			text = mContext.getResources().getString(R.string.profile_download)
+					+ " "
+					+ mContext.getResources().getString(
+							success ? R.string.success : R.string.fail) + "!";
+			Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+		}
+	};
+	
+	class DownLoadThread implements Runnable {
+
+		@Override
+		public void run() {
+			boolean success;
+			success = ProfileDownload.downloadZip();
+			if (success)
+				success = ProfileDownload.unzip();
+			if (success)
+				success = ProfileDownload.copyToDest();
+			Message msg = new Message();
+			msg.what = success ? 1:0;
+			handler.sendMessage(msg);
+		}
+		
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mContext = this;
 		this.setTitle(R.string.title_settings);
 		this.addPreferencesFromResource(R.xml.settings);
 		mPrefAbout = findPreference(KEY_PREF_ABOUT);
 		mPrefAbout.setOnPreferenceClickListener(this);
+		mPrefDownoadProfile = findPreference(KEY_PREF_PROFILE);
+		mPrefDownoadProfile.setOnPreferenceClickListener(this);
 		mPrefForceTint = (CheckBoxPreference) findPreference(Constant.KEY_PREF_FORCE_TINT);
 		mPrefForceTint.setChecked(Settings.System.getInt(getContentResolver(),Constant.KEY_PREF_FORCE_TINT, 0) == 1 ? true:false);
 		mPrefForceTint.setOnPreferenceChangeListener(this);
@@ -59,6 +99,13 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			Intent intent = new Intent();
 			intent.setClass(this, About.class);
 			this.startActivity(intent);
+		} else if (key.equals(KEY_PREF_PROFILE)) {
+			Toast.makeText(
+					mContext,
+					mContext.getResources().getString(
+							R.string.begin_download_profiles),
+					Toast.LENGTH_SHORT).show();
+			new Thread(new DownLoadThread()).start();
 		}
 		return false;
 	}

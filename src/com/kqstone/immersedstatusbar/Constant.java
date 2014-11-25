@@ -42,6 +42,8 @@ public final class Constant {
 	public static final String KEY_PREF_EXPORT_INFORM = "key_export_inform";
 	public static final String KEY_PREF_EXPORT_INFORM_TOFILE = "key_export_inform_tofile";
 
+	public static final String PROFILE_URL = "http://github.com/kqstone/ISBpreferences/archive/master.zip";
+
 	
 
 	

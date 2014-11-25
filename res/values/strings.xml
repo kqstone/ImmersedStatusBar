@@ -23,6 +23,11 @@
     <string name="acknow_inform">Acknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
     <string name="title_export_inform_tofile">Export informmation to sdcard</string>
     <string name="summary_export_inform_tofile">Export activity informmation and cache drawable to sdcard</string>
+    <string name="profile">Profiles</string>
+    <string name="profile_download">Download Profiles From Internet</string>
+    <string name="begin_download_profiles">Begin to download profiles from interent, please wait!</string>
+    <string name="success">Success</string>
+    <string name="fail">Failed</string>
     
     
 </resources>
