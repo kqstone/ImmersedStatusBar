@@ -9,13 +9,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="@string/author_inform" />
+        android:text="@string/author_inform"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/author_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="@string/author_content" />
 
     <TextView
         android:id="@+id/acknow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="@string/acknow_inform" />
+        android:text="@string/acknow_inform"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/acknow_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="@string/acknow_content" />
+
+    <TextView
+        android:id="@+id/profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/about_profile"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/profile_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="@string/about_profile_content" />
 
 </LinearLayout>

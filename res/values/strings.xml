@@ -4,6 +4,10 @@
     <string name="module_desc">Immersed Statusbar for Miui6</string>
     <string name="module_desc_full">Immersed Statusbar for Miui6\nAuthor: kqstone (kqstone@163.com)\nAcknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
     
+    <string name="begin_download_profiles">Begin to download profiles from interent, please wait!</string>
+    <string name="success">Success</string>
+    <string name="fail">Failed</string>
+    
     <!--settings  -->
     <string name="title_settings">Settings</string>
     <string name="title_force_tint">Force Tint StatusBar</string>
@@ -14,20 +18,21 @@
     <string name="summary_quickanim_content">Fast the statusbar content animation when darkmode change</string>
     <string name="debug">Debug</string>
     <string name="title_export_inform">Export activity information</string>
-    <string name="summary_export_inform">Export package and activity information for profile generation</string>
-    
-    <!--about  -->
-    <string name="about">About</string>
-    <string name="about_app">About Immersed Statusbar for MIUI6</string>
-    <string name="author_inform">Author: kqstone (kqstone@163.com)</string>
-    <string name="acknow_inform">Acknowledgment: Great thanks to MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) for lots of sources.</string>
+    <string name="summary_export_inform">Export package and activity information for profile generation</string>    
     <string name="title_export_inform_tofile">Export informmation to sdcard</string>
     <string name="summary_export_inform_tofile">Export activity informmation and cache drawable to sdcard</string>
     <string name="profile">Profiles</string>
     <string name="profile_download">Download Profiles From Internet</string>
-    <string name="begin_download_profiles">Begin to download profiles from interent, please wait!</string>
-    <string name="success">Success</string>
-    <string name="fail">Failed</string>
+    
+    <!--about  -->
+    <string name="about">About</string>
+    <string name="about_app">About Immersed Statusbar for MIUI6</string>
+    <string name="author_inform">Author:</string>
+    <string name="author_content">kqstone (kqstone@163.com)</string>
+    <string name="acknow_inform">Acknowledgment:</string>
+    <string name="acknow_content">Great thanks to MohammadAG for lots of sources. \n(https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) </string>
+    <string name="about_profile">About Profile</string>
+    <string name="about_profile_content">Profile is xml files that makes ISB more suitable for certain apps, you can download from ISB settings interface. \nMost profiles are made by watcgfw. \nhttps://github.com/watcgfw/ISBpreferences</string>
     
     
 </resources>
