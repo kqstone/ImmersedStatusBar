@@ -38,9 +38,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		public void handleMessage(Message msg) {
 			boolean success = msg.what == 1 ? true : false;
 			String text;
-			text = mContext.getResources().getString(R.string.profile_download)
-					+ " "
-					+ mContext.getResources().getString(
+			text = mContext.getResources().getString(
 							success ? R.string.success : R.string.fail) + "!";
 			Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
 		}
