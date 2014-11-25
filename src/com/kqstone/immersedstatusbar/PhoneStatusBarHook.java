@@ -55,9 +55,13 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR)) {
+				
 				String pkgName = intent.getStringExtra(Constant.PKG_NAME);
 				String actName = intent.getStringExtra(Constant.ACT_NAME);
 				Utils.log("PKG_NAME:" + pkgName + "; ACT_NAME:" + actName);
+				if (!(pkgName.equals("com.android.keyguard") && actName.equals("MiuiKeyGuard"))
+						&& Utils.isKeyguardLocked(mContext))
+					return;
 				if (mPrePkgName != null)
 					Utils.log("PRE_PKG_NAME:" + mPrePkgName);
 				boolean fastTrans = intent.getBooleanExtra(Constant.FAST_TRANSITION, false);
