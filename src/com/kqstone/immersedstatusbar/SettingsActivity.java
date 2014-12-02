@@ -7,6 +7,9 @@ import org.xmlpull.v1.XmlPullParserException;
 import de.robv.android.xposed.XposedHelpers;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +25,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
+import android.view.View;
+import android.widget.RemoteViews.RemoteView;
 import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener{
@@ -39,6 +44,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private Preference mSwitchDebug;
 	private CheckBoxPreference mPreExptInform;
 	private CheckBoxPreference mPreExptInformToFile;
+	private Notify mNotify;
 	
 	private boolean mDebugMode = false;
 	
@@ -50,6 +56,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			text = mContext.getResources().getString(
 							success ? R.string.success : R.string.fail) + "!";
 			Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+			mNotify.cancelNotification(0);
+			mNotify.setEvent(text, text, null);
+			mNotify.setFlags(Notification.FLAG_AUTO_CANCEL);
+			mNotify.showNotification(1);
 		}
 	};
 	
@@ -107,11 +117,54 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		}
 	}
 	
+	class Notify {
+		private Context mContext;
+		private NotificationManager mNotificationManager;
+		private Notification mNotification;
+		
+		public Notify(Context context) {
+			mContext = context;
+			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+			mNotification = new Notification();
+			mNotification.icon = R.drawable.icon;
+		}
+		
+		public Notify(Context context, String tickerText, String contentTitle, String contentText, int flags) {
+			this(context);
+			mNotification.tickerText = tickerText;
+			mNotification.flags |= flags;
+			Intent notificationIntent =new Intent(mContext, SettingsActivity.class);
+	        PendingIntent contentItent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);   
+	        mNotification.setLatestEventInfo(mContext, contentTitle, contentText, contentItent);
+		}
+		
+		public void setEvent(String tickerText, String contentTitle, String contentText) {
+			mNotification.tickerText = tickerText;
+			Intent notificationIntent =new Intent(mContext, SettingsActivity.class);
+	        PendingIntent contentItent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);   
+	        mNotification.setLatestEventInfo(mContext, contentTitle, contentText, contentItent);
+		}
+		
+		public void setFlags(int flags) {
+			mNotification.flags = flags;
+		}
+		
+		public void showNotification(int id) {
+			mNotification.when = System.currentTimeMillis();
+			mNotificationManager.notify(id, mNotification);
+		}
+		
+		public void cancelNotification(int id) {
+			mNotificationManager.cancel(id);
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = this;
+		mNotify = new Notify(mContext);
 		this.setTitle(R.string.title_settings);
 		this.addPreferencesFromResource(R.xml.settings);
 		mPrefAbout = findPreference(KEY_PREF_ABOUT);
@@ -160,6 +213,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					mContext.getResources().getString(
 							R.string.begin_download_profiles),
 					Toast.LENGTH_SHORT).show();
+			String text = mContext.getResources().getString(R.string.begin_download_profiles);
+			String textSummary = mContext.getResources().getString(R.string.begin_download_profiles_summary);
+			mNotify.setEvent(text, text, textSummary);
+			mNotify.setFlags(Notification.FLAG_ONGOING_EVENT);
+			mNotify.showNotification(0);
 			new Thread(new DownLoadThread()).start();
 		} else if (key.equals(KEY_SWITCH_DEBUG)) {
 			onDebugSwitchChanged(!mDebugMode);
