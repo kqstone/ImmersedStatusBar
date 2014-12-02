@@ -74,19 +74,16 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				}
 				Utils.log("fastTransition: " + fastTrans);
 				
-				boolean darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
-				if (darkMode != mPreDarkMode) {
-					updateStatusBarContent(darkMode, fastTrans);
-					mPreDarkMode = darkMode;
-				}
-				
 				int type = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_TYPE, 0);
+				boolean needUpdateContent = false;
 				switch (type) {
 				case 0:
 					int color = intent.getIntExtra(
 							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 					if (color != mPreColor) {
 						updateStatusBarBackground(new ColorDrawable(color), fastTrans);
+						if (mPreColor == Color.TRANSPARENT && color != Color.TRANSPARENT)
+							needUpdateContent = true;
 						mPreColor = color;
 					}
 					break;
@@ -94,7 +91,17 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					String path = intent.getStringExtra(Constant.STATUSBAR_BACKGROUND_PATH);
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
 					updateStatusBarBackground(new BitmapDrawable(bitmap), fastTrans);
+					if (mPreColor == Color.TRANSPARENT)
+						needUpdateContent = true;
 					mPreColor = Constant.UNKNOW_COLOR;
+				}
+				
+				boolean darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
+				Utils.log("Darkmode: " + darkMode + "; PreDarkMode: " + mPreDarkMode);
+				
+				if (darkMode != mPreDarkMode || needUpdateContent) {
+					updateStatusBarContent(darkMode, fastTrans);
+					mPreDarkMode = darkMode;
 				}
 				
 			} else if (intent.getAction().equals(
