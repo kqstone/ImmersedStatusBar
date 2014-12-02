@@ -126,7 +126,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			mContext = context;
 			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			mNotification = new Notification();
-			mNotification.icon = R.drawable.icon;
+			mNotification.icon = R.drawable.ic_stat_download;
 		}
 		
 		public Notify(Context context, String tickerText, String contentTitle, String contentText, int flags) {

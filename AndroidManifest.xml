@@ -14,7 +14,7 @@
     
     <application 
         android:label="@string/module_name" 
-        android:icon="@drawable/icon" >
+        android:icon="@drawable/ic_launcher" >
         
         <meta-data android:name="xposedmodule" android:value="true"/>
         <meta-data android:name="xposedminversion" android:value="30+" />
