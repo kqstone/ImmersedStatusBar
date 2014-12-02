@@ -7,6 +7,10 @@
     <string name="begin_download_profiles">Begin to download profiles from interent, please wait!</string>
     <string name="success">Profiles download success</string>
     <string name="fail">Profiles download Failed</string>
+    <string name="title_waring_debug">In debug mode</string>
+    <string name="message_waring_debug">Normal user isn\'t suggested to use debug mode, as it may cause some problems. \nClose the debug mode?</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
     
     <!--settings  -->
     <string name="title_settings">Settings</string>
@@ -23,6 +27,9 @@
     <string name="summary_export_inform_tofile">Export activity informmation and cache drawable to sdcard</string>
     <string name="profile">Profiles</string>
     <string name="profile_download">Download Profiles From Internet</string>
+    <string name="show_debug_settings">Show debug settings</string>
+    <string name="hide_debug_settings">Hide debug settings</string>
+    
     
     <!--about  -->
     <string name="about">About</string>

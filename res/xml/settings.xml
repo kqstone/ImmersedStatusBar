@@ -7,7 +7,8 @@
     
     <PreferenceCategory android:title="@string/profile">
         <Preference android:title="@string/profile_download" android:key="profile" />
-    </PreferenceCategory><PreferenceCategory android:title="@string/debug">
+    </PreferenceCategory><PreferenceCategory android:title="@string/debug" android:key="debug">
+    	<Preference android:title="@string/show_debug_settings" android:key="switch_debug" />
         <CheckBoxPreference android:title="@string/title_export_inform" android:key="key_export_inform" android:summary="@string/summary_export_inform"/>
         <CheckBoxPreference android:title="@string/title_export_inform_tofile" android:key="key_export_inform_tofile" android:summary="@string/summary_export_inform_tofile"/>
     </PreferenceCategory>
