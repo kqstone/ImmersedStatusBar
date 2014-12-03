@@ -335,6 +335,13 @@ public class Utils {
 		int g = Color.green(argbColor);
 		return Color.rgb(r, g, b);
 	}
+	
+	public static int setAlphaForARGB(int argbColor, int alpha) {
+		int r = Color.red(argbColor);
+		int b = Color.blue(argbColor);
+		int g = Color.green(argbColor);
+		return Color.argb(alpha, r, g, b);
+	}
 
 	public static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
 		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/isb/log/img/";

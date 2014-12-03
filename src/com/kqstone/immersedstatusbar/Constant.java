@@ -14,6 +14,7 @@ public final class Constant {
 	public static final String INTENT_UPDATE_NOTIFICATION_ICONS = "com.kqstone.immersedstatusbar.UPDATENOTIFICATIONICONS";
 	public static final String INTENT_UPDATE_SETTINGS = "com.kqstone.immersedstatusbar.UPDATESETTINGS";
 	public static final String INTENT_UPDATE_TRANSANIMASCALE = "com.kqstone.immersedstatusbar.UPDATETRANSANIMSCALE";
+	public static final String INTENT_RESTART_SYSTEMUI = "com.kqstone.immersedstatusbar.RESTARTSYSTEMUI";
 	
 	public static final String PKG_NAME = "package_name";
 	public static final String ACT_NAME = "activity_name";
@@ -41,6 +42,8 @@ public final class Constant {
 	public static final String KEY_PREF_QUICKANIM_CONTENT = "key_quickanim_content";
 	public static final String KEY_PREF_EXPORT_INFORM = "key_export_inform";
 	public static final String KEY_PREF_EXPORT_INFORM_TOFILE = "key_export_inform_tofile";
+	public static final String KEY_PREF_FILTER_ALPHA = "key_filter_alpha";
+
 
 	public static final String PROFILE_URL = "http://github.com/kqstone/ISBpreferences/archive/master.zip";
 

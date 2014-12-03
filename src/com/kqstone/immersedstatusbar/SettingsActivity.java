@@ -1,11 +1,5 @@
 package com.kqstone.immersedstatusbar;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlPullParserException;
-
-import de.robv.android.xposed.XposedHelpers;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,26 +7,24 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
-import android.preference.PreferenceScreen;
 import android.provider.Settings;
-import android.view.View;
-import android.widget.RemoteViews.RemoteView;
 import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener{
 	private final static String KEY_PREF_ABOUT = "about";
 	private final static String KEY_PREF_PROFILE = "profile";
 	private static final String KEY_SWITCH_DEBUG = "switch_debug";
+	private static final String KEY_FILTER_ALPHA = "filter_alpha";
 	
 	private Context mContext;
 	private Preference mPrefAbout;
@@ -44,6 +36,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private Preference mSwitchDebug;
 	private CheckBoxPreference mPreExptInform;
 	private CheckBoxPreference mPreExptInformToFile;
+	private ListPreference mPreFilterAlpha;
 	private Notify mNotify;
 	
 	private boolean mDebugMode = false;
@@ -175,8 +168,15 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		mPrefForceTint.setChecked(Settings.System.getInt(getContentResolver(),Constant.KEY_PREF_FORCE_TINT, 0) == 1 ? true:false);
 		mPrefForceTint.setOnPreferenceChangeListener(this);
 		mPreTintNotification = (CheckBoxPreference) findPreference(Constant.KEY_PREF_TINT_NOTIFICATION);
-		mPreTintNotification.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false);
+		boolean isTintNoti = Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false;
+		mPreTintNotification.setChecked(isTintNoti);
 		mPreTintNotification.setOnPreferenceChangeListener(this);
+		mPreFilterAlpha = (ListPreference) findPreference(Constant.KEY_PREF_FILTER_ALPHA);
+		int alpha = Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100);
+		mPreFilterAlpha.setValue(this.getFilterAlphaValue(String.valueOf(alpha)));
+		this.mPreFilterAlpha.setSummary(getFilterAlphaValue(String.valueOf(alpha)));
+		mPreFilterAlpha.setEnabled(isTintNoti);
+		mPreFilterAlpha.setOnPreferenceChangeListener(this);
 		mPreQuickAnimContent = (CheckBoxPreference) findPreference(Constant.KEY_PREF_QUICKANIM_CONTENT);
 		mPreQuickAnimContent.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false);
 		mPreQuickAnimContent.setOnPreferenceChangeListener(this);
@@ -228,24 +228,30 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	@Override
 	public boolean onPreferenceChange(Preference arg0, Object arg1) {
 		String key = arg0.getKey();
-		boolean checked = (Boolean)arg1;
 		if (key.equals(Constant.KEY_PREF_FORCE_TINT)) {
-			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_FORCE_TINT, checked ? 1 : 0);
-			mPrefForceTint.setChecked(checked);
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_FORCE_TINT, (Boolean)arg1 ? 1 : 0);
+			mPrefForceTint.setChecked((Boolean)arg1);
 		} else if (key.equals(Constant.KEY_PREF_TINT_NOTIFICATION)) {
-			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, checked ? 1 : 0);
-			this.mPreTintNotification.setChecked(checked);
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, (Boolean)arg1 ? 1 : 0);
+			this.mPreTintNotification.setChecked((Boolean)arg1);
+			this.mPreFilterAlpha.setEnabled((Boolean)arg1);
+			sendIntent(Constant.INTENT_RESTART_SYSTEMUI);
 //			Intent intent = new Intent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 //			this.sendBroadcast(intent);
 		} else if (key.equals(Constant.KEY_PREF_QUICKANIM_CONTENT)) {
-			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, checked ? 1 : 0);
-			this.mPreQuickAnimContent.setChecked(checked);
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, (Boolean)arg1 ? 1 : 0);
+			this.mPreQuickAnimContent.setChecked((Boolean)arg1);
 		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM)) {
-			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, checked ? 1 : 0);
-			this.mPreExptInform.setChecked(checked);
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, (Boolean)arg1 ? 1 : 0);
+			this.mPreExptInform.setChecked((Boolean)arg1);
 		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM_TOFILE)) {
-			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, checked ? 1 : 0);
-			this.mPreExptInformToFile.setChecked(checked);
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, (Boolean)arg1 ? 1 : 0);
+			this.mPreExptInformToFile.setChecked((Boolean)arg1);
+		} else if (key.equals(Constant.KEY_PREF_FILTER_ALPHA)) {
+			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, Integer.parseInt((String) arg1));
+			this.mPreFilterAlpha.setValue(getFilterAlphaValue((String) arg1));
+			this.mPreFilterAlpha.setSummary(getFilterAlphaValue((String) arg1));
+			sendIntent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 		}
 		
 		return false;
@@ -266,6 +272,16 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			mDebugprefCategory.addPreference(mPreExptInform);
 			mDebugprefCategory.addPreference(mPreExptInformToFile);
 		}
+	}
+	
+	private String getFilterAlphaValue(String entry) {
+		String value = entry+"%";
+		return value;
+	}
+	
+	private void sendIntent(String action) {
+		Intent intent = new Intent(action);
+		this.sendBroadcast(intent);
 	}
 
 }

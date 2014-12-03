@@ -45,7 +45,11 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private int mPreColor = Color.BLACK;
 	private boolean mPreDarkMode = false;
 	private int[] mIconColors = {Color.parseColor("#80000000"),Color.parseColor("#99ffffff")};
+	private int mAlphaFilter;
 	private long mDelayTime = 1L;
+	
+	private Drawable mBackgroundBeforeUnbind;
+	private Boolean mDarkModeBeforeUndbind;
 	
 	private Handler handler;
 	
@@ -106,11 +110,14 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				
 			} else if (intent.getAction().equals(
 					Constant.INTENT_UPDATE_NOTIFICATION_ICONS)) {
+				mAlphaFilter = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100) * 255 / 100;
 				refreshNotificationIcons();
 			} else if (intent.getAction().equals(
 					Constant.INTENT_UPDATE_TRANSANIMASCALE)) {
 				float scale = intent.getFloatExtra(Constant.TRANS_ANIM_SCALE, 1F);
 				mDelayTime = getDelayTime(scale);
+			} else if (intent.getAction().equals(Constant.INTENT_RESTART_SYSTEMUI)){
+				restartSystemUI();
 			}
 		}
 		
@@ -172,8 +179,10 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		ViewGroup notificationIcons = (ViewGroup) XposedHelpers.getObjectField(simpleStatusbar, "mNotificationIcons");
 		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
-		int color = Utils.getRGBFromARGB(mIconColors[darkmode ? 0 : 1]);
-		int alpha = Color.alpha(mIconColors[darkmode ? 0 : 1]);
+		int color = Utils.setAlphaForARGB(mIconColors[darkmode ? 0 : 1], mAlphaFilter);
+		int alpha = Color.alpha(mIconColors[darkmode ? 0 : 1]) + 255 - mAlphaFilter;
+		alpha = alpha < 255 ? alpha : 255;
+		Utils.log("FilterAlpha: " + mAlphaFilter + "; ViewAlpha: " + alpha);
 		int k = notificationIcons.getChildCount();
 		for (int i=0; i<k; i++) {
 			View icon = notificationIcons.getChildAt(i);
@@ -222,6 +231,10 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 
         return null;
     }
+    
+    private void restartSystemUI() {
+    	XposedHelpers.callMethod(instancePhoneStatusBar, "unbindViews");
+    }
 	
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
@@ -249,6 +262,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					intentFilter.addAction(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
 					intentFilter.addAction(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 					intentFilter.addAction(Constant.INTENT_UPDATE_TRANSANIMASCALE);
+					intentFilter.addAction(Constant.INTENT_RESTART_SYSTEMUI);
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 					mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
 					
@@ -283,8 +297,31 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					float transAnimScal = (Float) XposedHelpers.callMethod(WindowManager, "getAnimationScale", 1);
 					mDelayTime = getDelayTime(transAnimScal);
 					
+					mAlphaFilter = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100) * 255 / 100;
 				}
 				
+			});
+			
+			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader), 
+					"bindViews", new XC_MethodHook() {
+				@Override
+				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
+					if (mBackgroundBeforeUnbind != null && mDarkModeBeforeUndbind != null) {
+						Utils.log("update statusbar background and darkmode>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+						updateStatusBarBackground(mBackgroundBeforeUnbind, true);
+						updateStatusBarContent(mDarkModeBeforeUndbind, true);
+					}
+				}
+			});
+			
+			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader), 
+					"unbindViews", new XC_MethodHook() {
+				@Override
+				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
+					View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
+					mBackgroundBeforeUnbind = statusBarView.getBackground();
+					mDarkModeBeforeUndbind = mPreDarkMode;
+				}
 			});
 			
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.SimpleStatusBar", lpparam.classLoader), 

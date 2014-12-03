@@ -41,6 +41,8 @@
     <string name="acknow_content">Great thanks to MohammadAG for lots of sources. \n(https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) </string>
     <string name="about_profile">About Profile</string>
     <string name="about_profile_content">Profile is xml files that makes ISB more suitable for certain apps, you can download from ISB settings interface. \nMost profiles are made by watcgfw. \nhttps://github.com/watcgfw/ISBpreferences</string>
+    <string name="summary_filter_alpha">Notification icons filter color alpha value, adjust it to make notification readable</string>
+    <string name="title_filter_alpha">Filter color alpha</string>
     
     
 </resources>

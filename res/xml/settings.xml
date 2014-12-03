@@ -3,6 +3,7 @@
     
     <CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint" android:summary="@string/summary_force_tint"/>
     <CheckBoxPreference android:title="@string/title_tint_notification" android:key="key_tint_notification" android:summary="@string/summary_tint_notification"/>
+    <ListPreference android:entryValues="@array/filter_alpha_entries_value" android:key="key_filter_alpha" android:entries="@array/filter_alpha_entries" android:title="@string/title_filter_alpha" android:summary="@string/summary_filter_alpha"/>
     <CheckBoxPreference android:title="@string/title_quickanim_content" android:key="key_quickanim_content" android:summary="@string/summary_quickanim_content"/>
     
     <PreferenceCategory android:title="@string/profile">
@@ -18,6 +19,7 @@
     <PreferenceCategory android:title="@string/about">
         <Preference android:title="@string/about_app" android:key="about" />
     </PreferenceCategory>
+    
     
 
 </PreferenceScreen>
