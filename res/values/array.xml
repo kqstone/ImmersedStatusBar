@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="filter_alpha_entries">
+    <string-array name="filter_alpha_entries" translatable="false">
         <item >50%</item>
         <item >60%</item>
         <item >70%</item>
@@ -8,7 +8,7 @@
         <item >90%</item>
         <item >100%</item>
     </string-array>
-    <string-array name="filter_alpha_entries_value">
+    <string-array name="filter_alpha_entries_value" translatable="false">
         <item >50</item>
         <item >60</item>
         <item >70</item>
