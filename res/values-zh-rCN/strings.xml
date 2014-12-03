@@ -4,15 +4,20 @@
     <string name="module_desc">miui6第三方程序提供沉浸式状态栏</string>
     <string name="module_desc_full">解决miui6第三方程序不能沉浸状态栏\n\n作者: kqstone (kqstone@qq.com)\n致谢: 特别感谢MohammadAG (https://github.com/MohammadAG/Xposed-Tinted-Status-Bar)提供的诸多代码</string>
     <string name="begin_download_profiles">开始下载配置文件，请稍后!</string>
+    <string name="begin_download_profiles_summary">正在后台下载配置文件, 视网络连接状况需数秒到数分钟!</string>
     <string name="success">配置文件下载成功</string>
     <string name="fail">配置文件下载失败</string>
+    <string name="title_waring_debug">警告：调试模式中</string>
+    <string name="message_waring_debug">由于调试模式可能出现不可预知的问题，普通用户不建议也不需要开启调试模式。 \n关闭调试模式吗?</string>
+    <string name="button_ok">确认</string>
+    <string name="button_cancel">取消</string>
     
     <!--settings  -->
     <string name="title_settings">设置</string>
     <string name="title_force_tint">强制变色</string>
     <string name="summary_force_tint">对顶栏非单一色或渐变色应用强制变色</string>
-    <string name="title_tint_notification">变色通知图标（需重启）</string>
-    <string name="summary_tint_notification">将通知图标变色以适应沉浸模式下的不同背景色，需重启生效</string>
+    <string name="title_tint_notification">变色通知图标</string>
+    <string name="summary_tint_notification">将通知图标扁平化及变色以适应沉浸模式下的不同背景</string>
     <string name="title_quickanim_content">加快状态栏文字图标变色速度</string>
     <string name="summary_quickanim_content">加快状态栏文字图标变色速度以使背景和内容变色同步</string>
     <string name="debug">调试</string>
@@ -22,15 +27,19 @@
     <string name="summary_export_inform_tofile">输出程序界面信息及截图至SD卡，位于/sdcard/isb/log文件夹下</string>
     <string name="profile">配置文件</string>
     <string name="profile_download">点击从Internet下载配置文件</string>
+    <string name="show_debug_settings">显示调试设置</string>
+    <string name="hide_debug_settings">隐藏并关闭调试设置</string>
+    <string name="summary_filter_alpha">调整通知图标滤镜色浓度以提高通知图标可读性，可解决部分应用通知图标灰白方块</string>
+    <string name="title_filter_alpha">通知图标滤镜色浓度</string>
     
     <!--about  -->
     <string name="about">关于</string>
     <string name="about_app">关于MIUI6版沉浸状态栏</string>
     <string name="author_inform">作者:</string>    
-    <string name="author_content">kqstone (kqstone@163.com)</string>
+    <string name="author_content">kqstone (kqstone@163.com) \nhttps://github.com/kqstone/ImmersedStatusBar/tree/master/src/com/kqstone/immersedstatusbar</string>
     <string name="acknow_inform">致谢: </string>
-    <string name="acknow_content">Great thanks to MohammadAG for lots of sources. \n(https://github.com/MohammadAG/Xposed-Tinted-Status-Bar) </string>
+    <string name="acknow_content">感谢 MohammadAG提供的大量源代码. \nhttps://github.com/MohammadAG/Xposed-Tinted-Status-Bar </string>
     <string name="about_profile">关于配置文件</string>
-    <string name="about_profile_content">针对某些特殊app制作配置文件，使得ISB更准确高效, 可在设置界面中下载. \n大部分的配置文件为 watcgfw制作, 感谢! \nhttps://github.com/watcgfw/ISBpreferences</string>
+    <string name="about_profile_content">针对某些app制作配置文件，使得ISB更准确高效, 可在设置界面中下载. \n感谢watcgfw制作的大部分的配置文件! \nhttps://github.com/watcgfw/ISBpreferences</string>
     
 </resources>
