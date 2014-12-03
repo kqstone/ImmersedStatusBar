@@ -50,6 +50,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 							success ? R.string.success : R.string.fail) + "!";
 			Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
 			mNotify.cancelNotification(0);
+			mNotify.setIcon(success ? R.drawable.ic_stat_download_success : R.drawable.ic_stat_download_fail);
 			mNotify.setEvent(text, text, null);
 			mNotify.setFlags(Notification.FLAG_AUTO_CANCEL);
 			mNotify.showNotification(1);
@@ -141,6 +142,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		public void setFlags(int flags) {
 			mNotification.flags = flags;
 		}
+		
+		public void setIcon(int iconId) {
+			mNotification.icon = iconId;
+		}
+		
 		
 		public void showNotification(int id) {
 			mNotification.when = System.currentTimeMillis();
