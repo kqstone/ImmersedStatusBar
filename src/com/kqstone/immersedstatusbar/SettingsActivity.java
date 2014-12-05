@@ -291,9 +291,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	}
 	
 	private String getFilterAlphaValue(String entry) {
-		int value = (Integer.parseInt(entry) - 50) * 2;
 		String preFix = this.getResources().getString(R.string.summary_filter_alpha);
-		return preFix + value  +"%";
+		return preFix + entry  +"%";
 	}
 	
 	private void sendIntent(String action) {

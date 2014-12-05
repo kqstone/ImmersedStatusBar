@@ -110,7 +110,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				
 			} else if (intent.getAction().equals(
 					Constant.INTENT_UPDATE_NOTIFICATION_ICONS)) {
-				mAlphaFilter = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100) * 255 / 100;
+				mAlphaFilter = (Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100) + 100) * 255 / 200;
 				refreshNotificationIcons();
 			} else if (intent.getAction().equals(
 					Constant.INTENT_UPDATE_TRANSANIMASCALE)) {
@@ -297,7 +297,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					float transAnimScal = (Float) XposedHelpers.callMethod(WindowManager, "getAnimationScale", 1);
 					mDelayTime = getDelayTime(transAnimScal);
 					
-					mAlphaFilter = Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100) * 255 / 100;
+					mAlphaFilter = (Settings.System.getInt(mContext.getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100) + 100) * 255 / 200;
 				}
 				
 			});
