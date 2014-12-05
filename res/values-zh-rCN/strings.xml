@@ -29,7 +29,7 @@
     <string name="profile_download">点击从Internet下载配置文件</string>
     <string name="show_debug_settings">显示调试设置</string>
     <string name="hide_debug_settings">隐藏并关闭调试设置</string>
-    <string name="summary_filter_alpha">调整通知图标滤镜色浓度以提高通知图标可读性，可解决部分应用通知图标灰白方块</string>
+    <string name="summary_filter_alpha">当前滤镜颜色浓度: </string>
     <string name="title_filter_alpha">通知图标滤镜色浓度</string>
     
     <!--about  -->

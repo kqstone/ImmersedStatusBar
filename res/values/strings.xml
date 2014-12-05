@@ -30,7 +30,7 @@
     <string name="profile_download">Download Profiles From Internet</string>
     <string name="show_debug_settings">Show debug settings</string>
     <string name="hide_debug_settings">Hide debug settings</string>
-    <string name="summary_filter_alpha">Notification icons filter color alpha value, adjust it to make notification readable</string>
+    <string name="summary_filter_alpha">Current alpha: </string>
     <string name="title_filter_alpha">Filter color alpha</string>
     
     

@@ -24,7 +24,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private final static String KEY_PREF_ABOUT = "about";
 	private final static String KEY_PREF_PROFILE = "profile";
 	private static final String KEY_SWITCH_DEBUG = "switch_debug";
-	private static final String KEY_FILTER_ALPHA = "filter_alpha";
+	public static final String KEY_PREF_FILTER_ALPHA = "key_filter_alpha";
 	
 	private Context mContext;
 	private Preference mPrefAbout;
@@ -36,7 +36,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private Preference mSwitchDebug;
 	private CheckBoxPreference mPreExptInform;
 	private CheckBoxPreference mPreExptInformToFile;
-	private ListPreference mPreFilterAlpha;
+	private Preference mPreFilterAlpha;
 	private Notify mNotify;
 	
 	private boolean mDebugMode = false;
@@ -177,12 +177,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		boolean isTintNoti = Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_TINT_NOTIFICATION, 0) ==1 ? true:false;
 		mPreTintNotification.setChecked(isTintNoti);
 		mPreTintNotification.setOnPreferenceChangeListener(this);
-		mPreFilterAlpha = (ListPreference) findPreference(Constant.KEY_PREF_FILTER_ALPHA);
+		mPreFilterAlpha = findPreference(Constant.KEY_PREF_FILTER_ALPHA);
 		int alpha = Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100);
-		mPreFilterAlpha.setValue(this.getFilterAlphaValue(String.valueOf(alpha)));
 		this.mPreFilterAlpha.setSummary(getFilterAlphaValue(String.valueOf(alpha)));
 		mPreFilterAlpha.setEnabled(isTintNoti);
-		mPreFilterAlpha.setOnPreferenceChangeListener(this);
+		mPreFilterAlpha.setOnPreferenceClickListener(this);
 		mPreQuickAnimContent = (CheckBoxPreference) findPreference(Constant.KEY_PREF_QUICKANIM_CONTENT);
 		mPreQuickAnimContent.setChecked(Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false);
 		mPreQuickAnimContent.setOnPreferenceChangeListener(this);
@@ -206,6 +205,13 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		int alpha = Settings.System.getInt(getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, 100);
+		this.mPreFilterAlpha.setSummary(getFilterAlphaValue(String.valueOf(alpha)));
+	}
+	
+	@Override
 	public boolean onPreferenceClick(Preference arg0) {
 		// TODO Auto-generated method stub
 		String key = arg0.getKey();
@@ -227,6 +233,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			new Thread(new DownLoadThread()).start();
 		} else if (key.equals(KEY_SWITCH_DEBUG)) {
 			onDebugSwitchChanged(!mDebugMode);
+		} else if (key.equals(KEY_PREF_FILTER_ALPHA)) {
+			Intent intent = new Intent();
+			intent.setClass(this, FilterAlphaSettingActivity.class);
+			startActivity(intent);
 		}
 		return false;
 	}
@@ -253,11 +263,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		} else if (key.equals(Constant.KEY_PREF_EXPORT_INFORM_TOFILE)) {
 			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, (Boolean)arg1 ? 1 : 0);
 			this.mPreExptInformToFile.setChecked((Boolean)arg1);
-		} else if (key.equals(Constant.KEY_PREF_FILTER_ALPHA)) {
-			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, Integer.parseInt((String) arg1));
-			this.mPreFilterAlpha.setValue(getFilterAlphaValue((String) arg1));
-			this.mPreFilterAlpha.setSummary(getFilterAlphaValue((String) arg1));
-			sendIntent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
+//		} else if (key.equals(Constant.KEY_PREF_FILTER_ALPHA)) {
+//			Settings.System.putInt(getContentResolver(), Constant.KEY_PREF_FILTER_ALPHA, Integer.parseInt((String) arg1));
+//			this.mPreFilterAlpha.setValue(getFilterAlphaValue((String) arg1));
+//			this.mPreFilterAlpha.setSummary(getFilterAlphaValue((String) arg1));
+//			sendIntent(Constant.INTENT_UPDATE_NOTIFICATION_ICONS);
 		}
 		
 		return false;
@@ -281,8 +291,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	}
 	
 	private String getFilterAlphaValue(String entry) {
-		String value = entry+"%";
-		return value;
+		int value = (Integer.parseInt(entry) - 50) * 2;
+		String preFix = this.getResources().getString(R.string.summary_filter_alpha);
+		return preFix + value  +"%";
 	}
 	
 	private void sendIntent(String action) {
