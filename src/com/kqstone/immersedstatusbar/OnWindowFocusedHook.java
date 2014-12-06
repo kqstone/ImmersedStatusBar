@@ -16,6 +16,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnWindowFocusedHook extends XC_MethodHook {
+	private Boolean mDarkModeTranslucent;
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -29,16 +30,6 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 	
 	public void sendChangeStatusBarIntent(final Activity activity) {
 		WindowType type = Utils.getWindowType(activity);
-		
-		int color = Color.BLACK;
-		boolean isdark = false;
-		final boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
-		Bitmap bitmap;
-		
-		boolean needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
-		if (!needGetColorFromBackground)
-			return;
-		
 		switch (type) {
 		case Normal:
 			boolean exinformtofile = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false;
@@ -46,79 +37,94 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 				View view = activity.getWindow().getDecorView();
 				view.destroyDrawingCache();
 				view.setDrawingCacheEnabled(true);
-				bitmap = view.getDrawingCache();	
+				Bitmap bitmap = view.getDrawingCache();	
 				if (bitmap != null)
 					Utils.outputBitmapToFile(bitmap, activity);
 			}
+			
+			boolean needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
+			if (!needGetColorFromBackground)
+				return;
+			int delay = Constant.DELAY_GET_CACHEDRAWABLE;			
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable(){
 
-			bitmap = Utils.getBitMapFromActivityBackground(activity, false);
-			if (bitmap != null) {
-				BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
-				if (bitmapColor.mType == Type.FLAT) {
-					Utils.log("Flat BitMap found...");
-					color = bitmapColor.Color;
-					XposedHelpers.setAdditionalInstanceField(activity,
-							"mStatusBarBackground", color);
-					isdark = Utils.getDarkMode(color);
-					XposedHelpers.setAdditionalInstanceField(activity,
-							"mDarkMode", isdark);
-				} else if (bitmapColor.mType == Type.GRADUAL) {
-					Utils.log("GRADUAL BitMap found, rePadding viewgroup...");
-					color = bitmapColor.Color;
-					XposedHelpers.setAdditionalInstanceField(activity,
-							"mStatusBarBackground", color);
-					isdark = Utils.getDarkMode(color);
-					XposedHelpers.setAdditionalInstanceField(activity,
-							"mDarkMode", isdark);
-					if (!(Boolean) XposedHelpers.getAdditionalInstanceField(
-							activity, "mRepaddingHandled")) {
-						Utils.resetPadding(activity,
-								Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
-						XposedHelpers.setAdditionalInstanceField(activity,
-								"mRepaddingHandled", true);
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
+					int color = Color.BLACK;
+					boolean isdark = false;
+					boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
+					
+					if (bitmap != null) {
+						BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
+						if (bitmapColor.mType == Type.FLAT) {
+							Utils.log("Flat BitMap found...");
+							color = bitmapColor.Color;
+							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
+							isdark = Utils.getDarkMode(color);
+							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
+						} else if (bitmapColor.mType == Type.GRADUAL) {
+							Utils.log("GRADUAL BitMap found, rePadding viewgroup...");
+							color = bitmapColor.Color;
+							XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", color);
+							isdark = Utils.getDarkMode(color);
+							XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
+							if (!(Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mRepaddingHandled")) {
+								Utils.resetPadding(activity, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
+								XposedHelpers.setAdditionalInstanceField(activity, "mRepaddingHandled", true);
+							}
+							
+						} else if (bitmapColor.mType == Type.PICTURE) {
+							Utils.log("Flat BitMap found...");
+							if (Settings.System.getInt(
+									activity.getContentResolver(),
+									Constant.KEY_PREF_FORCE_TINT, 0) == 1) {
+								color = bitmapColor.Color;
+								XposedHelpers.setAdditionalInstanceField(activity,
+										"mStatusBarBackground", color);
+								isdark = Utils.getDarkMode(color);
+								XposedHelpers.setAdditionalInstanceField(activity,
+										"mDarkMode", isdark);
+							}
+						}
 					}
+					
+					Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+					intent.putExtra(Constant.PKG_NAME, activity.getPackageName());
+					intent.putExtra(Constant.ACT_NAME, activity.getLocalClassName());
+					intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
+					intent.putExtra(Constant.IS_DARKMODE, isdark);
+					intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
 
-				} else if (bitmapColor.mType == Type.PICTURE) {
-					Utils.log("Flat BitMap found...");
-					if (Settings.System.getInt(activity.getContentResolver(),
-							Constant.KEY_PREF_FORCE_TINT, 0) == 1) {
-						color = bitmapColor.Color;
-						XposedHelpers.setAdditionalInstanceField(activity,
-								"mStatusBarBackground", color);
-						isdark = Utils.getDarkMode(color);
-						XposedHelpers.setAdditionalInstanceField(activity,
-								"mDarkMode", isdark);
-					}
-				}
-			}
-
+					activity.sendBroadcast(intent);
+					XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
+				}}, delay);
 			break;
 		case Translucent:
-			bitmap = Utils.getBitMapFromActivityBackground(activity, true);
-			if (bitmap != null) {
-				BitMapColor bitmapColor= Utils.getBitmapColor(bitmap);
-				color = bitmapColor.Color;
-				isdark = Utils.getDarkMode(color);
-				XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", isdark);
-				XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", Color.TRANSPARENT);
+			if (this.mDarkModeTranslucent == null) {
+				Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
+				if (bitmap != null) {
+					BitMapColor bitmapColor= Utils.getBitmapColor(bitmap);
+					int color = bitmapColor.Color;
+					mDarkModeTranslucent = Utils.getDarkMode(color);
 				}
-			Utils.log("darkmode: " + isdark);
-
+			}
+			boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
+			Intent intent = new Intent(
+					Constant.INTENT_CHANGE_STATUSBAR_COLOR);
+			intent.putExtra(Constant.PKG_NAME, activity.getPackageName());
+			intent.putExtra(Constant.ACT_NAME, activity.getLocalClassName());
+			intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR,
+					Color.TRANSPARENT);
+			intent.putExtra(Constant.IS_DARKMODE, mDarkModeTranslucent);
+			intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
+			activity.sendBroadcast(intent);
 			break;
 		default:
-			return;
+			break;
 		}
-		
-		Intent intent = new Intent(
-				Constant.INTENT_CHANGE_STATUSBAR_COLOR);
-		intent.putExtra(Constant.PKG_NAME, activity.getPackageName());
-		intent.putExtra(Constant.ACT_NAME, activity.getLocalClassName());
-		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR,
-				Color.TRANSPARENT);
-		intent.putExtra(Constant.IS_DARKMODE, isdark);
-		intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
-		activity.sendBroadcast(intent);
-		XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
 
 	}
 }
