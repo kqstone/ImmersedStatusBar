@@ -120,14 +120,13 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	
 	private void updateDarkMode(Context context) {
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
-		if (simpleStatusbar != null) {			
+		if (simpleStatusbar != null) {		
+			XposedHelpers.callMethod(simpleStatusbar, "updateDarkMode");
+			
 			boolean fastAnim = Settings.System.getInt(context.getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false;
 			Utils.log("Is fast Animate Statusbar Content: " + fastAnim);
-			long duration = 500L;
-			if (fastAnim)
-				duration = 1L;
-			XposedHelpers.callMethod(simpleStatusbar, "updateDarkMode");
-			ObjectAnimator.ofFloat(simpleStatusbar, "transitionAlpha", new float[] { 0.0F, 1.0F }).setDuration(duration).start();
+			if (!fastAnim)
+				ObjectAnimator.ofFloat(simpleStatusbar, "transitionAlpha", new float[] { 0.0F, 1.0F }).setDuration(500L).start();
 		}
 	}
 
@@ -135,7 +134,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		Utils.log("darkmode: " + darkmode);
 		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mDarkMode", darkmode);
 		Runnable runnable = (Runnable) XposedHelpers.getAdditionalInstanceField(instancePhoneStatusBar, "mMyUpdateDarkModeRunnable");
-		long delaytime = fastTrans ? 50 : mDelayTime;
+		long delaytime = fastTrans ? 0 : mDelayTime;
 		handler.postDelayed(runnable, delaytime);
 	}
 	
