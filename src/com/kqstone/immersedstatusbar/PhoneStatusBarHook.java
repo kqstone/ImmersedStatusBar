@@ -321,37 +321,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				}
 			});
 			
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader), 
-					"updateExpandedViewPos", int.class, new XC_MethodHook() {
-				@Override
-				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
-					ViewGroup statusBarView = (ViewGroup) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
-					float statusBarAlpha = XposedHelpers.getFloatField(instancePhoneStatusBar, "mStatusBarAlpha");
-					float statusBarTransitionAlpha = XposedHelpers.getFloatField(instancePhoneStatusBar, "mStatusBarTransitionAlpha");
-					statusBarView.setAlpha(statusBarAlpha);
-					Drawable background = statusBarView.getBackground();
-					int color;
-					float offset;
-					if (background instanceof ColorDrawable && mPreColor != Color.TRANSPARENT) {
-						offset = (1.0F - statusBarTransitionAlpha) * (Utils.getColorVal(mPreColor) - 0.27F) / 1.0F;
-						if (offset < 0)
-							offset = 0.0F;
-						color = Utils.offsetValueForColor(mPreColor, offset);
-						statusBarView.setBackground(new ColorDrawable(color));
-						Utils.log("offset statusBar background val: " + (1.0F - statusBarTransitionAlpha));
-						
-						for (int i = 0; i < statusBarView.getChildCount(); i++) {
-							if (! (statusBarView.getChildAt(i) instanceof ViewGroup))
-								Utils.log("set statusbar content alpha>>>>>>");
-								statusBarView.getChildAt(i).setAlpha(statusBarAlpha * statusBarTransitionAlpha);
-						}
-					} else {
-						statusBarView.setAlpha(statusBarAlpha * statusBarTransitionAlpha);
-					}
-				}
-			});
-			
-			
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.SimpleStatusBar", lpparam.classLoader), 
 					"updateNotificationIcons", boolean.class, ArrayList.class, LinearLayout.LayoutParams.class, new XC_MethodHook(){
 				@Override
