@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
@@ -89,6 +90,9 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 								"mDarkMode", isdark);
 					}
 				}
+//				if (color != Color.BLACK) {
+//					activity.getWindow().setBackgroundDrawable(new ColorDrawable(color));
+//				}
 			}
 
 			XposedHelpers.setAdditionalInstanceField(activity,

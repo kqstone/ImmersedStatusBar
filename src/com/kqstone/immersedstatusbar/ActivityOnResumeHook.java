@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -186,6 +187,10 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 					}
 				}
 			}
+//			
+//			if (colorHandled) {
+//				Utils.setDecorViewBackground(activity, new ColorDrawable(color));
+//			}
 
 			break;
 		}

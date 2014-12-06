@@ -33,6 +33,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
@@ -118,6 +119,23 @@ public class Utils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static void setDecorViewBackground(Activity activity, Drawable drawable) {
+		View decorView = activity.getWindow().getDecorView();
+		int width = decorView.getWidth();
+		int height = decorView.getHeight();
+		Rect rect = new Rect();
+		decorView.getWindowVisibleDisplayFrame(rect);
+		int statusbarHeight = rect.top;	
+		Drawable[] drawables = new Drawable[2];
+		drawables[0] = drawable;
+		drawables[1] = decorView.getBackground();
+		LayerDrawable ld = new LayerDrawable(drawables);
+		ld.setLayerInset(0, 0, 0, width, height);
+		ld.setLayerInset(1, 0, statusbarHeight, width, height - statusbarHeight);
+		decorView.setBackground(ld);
+		decorView.invalidate();
 	}
 	
 //	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {

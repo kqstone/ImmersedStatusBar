@@ -3,7 +3,7 @@ package com.kqstone.immersedstatusbar;
 import android.graphics.Color;
 
 public final class Constant {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	public static final String MODULE = "ISB";
 	public static final String PKG_NAME_SELF = "com.kqstone.immersedstatusbar";	
