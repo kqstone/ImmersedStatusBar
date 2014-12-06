@@ -16,7 +16,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnWindowFocusedHook extends XC_MethodHook {
-	private Boolean mDarkModeTranslucent;
+	private Boolean mDarkModeTranslucent = false;;
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -52,7 +52,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
+					Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity, false);
 					int color = Color.BLACK;
 					boolean isdark = false;
 					boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
@@ -103,14 +103,17 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 				}}, delay);
 			break;
 		case Translucent:
-			if (this.mDarkModeTranslucent == null) {
-				Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity);
+			needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
+			if (!needGetColorFromBackground)
+				return;
+				Bitmap bitmap = Utils.getBitMapFromActivityBackground(activity, true);
 				if (bitmap != null) {
 					BitMapColor bitmapColor= Utils.getBitmapColor(bitmap);
 					int color = bitmapColor.Color;
 					mDarkModeTranslucent = Utils.getDarkMode(color);
+					XposedHelpers.setAdditionalInstanceField(activity, "mDarkMode", mDarkModeTranslucent);
+					XposedHelpers.setAdditionalInstanceField(activity, "mStatusBarBackground", Color.TRANSPARENT);
 				}
-			}
 			boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
 			Intent intent = new Intent(
 					Constant.INTENT_CHANGE_STATUSBAR_COLOR);

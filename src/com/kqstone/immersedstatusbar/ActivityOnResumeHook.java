@@ -61,6 +61,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		if (fastTrans == null) fastTrans = false;
 		XposedHelpers.setAdditionalInstanceField(activity, "mFastTrans", fastTrans);		
 
+		Object objColor;
 		WindowType type = Utils.getWindowType(activity);
 		Utils.log("Resume: Window type: " + type);
 		switch (type) {
@@ -72,8 +73,16 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			isdark = false;
 			break;
 		case Translucent:
-			Utils.log("Translucent activity, need get darkmode after window focus changed");
-			return;
+			objColor = XposedHelpers.getAdditionalInstanceField(activity, "mStatusBarBackground");
+			if (objColor != null){
+				color = (Integer) objColor;//transparent
+				colorHandled = true;
+				isdark = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mDarkMode");
+				XposedHelpers.setAdditionalInstanceField(activity, "mNeedGetColorFromBackground", false);
+			} else {
+				Utils.log("Translucent activity, need get darkmode after window focus changed");
+			}
+			break;
 		default:
 			boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
 			if (exinform)
@@ -94,10 +103,10 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				colorHandled = true;
 				break;
 			case 0:
-				Object obj = XposedHelpers.getAdditionalInstanceField(activity,
+				objColor = XposedHelpers.getAdditionalInstanceField(activity,
 						"mStatusBarBackground");
-				if (obj != null) {
-					color = (Integer) obj;
+				if (objColor != null) {
+					color = (Integer) objColor;
 					Utils.log("get color from mStatusBarBackground:" + color);
 					isdark = (Boolean) XposedHelpers
 							.getAdditionalInstanceField(activity, "mDarkMode");
@@ -178,15 +187,15 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				}
 			}
 
-			if (!colorHandled) {
-				XposedHelpers.setAdditionalInstanceField(activity,
-						"mNeedGetColorFromBackground", true);
-				Utils.log("can't handle color, need to get color from drawcache after widow focus changed");
-				return;
-			}
 			break;
 		}
 
+		if (!colorHandled) {
+			XposedHelpers.setAdditionalInstanceField(activity,
+					"mNeedGetColorFromBackground", true);
+			Utils.log("can't handle color, need to get color from drawcache after widow focus changed");
+			return;
+		}
 
 		Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
 		intent.putExtra(Constant.PKG_NAME, activity.getPackageName());

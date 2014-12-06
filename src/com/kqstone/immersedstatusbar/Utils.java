@@ -92,23 +92,25 @@ public class Utils {
 		return keyguardLocked;
 	}
 	
-	public static Bitmap getBitMapFromActivityBackground(Activity activity) {
+	public static Bitmap getBitMapFromActivityBackground(Activity activity, boolean transparent) {
 		View view = activity.getWindow().getDecorView();
 		view.destroyDrawingCache();
 		view.setDrawingCacheEnabled(true);
 		Bitmap bitmap1 = view.getDrawingCache();	
 		
-		Rect rect = new Rect();
-		view.getWindowVisibleDisplayFrame(rect);
-		int statusbarHeight = rect.top;	
-		Utils.log("statusbar height: " + statusbarHeight);
-		
 		if (bitmap1 == null) 
 			return null;
+		int top = 0;
+		if (!transparent){
+			Rect rect = new Rect();
+			view.getWindowVisibleDisplayFrame(rect);
+			top = rect.top;	
+			Utils.log("statusbar height: " + top);
+		}
 		
 		int width = bitmap1.getWidth() / 4;
 		try {
-			Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, statusbarHeight, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
+			Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2, top, width, Constant.OFFEST_FOR_GRADUAL_ACTIVITY);
 			
 			return bitmap;
 		} catch (Exception e) {
