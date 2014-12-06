@@ -79,15 +79,12 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				Utils.log("fastTransition: " + fastTrans);
 				
 				int type = intent.getIntExtra(Constant.STATUSBAR_BACKGROUND_TYPE, 0);
-				boolean needUpdateContent = false;
 				switch (type) {
 				case 0:
 					int color = intent.getIntExtra(
 							Constant.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 					if (color != mPreColor) {
 						updateStatusBarBackground(new ColorDrawable(color), fastTrans);
-						if (mPreColor == Color.TRANSPARENT && color != Color.TRANSPARENT)
-							needUpdateContent = true;
 						mPreColor = color;
 					}
 					break;
@@ -95,15 +92,13 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					String path = intent.getStringExtra(Constant.STATUSBAR_BACKGROUND_PATH);
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
 					updateStatusBarBackground(new BitmapDrawable(bitmap), fastTrans);
-					if (mPreColor == Color.TRANSPARENT)
-						needUpdateContent = true;
 					mPreColor = Constant.UNKNOW_COLOR;
 				}
 				
 				boolean darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
 				Utils.log("Darkmode: " + darkMode + "; PreDarkMode: " + mPreDarkMode);
 				
-				if (darkMode != mPreDarkMode || needUpdateContent) {
+				if (darkMode != mPreDarkMode) {
 					updateStatusBarContent(darkMode, fastTrans);
 					mPreDarkMode = darkMode;
 				}
@@ -124,11 +119,6 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	};
 	
 	private void updateDarkMode(Context context) {
-		boolean darkMode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mDarkMode");
-		boolean targetDarkMode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
-		if (darkMode == targetDarkMode)
-			return;
-		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mDarkMode", targetDarkMode);
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		if (simpleStatusbar != null) {			
 			boolean fastAnim = Settings.System.getInt(context.getContentResolver(), Constant.KEY_PREF_QUICKANIM_CONTENT, 0) ==1 ? true:false;
@@ -143,8 +133,8 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 
 	private void updateStatusBarContent(boolean darkmode, boolean fastTrans) {
 		Utils.log("darkmode: " + darkmode);
-		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mTargetDarkMode", darkmode);
-		Runnable runnable = (Runnable) XposedHelpers.getObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable");
+		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mDarkMode", darkmode);
+		Runnable runnable = (Runnable) XposedHelpers.getAdditionalInstanceField(instancePhoneStatusBar, "mMyUpdateDarkModeRunnable");
 		long delaytime = fastTrans ? 50 : mDelayTime;
 		handler.postDelayed(runnable, delaytime);
 	}
@@ -178,7 +168,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			return;
 		Object simpleStatusbar = XposedHelpers.getObjectField(instancePhoneStatusBar, "mSimpleStatusbar");
 		ViewGroup notificationIcons = (ViewGroup) XposedHelpers.getObjectField(simpleStatusbar, "mNotificationIcons");
-		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mTargetDarkMode");
+		boolean darkmode = XposedHelpers.getBooleanField(instancePhoneStatusBar, "mDarkMode");
 		int color = Utils.setAlphaForARGB(mIconColors[darkmode ? 0 : 1], mAlphaFilter);
 		int alpha = Color.alpha(mIconColors[darkmode ? 0 : 1]) + 255 - mAlphaFilter;
 		alpha = alpha < 255 ? alpha : 255;
@@ -285,10 +275,18 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 
 						@Override
 						public void run() {
-							updateDarkMode(mContext);
 						}
 					};
 					XposedHelpers.setObjectField(instancePhoneStatusBar, "mUpdateDarkModeRunnable", darkModeRunnable);	
+					
+					Runnable MyDarkModeRunnable = new Runnable() {
+
+						@Override
+						public void run() {
+							updateDarkMode(mContext);
+						}
+					};
+					XposedHelpers.setAdditionalInstanceField(instancePhoneStatusBar, "mMyUpdateDarkModeRunnable", MyDarkModeRunnable);	
 					
 					Class<?> ServiceManager = XposedHelpers.findClass("android.os.ServiceManager", null);
 					Object WindowService = XposedHelpers.callStaticMethod(ServiceManager, "getService", "window");
