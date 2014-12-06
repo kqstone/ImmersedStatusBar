@@ -196,20 +196,8 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			Utils.log("can't handle color, need to get color from drawcache after widow focus changed");
 			return;
 		}
-
-		Intent intent = new Intent(Constant.INTENT_CHANGE_STATUSBAR_COLOR);
-		intent.putExtra(Constant.PKG_NAME, activity.getPackageName());
-		intent.putExtra(Constant.ACT_NAME, activity.getLocalClassName());
-		intent.putExtra(Constant.STATUSBAR_BACKGROUND_TYPE, backgroundtype);
-		intent.putExtra(Constant.STATUSBAR_BACKGROUND_COLOR, color);
-		intent.putExtra(Constant.STATUSBAR_BACKGROUND_PATH, path);
-		intent.putExtra(Constant.IS_DARKMODE, isdark);
-		intent.putExtra(Constant.FAST_TRANSITION, fastTrans);
 		
-		Utils.log("backgroundtype:" + backgroundtype + ";" + "statusbar_background:" + color + "; " + 
-		"path:" + path + ";" + "dark_mode:" + isdark + "; " + "fast_transition:" + fastTrans);
-
-		activity.sendBroadcast(intent);
+		Utils.sendTintStatusBarIntent(activity, backgroundtype, color, path, isdark, fastTrans);
 	}
 	
 	public final String[] FastTransApp = {
