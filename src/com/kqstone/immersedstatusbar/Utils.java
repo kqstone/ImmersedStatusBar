@@ -342,6 +342,20 @@ public class Utils {
 		int g = Color.green(argbColor);
 		return Color.argb(alpha, r, g, b);
 	}
+	
+	public static int offsetValueForColor(int color, float offset) {
+		float[] hsv = {0,0,0};
+		Color.colorToHSV(color, hsv);
+		hsv[2] = hsv[2] - offset;
+		return Color.HSVToColor(hsv);
+	}
+	
+	public static float getColorVal(int color) {
+		float[] hsv = {0,0,0};
+		Color.colorToHSV(color, hsv);
+		return hsv[2];
+	}
+
 
 	public static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
 		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/isb/log/img/";
