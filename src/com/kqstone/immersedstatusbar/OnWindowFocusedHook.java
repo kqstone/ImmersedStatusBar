@@ -24,7 +24,13 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			return;	
 		
 		final Activity activity = (Activity) param.thisObject;
-		sendChangeStatusBarIntent(activity);
+		new Handler().postDelayed(new Runnable(){
+
+			@Override
+			public void run() {
+				sendChangeStatusBarIntent(activity);
+			}}, 10L);
+		
 	}
 	
 	public void sendChangeStatusBarIntent(final Activity activity) {
@@ -32,7 +38,13 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 		
 		int color = Color.BLACK;
 		boolean isdark = false;
-		final boolean fastTrans = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
+		boolean fastTrans;
+		Object objFastTrans = XposedHelpers.getAdditionalInstanceField(activity, "mFastTrans");
+		if (objFastTrans != null) {
+			fastTrans = (Boolean) objFastTrans;
+		} else {
+			fastTrans = false;
+		}
 		Bitmap bitmap;
 		
 		boolean needGetColorFromBackground = (Boolean) XposedHelpers.getAdditionalInstanceField(activity, "mNeedGetColorFromBackground");
