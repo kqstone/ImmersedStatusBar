@@ -39,6 +39,8 @@ import de.robv.android.xposed.callbacks.XC_InitPackageResources.InitPackageResou
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class PhoneStatusBarHook implements IXposedHookLoadPackage {
+	private static final float DARKMODE_VALUE_THREAD = 0.2F;
+	private static final float NORMALMODE_VALUE_THREAD = 0.8F;
 	private Object instancePhoneStatusBar;
 	private Context mContext;
 	private String mPrePkgName = null;
@@ -224,6 +226,23 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
     private void restartSystemUI() {
     	XposedHelpers.callMethod(instancePhoneStatusBar, "unbindViews");
     }
+    
+    private void updateIconsColor() {
+		Resources res = mContext.getResources();
+		String[] resNames = {"status_bar_textColor_darkmode", "status_bar_textColor"};
+		int k;
+		for (int i=0; i<2; i++) {
+			try {
+				k = res.getIdentifier(resNames[i], "color", "com.android.systemui");
+				if (k > 0)
+					mIconColors[i] = res.getColor(k);
+				Utils.log("mIconColor: " + mIconColors[i]);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    }
 	
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
@@ -255,20 +274,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 					mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
 					
-					Resources res = mContext.getResources();
-					String[] resNames = {"status_bar_textColor_darkmode", "status_bar_textColor"};
-					int k;
-					for (int i=0; i<2; i++) {
-						try {
-							k = res.getIdentifier(resNames[i], "color", "com.android.systemui");
-							if (k > 0)
-								mIconColors[i] = res.getColor(k);
-							Utils.log("mIconColor: " + mIconColors[i]);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}					
+					updateIconsColor();
 					
 					Runnable darkModeRunnable = new Runnable() {
 
@@ -301,6 +307,11 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 			
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader), 
 					"bindViews", new XC_MethodHook() {
+				@Override
+				protected void beforeHookedMethod(MethodHookParam param) throws Throwable{
+					updateIconsColor();
+				}
+				
 				@Override
 				protected void afterHookedMethod(MethodHookParam param) throws Throwable{
 					if (mBackgroundBeforeUnbind != null && mDarkModeBeforeUndbind != null) {

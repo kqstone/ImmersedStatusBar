@@ -344,6 +344,20 @@ public class Utils {
 		int g = Color.green(argbColor);
 		return Color.argb(alpha, r, g, b);
 	}
+	
+	public static float getColorValue(int color) {
+		float[] hsv = new float[3];
+		Color.colorToHSV(color, hsv);
+		return hsv[2];
+	}
+	
+	public static int setColorValue(int color, float value) {
+		float[] hsv = new float[3];
+		Color.colorToHSV(color, hsv);
+		hsv[2] = value;
+		int alpha = Color.alpha(color);
+		return Color.HSVToColor(alpha, hsv);
+	}
 
 	public static void outputBitmapToFile(final Bitmap bitmap, final Activity activity)  {
 		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/isb/log/img/";
