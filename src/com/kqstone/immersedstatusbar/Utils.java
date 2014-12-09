@@ -121,21 +121,21 @@ public class Utils {
 		}
 	}
 	
-	public static void setDecorViewBackground(Activity activity, Drawable drawable) {
+	public static void setDecorViewBackground(Activity activity, Drawable drawable) throws Exception{
 		View decorView = activity.getWindow().getDecorView();
 		int width = decorView.getWidth();
 		int height = decorView.getHeight();
-		Rect rect = new Rect();
-		decorView.getWindowVisibleDisplayFrame(rect);
-		int statusbarHeight = rect.top;	
+		int id = XposedHelpers.getStaticIntField(XposedHelpers.findClass("com.android.internal.R$dimen", null), "status_bar_height");
+		
+		int statusbarHeight = activity.getResources().getDimensionPixelSize(id);
+		Utils.log("The static statusbar height is: " + statusbarHeight + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		Drawable[] drawables = new Drawable[2];
 		drawables[0] = drawable;
 		drawables[1] = decorView.getBackground();
 		LayerDrawable ld = new LayerDrawable(drawables);
 		ld.setLayerInset(0, 0, 0, width, height);
-		ld.setLayerInset(1, 0, statusbarHeight, width, height - statusbarHeight);
-		decorView.setBackground(ld);
-		decorView.invalidate();
+		ld.setLayerInset(1, 0, statusbarHeight, width, height);
+		activity.getWindow().setBackgroundDrawable(ld);
 	}
 	
 //	public static Bitmap getBitMapFromActivityBackgroundOld(Activity activity) {

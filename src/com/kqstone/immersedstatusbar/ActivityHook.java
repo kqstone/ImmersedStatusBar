@@ -65,6 +65,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundType",0);//background type: 0=color, 1=picture
 				XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundFilePath",null);
 				XposedHelpers.setAdditionalInstanceField(activity, "mFastTrans",null);
+				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground",false);
 			}
 		});
 		

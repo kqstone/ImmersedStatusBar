@@ -61,8 +61,33 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		}
 		if (fastTrans == null) fastTrans = false;
 		XposedHelpers.setAdditionalInstanceField(activity, "mFastTrans", fastTrans);		
-
+		
 		Object objColor;
+		backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,
+				"mBackgroundType");
+		switch (backgroundtype) {
+		case 1:
+			path = (String) XposedHelpers.getAdditionalInstanceField(activity,
+					"mBackgroundPath");
+			isdark = (Boolean) XposedHelpers
+					.getAdditionalInstanceField(activity, "mDarkMode");
+			colorHandled = true;
+			break;
+		case 0:
+			objColor = XposedHelpers.getAdditionalInstanceField(activity,
+					"mStatusBarBackground");
+			if (objColor != null) {
+				color = (Integer) objColor;
+				Utils.log("get color from mStatusBarBackground:" + color);
+				isdark = (Boolean) XposedHelpers
+						.getAdditionalInstanceField(activity, "mDarkMode");
+				colorHandled = true;
+				XposedHelpers.setAdditionalInstanceField(activity,
+						"mNeedGetColorFromBackground", false);
+			break;
+			}
+		}
+		
 		WindowType type = Utils.getWindowType(activity);
 		Utils.log("Resume: Window type: " + type);
 		switch (type) {
@@ -93,30 +118,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				Utils.exportStandXml(activity);
 			
 			XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",0);
-			backgroundtype = (Integer) XposedHelpers.getAdditionalInstanceField(activity,
-					"mBackgroundType");
-			switch (backgroundtype) {
-			case 1:
-				path = (String) XposedHelpers.getAdditionalInstanceField(activity,
-						"mBackgroundPath");
-				isdark = (Boolean) XposedHelpers
-						.getAdditionalInstanceField(activity, "mDarkMode");
-				colorHandled = true;
-				break;
-			case 0:
-				objColor = XposedHelpers.getAdditionalInstanceField(activity,
-						"mStatusBarBackground");
-				if (objColor != null) {
-					color = (Integer) objColor;
-					Utils.log("get color from mStatusBarBackground:" + color);
-					isdark = (Boolean) XposedHelpers
-							.getAdditionalInstanceField(activity, "mDarkMode");
-					colorHandled = true;
-					XposedHelpers.setAdditionalInstanceField(activity,
-							"mNeedGetColorFromBackground", false);
-				break;
-				}
-			}
+			
 			if (!colorHandled) {
 				ProfileHelper helper = (ProfileHelper) XposedHelpers.getAdditionalInstanceField(activity, "mProfileHelper");
 				if (helper != null) {
@@ -187,10 +189,17 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 					}
 				}
 			}
-//			
-//			if (colorHandled) {
-//				Utils.setDecorViewBackground(activity, new ColorDrawable(color));
-//			}
+			
+			if (colorHandled && !(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
+				try {
+					Utils.setDecorViewBackground(activity, new ColorDrawable(color));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Utils.log("set decorWindow background: " + Utils.getHexFromColor(color));
+				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground", true);
+			}
 
 			break;
 		}
