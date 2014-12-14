@@ -43,12 +43,17 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 		case Normal:
 			boolean exinformtofile = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false;
 			if (exinformtofile) {
-				View view = activity.getWindow().getDecorView();
-				view.destroyDrawingCache();
-				view.setDrawingCacheEnabled(true);
-				bitmap = view.getDrawingCache();	
-				if (bitmap != null)
-					Utils.outputBitmapToFile(bitmap, activity);
+				try {
+					View view = activity.getWindow().getDecorView();
+					view.destroyDrawingCache();
+					view.setDrawingCacheEnabled(true);
+					bitmap = view.getDrawingCache();	
+					if (bitmap != null)
+						Utils.outputBitmapToFile(bitmap, activity);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			bitmap = Utils.getBitMapFromActivityBackground(activity, false);

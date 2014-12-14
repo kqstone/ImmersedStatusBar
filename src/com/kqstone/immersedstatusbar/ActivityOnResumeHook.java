@@ -112,7 +112,12 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		default:
 			boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
 			if (exinform)
-				Utils.logStandXml(activity);
+				try {
+					Utils.logStandXml(activity);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			boolean exinformtofile = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM_TOFILE, 0) ==1 ? true:false;
 			if (exinformtofile)
 				Utils.exportStandXml(activity);
