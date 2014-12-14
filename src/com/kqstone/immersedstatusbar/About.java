@@ -12,7 +12,7 @@ import android.view.View.OnTouchListener;
 import android.widget.TextView;
 
 public class About extends Activity {
-	public static final String URL_AUTHOR = "https://github.com/kqstone/ImmersedStatusBar/tree/master/src/com/kqstone/immersedstatusbar";
+	public static final String URL_AUTHOR = "https://github.com/kqstone/ImmersedStatusBar";
 	public static final String URL_ACKNOW = "https://github.com/MohammadAG/Xposed-Tinted-Status-Bar";
 	public static final String URL_PROFILE = "https://github.com/watcgfw/ISBpreferences";
 	private View mAboutAuthorContent, mAcknowContent, mAboutProfileContent;
