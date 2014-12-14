@@ -41,6 +41,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 	private static final float DARKMODE_VALUE_THREAD = 0.2F;
 	private static final float NORMALMODE_VALUE_THREAD = 0.8F;
+	private static final int DELAY_FAST_TRANS = 80;
 	private Object instancePhoneStatusBar;
 	private Context mContext;
 	private String mPrePkgName = null;
@@ -140,12 +141,12 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 		Utils.log("darkmode: " + darkmode);
 		XposedHelpers.setBooleanField(instancePhoneStatusBar, "mDarkMode", darkmode);
 		Runnable runnable = (Runnable) XposedHelpers.getAdditionalInstanceField(instancePhoneStatusBar, "mMyUpdateDarkModeRunnable");
-		long delaytime = fastTrans ? 0 : mDelayTime;
+		long delaytime = fastTrans ? DELAY_FAST_TRANS : mDelayTime;
 		handler.postDelayed(runnable, delaytime);
 	}
 	
 	private void updateStatusBarBackground(final Drawable drawable, boolean fastTrans) {
-		long delaytime = fastTrans ? 0 : mDelayTime;
+		long delaytime = fastTrans ? DELAY_FAST_TRANS : mDelayTime;
 		final View statusBarView = (View) XposedHelpers.getObjectField(instancePhoneStatusBar, "mStatusBarView");
 		Runnable r = new Runnable() {
 
