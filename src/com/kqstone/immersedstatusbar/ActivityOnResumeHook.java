@@ -110,6 +110,10 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			}
 			break;
 		default:
+			for (String[] ignorApp:IgnorApp) {
+				if (ignorApp[0].equals(activity.getPackageName()) && ignorApp[1].equals(activity.getLocalClassName()))
+					return;
+			}
 			boolean exinform = Settings.System.getInt(activity.getContentResolver(), Constant.KEY_PREF_EXPORT_INFORM, 0) ==1 ? true:false;
 			if (exinform)
 				try {
@@ -214,10 +218,14 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 		Utils.sendTintStatusBarIntent(activity, backgroundtype, color, path, isdark, fastTrans);
 	}
 	
-	public final String[] FastTransApp = {
+	public static final String[] FastTransApp = {
 			"com.miui.home",
 			"com.UCMobile",
 			"com.tencent.mm",
 			"com.sina.weibo"
+	};
+	
+	public static final String[][] IgnorApp = {
+		{"com.baidu.netdisk", "ui.MainActivity"}
 	};
 }
