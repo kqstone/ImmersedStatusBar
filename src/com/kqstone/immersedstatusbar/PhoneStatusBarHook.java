@@ -72,6 +72,10 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					Utils.log("PRE_PKG_NAME:" + mPrePkgName);
 				boolean fastTrans = intent.getBooleanExtra(Constant.FAST_TRANSITION, false);
 				if (pkgName != null) {
+					if (mPrePkgName != null && mPrePkgName.equals("com.android.keyguard")) {
+						Utils.log("mPrePkg is KeyGuard, fastTran statusbar");
+						fastTrans = true;
+					}
 					if (mPrePkgName != null && pkgName.equals(mPrePkgName)) {
 						fastTrans = true;
 					} else {

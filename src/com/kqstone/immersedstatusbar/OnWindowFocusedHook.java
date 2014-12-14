@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
@@ -89,10 +90,22 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 								"mDarkMode", isdark);
 					}
 				}
+				
 			}
 
 			XposedHelpers.setAdditionalInstanceField(activity,
 					"mNeedGetColorFromBackground", false);
+			
+			if (!(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
+				try {
+					Utils.setDecorViewBackground(activity, new ColorDrawable(color));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Utils.log("set decorWindow background: " + Utils.getHexFromColor(color));
+				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground", true);
+			}
 			Utils.sendTintStatusBarIntent(activity, 0, color, null, isdark,
 					fastTrans);
 			break;
