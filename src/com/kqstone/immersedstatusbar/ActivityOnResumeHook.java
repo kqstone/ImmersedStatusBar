@@ -191,12 +191,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			}
 			
 			if (colorHandled && !(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
-				try {
 					Utils.setDecorViewBackground(activity, new ColorDrawable(color));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				Utils.log("set decorWindow background: " + Utils.getHexFromColor(color));
 				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground", true);
 			}
