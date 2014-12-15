@@ -205,7 +205,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			}
 			
 			if (drawable != null && !(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
-					Utils.setDecorViewBackground(activity, drawable);
+				Utils.setDecorViewBackground(activity, drawable, false);
 				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground", true);
 			}
 

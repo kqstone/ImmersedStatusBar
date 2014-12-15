@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
@@ -57,6 +58,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			}
 
 			bitmap = Utils.getBitMapFromActivityBackground(activity, false);
+			Drawable drawable = null;
 			if (bitmap != null) {
 				BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
 				if (bitmapColor.mType == Type.FLAT) {
@@ -67,6 +69,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 					isdark = Utils.getDarkMode(color);
 					XposedHelpers.setAdditionalInstanceField(activity,
 							"mDarkMode", isdark);
+					drawable = new ColorDrawable(color);
 				} else if (bitmapColor.mType == Type.GRADUAL) {
 					Utils.log("GRADUAL BitMap found, rePadding viewgroup...");
 					color = bitmapColor.Color;
@@ -82,7 +85,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 						XposedHelpers.setAdditionalInstanceField(activity,
 								"mRepaddingHandled", true);
 					}
-
+					drawable = new ColorDrawable(color);
 				} else if (bitmapColor.mType == Type.PICTURE) {
 					Utils.log("Flat BitMap found...");
 					if (Settings.System.getInt(activity.getContentResolver(),
@@ -93,6 +96,7 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 						isdark = Utils.getDarkMode(color);
 						XposedHelpers.setAdditionalInstanceField(activity,
 								"mDarkMode", isdark);
+						drawable = new ColorDrawable(color);
 					}
 				}
 				
@@ -101,14 +105,8 @@ public class OnWindowFocusedHook extends XC_MethodHook {
 			XposedHelpers.setAdditionalInstanceField(activity,
 					"mNeedGetColorFromBackground", false);
 			
-			if (!(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
-				try {
-					Utils.setDecorViewBackground(activity, new ColorDrawable(color));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Utils.log("set decorWindow background: " + Utils.getHexFromColor(color));
+			if (drawable != null && !(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
+				Utils.setDecorViewBackground(activity, drawable, true);
 				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground", true);
 			}
 			Utils.sendTintStatusBarIntent(activity, 0, color, null, isdark,

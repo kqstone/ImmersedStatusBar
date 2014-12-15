@@ -122,8 +122,10 @@ public class Utils {
 		}
 	}
 	
-	public static void setDecorViewBackground(Activity activity, Drawable drawable){
-		View decorView = ((ViewGroup)activity.getWindow().getDecorView()).getChildAt(0);
+	public static void setDecorViewBackground(Activity activity, Drawable drawable, boolean isCalledOnFocused){
+		View decorView = activity.getWindow().getDecorView();
+		if (!isCalledOnFocused)
+			decorView = ((ViewGroup)decorView).getChildAt(0);
 		if (decorView == null) {
 			Utils.log("can not get decorView");
 			return;
