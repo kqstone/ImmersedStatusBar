@@ -57,17 +57,27 @@ public class ProfileHelper {
 			mProfile = getProfileFromXml(activityName, profilePath);
 			if (mProfile != null)
 				mHasProfile = true;
-			Utils.log("Profile \n" + mProfile.getActName() + "\n" + mProfile.getBgType() + "\n" + mProfile.getBgColor());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
+			Utils.log("Profile \n" + mProfile.getActName() + "\n"
+					+ mProfile.getBgType() + "\n" + mProfile.getBgColor());
+			
 			mUserProfile = getProfileFromXml(activityName, userProfilePath);
 			if (mUserProfile != null)
 				mHasUserProfile = true;
-			Utils.log("UserProfile \n" + mProfile.getActName() + "\n" + mProfile.getBgType() + "\n" + mProfile.getBgColor());
-		} catch (Exception e) {
-			e.printStackTrace();
+			Utils.log("UserProfile \n" + mProfile.getActName() + "\n"
+					+ mProfile.getBgType() + "\n" + mProfile.getBgColor());
+
+		} catch (NumberFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (XmlPullParserException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 	
@@ -144,7 +154,7 @@ public class ProfileHelper {
 //	public boolean getTranslucent(String actName) {
 //	}
 	
-	private ActivityProfile getProfileFromXml(String activityName, String filePath) throws XmlPullParserException, NumberFormatException, IOException {
+	private ActivityProfile getProfileFromXml(String activityName, String filePath) throws XmlPullParserException, NumberFormatException, IOException, FileNotFoundException {
 		FileInputStream slideInputStream = new FileInputStream(filePath);  
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();   
         factory.setNamespaceAware(true);   
