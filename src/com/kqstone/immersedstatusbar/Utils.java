@@ -151,7 +151,7 @@ public class Utils {
 		int id = XposedHelpers.getStaticIntField(XposedHelpers.findClass("com.android.internal.R$dimen", null), "status_bar_height");			
 		int statusbarHeight = activity.getResources().getDimensionPixelSize(id);
 		Utils.log("The static statusbar height is: " + statusbarHeight + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		ld.setLayerInset(0, 0, 0, width, height);
+		ld.setLayerInset(0, 0, 0, width, statusbarHeight);
 		ld.setLayerInset(1, 0, statusbarHeight, width, height);
 		decorView.setBackground(ld);
 	}

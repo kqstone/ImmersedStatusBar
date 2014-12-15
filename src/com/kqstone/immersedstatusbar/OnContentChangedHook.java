@@ -12,13 +12,11 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class OnContentChangedHook extends XC_MethodHook {
-	
-	private Handler mHandler = new Handler();
 
 	@Override
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 		final Activity activity = (Activity) param.thisObject;	
-		mHandler.postDelayed(new Runnable() {
+		new Handler().postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
