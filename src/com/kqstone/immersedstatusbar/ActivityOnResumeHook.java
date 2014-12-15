@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -128,6 +129,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			
 			XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",0);
 			
+			Drawable drawable = null;
 			if (!colorHandled) {
 				ProfileHelper helper = (ProfileHelper) XposedHelpers.getAdditionalInstanceField(activity, "mProfileHelper");
 				if (helper != null) {
@@ -150,6 +152,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 						if (k != 0) {
 							Utils.resetPadding(activity, k);
 						}
+						drawable = new ColorDrawable(color);
 						break;
 					case 1:
 						path = helper.getBackgroundPath();
@@ -165,6 +168,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 						if (j != 0) {
 							Utils.resetPadding(activity, j);
 						}
+						drawable = new BitmapDrawable(tempmap);
 						break;
 					}
 				}
@@ -191,6 +195,7 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 								XposedHelpers.setAdditionalInstanceField(
 										activity, "mDarkMode", isdark);
 								colorHandled = true;
+								drawable = new ColorDrawable(color);
 							} catch (IllegalArgumentException e) {
 							}
 							container.invalidate();
@@ -199,9 +204,8 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 				}
 			}
 			
-			if (colorHandled && !(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
-					Utils.setDecorViewBackground(activity, new ColorDrawable(color));
-				Utils.log("set decorWindow background: " + Utils.getHexFromColor(color));
+			if (drawable != null && !(Boolean)XposedHelpers.getAdditionalInstanceField(activity, "mHasSetWindowBackground")) {
+					Utils.setDecorViewBackground(activity, drawable);
 				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground", true);
 			}
 
