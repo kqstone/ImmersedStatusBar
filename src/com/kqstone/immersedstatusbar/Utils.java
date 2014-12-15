@@ -35,6 +35,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Xml;
 import android.view.View;
@@ -122,37 +123,28 @@ public class Utils {
 	}
 	
 	public static void setDecorViewBackground(Activity activity, Drawable drawable){
-		View decorView;
-		Drawable dViewDrawable;
-		Drawable[] drawables;
-		
-		decorView = activity.getWindow().getDecorView();
+		View decorView = ((ViewGroup)activity.getWindow().getDecorView()).getChildAt(0);
 		if (decorView == null) {
 			Utils.log("can not get decorView");
 			return;
 		}
-		dViewDrawable = decorView.getBackground();
+		Drawable dViewDrawable = decorView.getBackground();
 		if (dViewDrawable == null) {
-			Utils.log("can not get decorView background! Try another method!");
-			decorView = ((ViewGroup)decorView).getChildAt(0);
-			dViewDrawable = decorView.getBackground();
-			if (dViewDrawable == null) {
-				decorView.setBackground(drawable);
-				Utils.log("can not get decorView background! Give up!");
-				return;
-			}
+			dViewDrawable = new ColorDrawable(Color.TRANSPARENT);
 		}
-		drawables = new Drawable[2];
+		Drawable[] drawables = new Drawable[2];
 		drawables[0] = drawable;
 		drawables[1] = dViewDrawable;
 		LayerDrawable ld = new LayerDrawable(drawables);
-		int width = decorView.getWidth();
-		int height = decorView.getHeight();
+		DisplayMetrics metric = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metric);
+        int height = metric.heightPixels;
+
 		int id = XposedHelpers.getStaticIntField(XposedHelpers.findClass("com.android.internal.R$dimen", null), "status_bar_height");			
 		int statusbarHeight = activity.getResources().getDimensionPixelSize(id);
 		Utils.log("The static statusbar height is: " + statusbarHeight + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		ld.setLayerInset(0, 0, 0, width, statusbarHeight);
-		ld.setLayerInset(1, 0, statusbarHeight, width, height);
+		ld.setLayerInset(0, 0, 0, 0, height - statusbarHeight);
+		ld.setLayerInset(1, 0, statusbarHeight, 0, 0);
 		decorView.setBackground(ld);
 	}
 	
