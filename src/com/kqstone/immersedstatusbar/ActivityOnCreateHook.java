@@ -17,6 +17,8 @@ public class ActivityOnCreateHook extends XC_MethodHook {
 	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 		Activity activity = (Activity) param.thisObject;
 		
+		if (activity.getPackageName().equals("com.miui.home"))
+			return;
 		ProfileHelper helper = new ProfileHelper(activity.getPackageName());
 		helper.initiateProfile(activity.getLocalClassName());
 		if (helper.hasProfile())

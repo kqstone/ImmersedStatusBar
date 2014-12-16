@@ -89,6 +89,11 @@ public class ActivityOnResumeHook extends XC_MethodHook {
 			}
 		}
 		
+		if (colorHandled) {
+			Utils.sendTintStatusBarIntent(activity, backgroundtype, color, path, isdark, fastTrans);
+			return;
+		}
+		
 		WindowType type = Utils.getWindowType(activity);
 		Utils.log("Resume: Window type: " + type);
 		switch (type) {
