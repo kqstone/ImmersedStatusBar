@@ -66,11 +66,13 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				String pkgName = intent.getStringExtra(Constant.PKG_NAME);
 				String actName = intent.getStringExtra(Constant.ACT_NAME);
 				Utils.log("PKG_NAME:" + pkgName + "; ACT_NAME:" + actName);
+				Utils.log("PRE_PKG_NAME:" + mPrePkgName != null ? mPrePkgName : "null");
+				
 				if (!(pkgName.equals("com.android.keyguard") && actName.equals("MiuiKeyGuard"))
-						&& Utils.isKeyguardLocked(mContext))
+						&& (mPrePkgName != null && mPrePkgName.equals("com.android.keyguard") && Utils.isKeyguardLocked(mContext))) {
 					return;
-				if (mPrePkgName != null)
-					Utils.log("PRE_PKG_NAME:" + mPrePkgName);
+				}
+				
 				boolean fastTrans = intent.getBooleanExtra(Constant.FAST_TRANSITION, false);
 				if (pkgName != null) {
 					if (mPrePkgName != null && mPrePkgName.equals("com.android.keyguard")) {
@@ -100,6 +102,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
 					updateStatusBarBackground(new BitmapDrawable(bitmap), fastTrans);
 					mPreColor = Constant.UNKNOW_COLOR;
+					break;
 				}
 				
 				boolean darkMode = intent.getBooleanExtra(Constant.IS_DARKMODE, false);
