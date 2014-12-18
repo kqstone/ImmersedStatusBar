@@ -66,7 +66,7 @@ public class PhoneStatusBarHook implements IXposedHookLoadPackage {
 				String pkgName = intent.getStringExtra(Constant.PKG_NAME);
 				String actName = intent.getStringExtra(Constant.ACT_NAME);
 				Utils.log("PKG_NAME:" + pkgName + "; ACT_NAME:" + actName);
-				Utils.log("PRE_PKG_NAME:" + mPrePkgName != null ? mPrePkgName : "null");
+//				Utils.log("PRE_PKG_NAME:" + mPrePkgName != null ? mPrePkgName : "null");
 				
 				if (!(pkgName.equals("com.android.keyguard") && actName.equals("MiuiKeyGuard"))
 						&& (mPrePkgName != null && mPrePkgName.equals("com.android.keyguard") && Utils.isKeyguardLocked(mContext))) {
