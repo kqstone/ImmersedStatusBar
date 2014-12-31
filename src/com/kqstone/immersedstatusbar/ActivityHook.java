@@ -63,7 +63,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 				XposedHelpers.setAdditionalInstanceField(activity, "mHasProfile",false);
 				XposedHelpers.setAdditionalInstanceField(activity, "mContentChangeTimes",0);
 				XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundType",0);//background type: 0=color, 1=picture
-				XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundFilePath",null);
+				XposedHelpers.setAdditionalInstanceField(activity, "mBackgroundPath",null);
 				XposedHelpers.setAdditionalInstanceField(activity, "mFastTrans",null);
 				XposedHelpers.setAdditionalInstanceField(activity, "mHasSetWindowBackground",false);
 			}
@@ -72,7 +72,7 @@ public class ActivityHook implements IXposedHookZygoteInit {
 		XposedHelpers.findAndHookMethod(Activity.class, "onCreate", Bundle.class, new ActivityOnCreateHook());
 		XposedHelpers.findAndHookMethod(Activity.class, "performResume", new ActivityOnResumeHook());
 		XposedHelpers.findAndHookMethod(Activity.class, "onWindowFocusChanged", boolean.class, new OnWindowFocusedHook());
-		XposedHelpers.findAndHookMethod(Activity.class, "onContentChanged", new OnContentChangedHook());
+//		XposedHelpers.findAndHookMethod(Activity.class, "onContentChanged", new OnContentChangedHook());
 
 	}
 
