@@ -1,4 +1,4 @@
-package com.kqstone.immersedstatusbar;
+package com.kqstone.immersedstatusbar.settings;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,16 +7,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
+
+import com.kqstone.immersedstatusbar.R;
 
 public class About extends Activity {
 	public static final String URL_AUTHOR = "https://github.com/kqstone/ImmersedStatusBar";
 	public static final String URL_ACKNOW = "https://github.com/MohammadAG/Xposed-Tinted-Status-Bar";
 	public static final String URL_PROFILE = "https://github.com/watcgfw/ISBpreferences";
 	private View mAboutAuthorContent, mAcknowContent, mAboutProfileContent;
-	
+
 	private OnTouchListener mTouchListener = new OnTouchListener() {
 
 		@Override
@@ -24,20 +25,22 @@ public class About extends Activity {
 			boolean flag = false;
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-				((TextView)view).setTextColor(Color.parseColor("#ff888888"));
+				((TextView) view).setTextColor(Color.parseColor("#ff888888"));
 				flag = true;
 				break;
 			case MotionEvent.ACTION_MOVE:
 				if (isInView(view, event)) {
 					flag = true;
 				} else {
-					((TextView)view).setTextColor(Color.parseColor("#ff000000"));
+					((TextView) view).setTextColor(Color
+							.parseColor("#ff000000"));
 					flag = false;
 				}
 				break;
 			case MotionEvent.ACTION_UP:
-				if(isInView(view, event)) {
-					((TextView) view).setTextColor(Color.parseColor("#ff000000"));
+				if (isInView(view, event)) {
+					((TextView) view).setTextColor(Color
+							.parseColor("#ff000000"));
 					switch (view.getId()) {
 					case R.id.acknow_content:
 						jumpToUrl(URL_ACKNOW);
@@ -55,9 +58,9 @@ public class About extends Activity {
 			}
 			return flag;
 		}
-		
+
 		private boolean isInView(View view, MotionEvent event) {
-			int[] location = {0, 0};
+			int[] location = { 0, 0 };
 			view.getLocationOnScreen(location);
 			int w = view.getWidth();
 			int h = view.getHeight();
@@ -65,13 +68,13 @@ public class About extends Activity {
 			int top = location[1];
 			float x = event.getRawX();
 			float y = event.getRawY();
-			if (x > left && x < left+w && y > top && y < top+h) {
+			if (x > left && x < left + w && y > top && y < top + h) {
 				return true;
 			}
 			return false;
 		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -84,7 +87,7 @@ public class About extends Activity {
 		mAcknowContent = findViewById(R.id.acknow_content);
 		mAcknowContent.setOnTouchListener(mTouchListener);
 	}
-	
+
 	private void jumpToUrl(String url) {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		startActivity(intent);

@@ -93,7 +93,7 @@ public class ZipUtils {
 				desFile.createNewFile();
 			}
 			OutputStream out = new FileOutputStream(desFile);
-			byte buffer[] = new byte[1024];
+			byte buffer[] = new byte[BUFF_SIZE];
 			int realLength = 0;
 			while ((realLength = in.read(buffer)) != -1) {
 				out.write(buffer, 0, realLength);

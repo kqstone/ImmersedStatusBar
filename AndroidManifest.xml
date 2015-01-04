@@ -22,15 +22,15 @@
         <meta-data android:name="xposeddetails" android:value="@string/module_desc_full" />
         
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/module_name" android:theme="@android:style/Theme.Holo.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="FilterAlphaSettingActivity" android:theme="@android:style/Theme.Holo.Light"></activity>
-        <activity android:name="About" android:theme="@android:style/Theme.Holo.Light"></activity>
+        <activity android:name=".settings.FilterAlphaSettingActivity" android:theme="@android:style/Theme.Holo.Light"></activity>
+        <activity android:name=".settings.About" android:theme="@android:style/Theme.Holo.Light"></activity>
         
     </application>
 
