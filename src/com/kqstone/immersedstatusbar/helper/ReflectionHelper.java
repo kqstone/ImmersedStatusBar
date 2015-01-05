@@ -136,6 +136,7 @@ public class ReflectionHelper {
 			if (method.getName().equals(methodName)) {
 				Class<?>[] tmpArgs = method.getParameterTypes();
 				if (compareArgs(tmpArgs, argClasses))
+					method.setAccessible(true);
 					return method;
 			}
 		}

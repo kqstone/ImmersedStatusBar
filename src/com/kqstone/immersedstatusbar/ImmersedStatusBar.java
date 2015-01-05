@@ -11,6 +11,8 @@ import com.kqstone.immersedstatusbar.hook.ActivityHook;
 import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardHook;
 import com.kqstone.immersedstatusbar.hook.PhoneStatusBarHook;
 import com.kqstone.immersedstatusbar.hook.SettingsHook;
+import com.kqstone.immersedstatusbar.hook.SimpleStatusbarHook;
+import com.kqstone.immersedstatusbar.hook.StatusBarIconViewHook;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -112,6 +114,18 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 				}
 			});
 
+			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
+					"com.android.systemui.statusbar.phone.SimpleStatusBar",
+					lpparam.classLoader), new XC_MethodHook() {
+				@Override
+				protected void afterHookedMethod(MethodHookParam param)
+						throws Throwable {
+					XposedHelpers.setAdditionalInstanceField(param.thisObject,
+							"mSimpleStatusbarHook", new SimpleStatusbarHook(
+									param.thisObject));
+				}
+			});
+
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
 					"com.android.systemui.statusbar.phone.SimpleStatusBar",
 					lpparam.classLoader), "updateNotificationIcons",
@@ -120,7 +134,10 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 						@Override
 						protected void afterHookedMethod(MethodHookParam param)
 								throws Throwable {
-							mPhoneStatusBarHook
+							((SimpleStatusbarHook) XposedHelpers
+									.getAdditionalInstanceField(
+											param.thisObject,
+											"mSimpleStatusbarHook"))
 									.hookAfterUpdateNotificationIcons();
 						}
 					});
@@ -132,12 +149,28 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 						@Override
 						protected void afterHookedMethod(MethodHookParam param)
 								throws Throwable {
-							mPhoneStatusBarHook.hookAfterUpdateDarkMode();
+							((SimpleStatusbarHook) XposedHelpers
+									.getAdditionalInstanceField(
+											param.thisObject,
+											"mSimpleStatusbarHook"))
+									.hookAfterUpdateDarkMode();
 						}
 					});
 
 			Class<?> StatusBarIcon = XposedHelpers.findClass(
 					"com.android.internal.statusbar.StatusBarIcon", null);
+			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
+					"com.android.systemui.statusbar.StatusBarIconView",
+					lpparam.classLoader), new XC_MethodHook() {
+				@Override
+				protected void afterHookedMethod(MethodHookParam param)
+						throws Throwable {
+					XposedHelpers.setAdditionalInstanceField(param.thisObject,
+							"mStatusBarIconViewHook",
+							new StatusBarIconViewHook(param.thisObject));
+				}
+			});
+
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
 					"com.android.systemui.statusbar.StatusBarIconView",
 					lpparam.classLoader), "setIcon", StatusBarIcon,
@@ -146,10 +179,11 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 						@Override
 						protected void afterHookedMethod(MethodHookParam param)
 								throws Throwable {
-							Object statusBarIconView = param.thisObject;
-							Object statusBarIcon = param.args[0];
-							mPhoneStatusBarHook.hookAfterSetIcon(
-									statusBarIconView, statusBarIcon);
+							((StatusBarIconViewHook) XposedHelpers
+									.getAdditionalInstanceField(
+											param.thisObject,
+											"mStatusBarIconViewHook"))
+									.hookAfterSetIcon(param.args[0]);
 						}
 					});
 		}
