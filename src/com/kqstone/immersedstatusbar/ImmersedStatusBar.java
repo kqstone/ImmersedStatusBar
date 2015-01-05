@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
 import com.kqstone.immersedstatusbar.hook.ActivityHook;
@@ -71,6 +72,18 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 								.hookAfterOnWindowFocusChanged((Boolean) param.args[0]);
 					}
 				});
+		
+		XposedHelpers.findAndHookMethod(Activity.class, "onPause",
+				new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param)
+							throws Throwable {
+						((ActivityHook) XposedHelpers
+								.getAdditionalInstanceField(param.thisObject,
+										"mActivityHook"))
+								.hookAfterOnPause();
+					}
+				});
 
 	}
 
@@ -111,6 +124,16 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 				protected void beforeHookedMethod(MethodHookParam param)
 						throws Throwable {
 					mPhoneStatusBarHook.hookBeforeUnBindViews();
+				}
+			});
+			
+			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
+					"com.android.systemui.statusbar.phone.PhoneStatusBar",
+					lpparam.classLoader), "interceptTouchEvent", MotionEvent.class, new XC_MethodHook() {
+				@Override
+				protected void beforeHookedMethod(MethodHookParam param)
+						throws Throwable {
+					mPhoneStatusBarHook.hookBeforeInterceptTouchEvent((MotionEvent)param.args[0]);
 				}
 			});
 

@@ -13,6 +13,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.kqstone.immersedstatusbar.Const;
@@ -36,6 +38,8 @@ public class PhoneStatusBarHook {
 
 	private Handler mHandler;
 	private Runnable mUpdateDarkModeRunnable;
+
+	private boolean mHasActionDownBefore = false;
 
 	private BroadcastReceiver mActivityResumeReceiver = new BroadcastReceiver() {
 
@@ -144,6 +148,44 @@ public class PhoneStatusBarHook {
 		mBackgroundBeforeUnbind = ((View) ReflectionHelper.getObjectField(
 				mPhoneStatusBar, "mStatusBarView")).getBackground();
 		mDarkModeBeforeUndbind = mPreDarkMode;
+	}
+
+	public void hookBeforeInterceptTouchEvent(MotionEvent motionEvent) {
+		boolean getUsrColor = Settings.System.getInt(mContext.getContentResolver(),
+				Const.KEY_PREF_GET_USR_COLOR, 0) == 1 ? true
+				: false;
+		if (!getUsrColor)
+			return;
+		View statusbarView = ((View) ReflectionHelper.getObjectField(
+				mPhoneStatusBar, "mStatusBarView"));
+		int x = (int) motionEvent.getRawX();
+		int statusbarWidth = statusbarView.getWidth();
+		if (x >= statusbarWidth / 5 && x <= statusbarWidth * 4 / 5)
+			return;
+		int action = motionEvent.getAction();
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			if (!mHasActionDownBefore) {
+				Intent intent = new Intent(Const.INTENT_GET_USER_COLOR);
+				if (x < statusbarWidth / 5) {
+					intent.putExtra("IS_GET", false);
+				} else if (x > statusbarWidth * 4 / 5) {
+					intent.putExtra("IS_GET", true);
+				}
+				mContext.sendBroadcast(intent);
+				StringBuilder builder = new StringBuilder();
+				builder.append("send get_usr_color intent; ");
+				builder.append("statusbarWidth:" + statusbarWidth);
+				builder.append("x:" + x);
+				Utils.log(builder.toString());
+				mHasActionDownBefore = true;
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+			mHasActionDownBefore = false;
+			break;
+		}
+
 	}
 
 	private void prepare() {

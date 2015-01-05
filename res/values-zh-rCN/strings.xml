@@ -31,6 +31,11 @@
     <string name="hide_debug_settings">隐藏并关闭调试设置</string>
     <string name="summary_filter_alpha">当前滤镜颜色浓度: </string>
     <string name="title_filter_alpha">通知图标滤镜色浓度</string>
+    <string name="title_get_usr_color">状态栏取色</string>
+    <string name="summary_title_get_usr_color">点击状态栏右上角进行取色并存储，点击左上角清除</string>
+    <string name="toast_prefix_get_usr_color">状态栏點擊取色: </string>
+    <string name="toast_suffix_get_usr_color_fail">失敗</string>
+    <string name="toast_cancel_usr_color">已清除取色！ </string>
     
     <!--about  -->
     <string name="about">关于</string>

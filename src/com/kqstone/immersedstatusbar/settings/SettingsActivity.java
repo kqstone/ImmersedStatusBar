@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import com.kqstone.immersedstatusbar.Const;
 import com.kqstone.immersedstatusbar.R;
 import com.kqstone.immersedstatusbar.helper.ProfileDownload;
-import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
 
 public class SettingsActivity extends PreferenceActivity implements
 		OnPreferenceClickListener, OnPreferenceChangeListener {
@@ -38,6 +36,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	private CheckBoxPreference mPrefForceTint;
 	private CheckBoxPreference mPreTintNotification;
 	private CheckBoxPreference mPreQuickAnimContent;
+	private CheckBoxPreference mPreGetUsrColor;
 	private PreferenceCategory mDebugprefCategory;
 	private Preference mSwitchDebug;
 	private CheckBoxPreference mPreExptInform;
@@ -213,6 +212,10 @@ public class SettingsActivity extends PreferenceActivity implements
 						Const.KEY_PREF_QUICKANIM_CONTENT, 0) == 1 ? true
 						: false);
 		mPreQuickAnimContent.setOnPreferenceChangeListener(this);
+		mPreGetUsrColor = (CheckBoxPreference) findPreference(Const.KEY_PREF_GET_USR_COLOR);
+		mPreGetUsrColor.setChecked(Settings.System.getInt(getContentResolver(),
+				Const.KEY_PREF_GET_USR_COLOR, 0) == 1 ? true : false);
+		mPreGetUsrColor.setOnPreferenceChangeListener(this);
 		mDebugprefCategory = (PreferenceCategory) findPreference("debug");
 		mSwitchDebug = findPreference(KEY_SWITCH_DEBUG);
 		mSwitchDebug.setOnPreferenceClickListener(this);
@@ -294,6 +297,10 @@ public class SettingsActivity extends PreferenceActivity implements
 			Settings.System.putInt(getContentResolver(),
 					Const.KEY_PREF_QUICKANIM_CONTENT, (Boolean) arg1 ? 1 : 0);
 			this.mPreQuickAnimContent.setChecked((Boolean) arg1);
+		} else if (key.equals(Const.KEY_PREF_GET_USR_COLOR)) {
+			Settings.System.putInt(getContentResolver(),
+					Const.KEY_PREF_GET_USR_COLOR, (Boolean) arg1 ? 1 : 0);
+			this.mPreGetUsrColor.setChecked((Boolean) arg1);
 		} else if (key.equals(Const.KEY_PREF_EXPORT_INFORM)) {
 			Settings.System.putInt(getContentResolver(),
 					Const.KEY_PREF_EXPORT_INFORM, (Boolean) arg1 ? 1 : 0);
