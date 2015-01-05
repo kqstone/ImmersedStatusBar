@@ -53,6 +53,9 @@ public class Utils {
 		if (Const.DEBUG)
 			Log.d(Const.MODULE, log);
 	}
+	
+	private static int sStatusbarHeight = 0;
+	private static int sDisplayHeight = 0;
 
 	public static int getMainColorFromActionBarDrawable(Drawable drawable)
 			throws IllegalArgumentException {
@@ -150,16 +153,21 @@ public class Utils {
 		drawables[0] = drawable;
 		drawables[1] = dViewDrawable;
 		LayerDrawable ld = new LayerDrawable(drawables);
-		DisplayMetrics metric = new DisplayMetrics();
-		activity.getWindowManager().getDefaultDisplay().getMetrics(metric);
-		int height = metric.heightPixels;
-		int id = (int) ReflectionHelper.getStaticField(
-				ReflectionHelper.getClass("com.android.internal.R$dimen"),
-				"status_bar_height");
-		int statusbarHeight = activity.getResources().getDimensionPixelSize(id);
-		Utils.log("static statusbar height: " + statusbarHeight);
-		ld.setLayerInset(0, 0, 0, 0, height - statusbarHeight);
-		ld.setLayerInset(1, 0, statusbarHeight, 0, 0);
+		if (sDisplayHeight == 0) {
+			DisplayMetrics metric = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(metric);
+			sDisplayHeight = metric.heightPixels;
+		}
+		if (sStatusbarHeight == 0) {
+			int id = (int) ReflectionHelper.getStaticField(
+					ReflectionHelper.getClass("com.android.internal.R$dimen"),
+					"status_bar_height");
+			sStatusbarHeight = activity.getResources()
+					.getDimensionPixelSize(id);
+			Utils.log("static statusbar height: " + sStatusbarHeight);
+		}
+		ld.setLayerInset(0, 0, 0, 0, sDisplayHeight - sStatusbarHeight);
+		ld.setLayerInset(1, 0, sStatusbarHeight, 0, 0);
 		decorView.setBackground(ld);
 	}
 
