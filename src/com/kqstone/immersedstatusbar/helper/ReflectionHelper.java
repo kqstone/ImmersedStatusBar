@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class ReflectionHelper {
 	private static HashMap<String, Method> sMethodCache = new HashMap<String, Method>();
 	private static HashMap<String, Field> sFieldCache = new HashMap<String, Field>();
-	
+
 	private static HashMap<Class<?>, Class<?>> primativeClassMap = new HashMap<Class<?>, Class<?>>();
 	static {
 		primativeClassMap.put(int.class, Integer.class);
@@ -135,13 +135,14 @@ public class ReflectionHelper {
 			e.printStackTrace();
 		}
 	}
-	
-	private static String genMethodFullName(Class<?> clazz, String methodName, Class<?>... argClasses) {
+
+	private static String genMethodFullName(Class<?> clazz, String methodName,
+			Class<?>... argClasses) {
 		StringBuilder name = new StringBuilder();
 		name.append(clazz.getName());
 		name.append(":");
 		name.append(methodName);
-		for (int i=0; i<argClasses.length; i++) {
+		for (int i = 0; i < argClasses.length; i++) {
 			if (i == (argClasses.length - 1)) {
 				name.append(argClasses[i].getName());
 			} else {
@@ -250,7 +251,7 @@ public class ReflectionHelper {
 		sFieldCache.put(fieldFullName, field);
 		return field;
 	}
-	
+
 	private static String genFieldFullName(Class<?> clazz, String fieldName) {
 		StringBuilder name = new StringBuilder();
 		name.append(clazz.getName());
@@ -258,7 +259,5 @@ public class ReflectionHelper {
 		name.append(fieldName);
 		return name.toString();
 	}
-
-
 
 }
