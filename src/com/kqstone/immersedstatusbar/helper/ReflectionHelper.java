@@ -6,6 +6,21 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class ReflectionHelper {
+	private static HashMap<String, Method> sMethodCache = new HashMap<String, Method>();
+	private static HashMap<String, Field> sFieldCache = new HashMap<String, Field>();
+	
+	private static HashMap<Class<?>, Class<?>> primativeClassMap = new HashMap<Class<?>, Class<?>>();
+	static {
+		primativeClassMap.put(int.class, Integer.class);
+		primativeClassMap.put(boolean.class, Boolean.class);
+		primativeClassMap.put(float.class, Float.class);
+		primativeClassMap.put(long.class, Long.class);
+		primativeClassMap.put(short.class, Short.class);
+		primativeClassMap.put(byte.class, Byte.class);
+		primativeClassMap.put(double.class, Double.class);
+		primativeClassMap.put(char.class, Character.class);
+		primativeClassMap.put(void.class, Void.class);
+	}
 
 	public static Class<?> getClass(String className) {
 		Class<?> clazz = null;
@@ -120,6 +135,22 @@ public class ReflectionHelper {
 			e.printStackTrace();
 		}
 	}
+	
+	private static String genMethodFullName(Class<?> clazz, String methodName, Class<?>... argClasses) {
+		StringBuilder name = new StringBuilder();
+		name.append(clazz.getName());
+		name.append(":");
+		name.append(methodName);
+		for (int i=0; i<argClasses.length; i++) {
+			if (i == (argClasses.length - 1)) {
+				name.append(argClasses[i].getName());
+			} else {
+				name.append(argClasses[i].getName());
+				name.append(",");
+			}
+		}
+		return name.toString();
+	}
 
 	private static Class<?>[] getArgsTypes(Object... args) {
 		Class<?>[] argClasses = new Class<?>[args.length];
@@ -132,12 +163,17 @@ public class ReflectionHelper {
 
 	private static Method getMethodBestMatch(Class<?> clazz, String methodName,
 			Class<?>... argClasses) throws Throwable {
+		String methodFullName = genMethodFullName(clazz, methodName, argClasses);
+		if (sMethodCache.containsKey(methodFullName))
+			return sMethodCache.get(methodFullName);
 		for (Method method : clazz.getDeclaredMethods()) {
 			if (method.getName().equals(methodName)) {
 				Class<?>[] tmpArgs = method.getParameterTypes();
-				if (compareArgs(tmpArgs, argClasses))
+				if (compareArgs(tmpArgs, argClasses)) {
 					method.setAccessible(true);
+					sMethodCache.put(methodFullName, method);
 					return method;
+				}
 			}
 		}
 		String msg = "";
@@ -180,6 +216,9 @@ public class ReflectionHelper {
 
 	private static Field getField(Class<?> clazz, String fieldName)
 			throws Throwable {
+		String fieldFullName = genFieldFullName(clazz, fieldName);
+		if (sFieldCache.containsKey(fieldFullName))
+			return sFieldCache.get(fieldFullName);
 		Field field = null;
 		try {
 			field = clazz.getField(fieldName);
@@ -208,20 +247,18 @@ public class ReflectionHelper {
 					+ fieldName;
 			throw new Throwable(msg);
 		}
+		sFieldCache.put(fieldFullName, field);
 		return field;
 	}
-
-	private static HashMap<Class<?>, Class<?>> primativeClassMap = new HashMap<Class<?>, Class<?>>();
-	static {
-		primativeClassMap.put(int.class, Integer.class);
-		primativeClassMap.put(boolean.class, Boolean.class);
-		primativeClassMap.put(float.class, Float.class);
-		primativeClassMap.put(long.class, Long.class);
-		primativeClassMap.put(short.class, Short.class);
-		primativeClassMap.put(byte.class, Byte.class);
-		primativeClassMap.put(double.class, Double.class);
-		primativeClassMap.put(char.class, Character.class);
-		primativeClassMap.put(void.class, Void.class);
+	
+	private static String genFieldFullName(Class<?> clazz, String fieldName) {
+		StringBuilder name = new StringBuilder();
+		name.append(clazz.getName());
+		name.append(":");
+		name.append(fieldName);
+		return name.toString();
 	}
+
+
 
 }
