@@ -74,20 +74,18 @@ public class ActivityHook {
 				}
 				if (isget) {
 					Drawable drawable = null;
-					Bitmap bitmap = Utils.getBitMapFromActivityBackground(
-							mActivity, false);
-					if (bitmap != null) {
-						BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
-						if (mColor != bitmapColor.Color) {
-							mColor = bitmapColor.Color;
+					int color = intent.getIntExtra(
+							Const.STATUSBAR_BACKGROUND_COLOR,
+							Const.UNKNOW_COLOR);
+					if (color != Const.UNKNOW_COLOR) {
+						if (mColor != color) {
+							mColor = color;
 							mBackgroundType = 0;
 							mDarkMode = Utils.getDarkMode(mColor);
 							drawable = new ColorDrawable(mColor);
 							if (drawable != null) {
 								Utils.setDecorViewBackground(mActivity,
 										drawable, true);
-								mActivity.getWindow().getDecorView()
-										.invalidate();
 								mHasSetWindowBackground = true;
 							}
 							Editor editor = mPref.edit();

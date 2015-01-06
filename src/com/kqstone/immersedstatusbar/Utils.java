@@ -53,7 +53,7 @@ public class Utils {
 		if (Const.DEBUG)
 			Log.d(Const.MODULE, log);
 	}
-	
+
 	private static int sStatusbarHeight = 0;
 	private static int sDisplayHeight = 0;
 
@@ -106,6 +106,33 @@ public class Utils {
 		return keyguardLocked;
 	}
 
+	public static Bitmap getScreenShot(Context context) {
+		Bitmap bitmap1 = (Bitmap) ReflectionHelper.callStaticMethod(
+				ReflectionHelper.getClass("miui.util.ScreenshotUtils"),
+				"getScreenshot", context);
+		if (bitmap1 == null)
+			return null;
+		if (sStatusbarHeight == 0) {
+			int id = (int) ReflectionHelper.getStaticField(
+					ReflectionHelper.getClass("com.android.internal.R$dimen"),
+					"status_bar_height");
+			sStatusbarHeight = context.getResources().getDimensionPixelSize(id);
+			Utils.log("static statusbar height: " + sStatusbarHeight);
+		}
+
+		int width = bitmap1.getWidth() / 4;
+		try {
+			Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2,
+					sStatusbarHeight, width, Const.OFFEST_FOR_GRADUAL_ACTIVITY);
+
+			return bitmap;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static Bitmap getBitMapFromActivityBackground(Activity activity,
 			boolean transparent) {
 		View view = activity.getWindow().getDecorView();
@@ -117,10 +144,15 @@ public class Utils {
 			return null;
 		int top = 0;
 		if (!transparent) {
-			Rect rect = new Rect();
-			view.getWindowVisibleDisplayFrame(rect);
-			top = rect.top;
-			Utils.log("statusbar height: " + top);
+			if (sStatusbarHeight == 0) {
+				int id = (int) ReflectionHelper.getStaticField(ReflectionHelper
+						.getClass("com.android.internal.R$dimen"),
+						"status_bar_height");
+				sStatusbarHeight = activity.getResources()
+						.getDimensionPixelSize(id);
+				Utils.log("static statusbar height: " + sStatusbarHeight);
+			}
+			top = sStatusbarHeight;
 		}
 
 		int width = bitmap1.getWidth() / 4;
@@ -376,6 +408,29 @@ public class Utils {
 		hsv[2] = value;
 		int alpha = Color.alpha(color);
 		return Color.HSVToColor(alpha, hsv);
+	}
+
+	public static void outputBitmapToFile(Bitmap bitmap) {
+		String path = Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + "/isb/temp/";
+		File dir = new File(path);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+
+		String fname = path + "screenshot.png";
+
+		FileOutputStream out;
+		try {
+			out = new FileOutputStream(fname);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 80, out);
+			// bitmap.recycle();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void outputBitmapToFile(final Bitmap bitmap,

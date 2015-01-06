@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.kqstone.immersedstatusbar.Const;
 import com.kqstone.immersedstatusbar.Utils;
+import com.kqstone.immersedstatusbar.helper.BitMapColor;
 import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
 
 public class PhoneStatusBarHook {
@@ -151,8 +152,8 @@ public class PhoneStatusBarHook {
 	}
 
 	public void hookBeforeInterceptTouchEvent(MotionEvent motionEvent) {
-		boolean getUsrColor = Settings.System.getInt(mContext.getContentResolver(),
-				Const.KEY_PREF_GET_USR_COLOR, 0) == 1 ? true
+		boolean getUsrColor = Settings.System.getInt(
+				mContext.getContentResolver(), Const.KEY_PREF_GET_USR_COLOR, 0) == 1 ? true
 				: false;
 		if (!getUsrColor)
 			return;
@@ -171,6 +172,12 @@ public class PhoneStatusBarHook {
 					intent.putExtra("IS_GET", false);
 				} else if (x > statusbarWidth * 4 / 5) {
 					intent.putExtra("IS_GET", true);
+					Bitmap bitmap = Utils.getScreenShot(mContext);
+					if (bitmap != null) {
+						BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
+						int color = bitmapColor.Color;
+						intent.putExtra(Const.STATUSBAR_BACKGROUND_COLOR, color);
+					}
 				}
 				mContext.sendBroadcast(intent);
 				StringBuilder builder = new StringBuilder();
