@@ -37,6 +37,8 @@
     <string name="toast_prefix_get_usr_color">Get user color: </string>
     <string name="toast_suffix_get_usr_color_fail">Failed</string>
     <string name="toast_cancel_usr_color">Clear customized user color </string>
+    <string name="text_title_get_user_color_mode">On get user color mode</string>
+    <string name="text_content_get_user_color_mode">You can get and store user color by click right part of statusbar, and clear it by click left part of statusbar. \nSuggest to turn of on daily use</string>
     
     
     <!--about  -->

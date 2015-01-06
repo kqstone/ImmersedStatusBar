@@ -49,18 +49,21 @@ public class SettingsActivity extends PreferenceActivity implements
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
+			mNotify.cancelNotification(0);
 			boolean success = msg.what == 1 ? true : false;
 			String text;
-			text = mContext.getResources().getString(
-					success ? R.string.success : R.string.fail)
-					+ "!";
-			Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
-			mNotify.cancelNotification(0);
-			mNotify.setIcon(success ? R.drawable.ic_stat_download_success
-					: R.drawable.ic_stat_download_fail);
-			mNotify.setEvent(text, text, null);
-			mNotify.setFlags(Notification.FLAG_AUTO_CANCEL);
-			mNotify.showNotification(1);
+			if (!success) {
+				text = mContext.getResources().getString(R.string.fail)
+						+ "!";
+				mNotify.setIcon(R.drawable.ic_stat_download_fail);
+				mNotify.setEvent(text, text, null);
+				mNotify.setFlags(Notification.FLAG_AUTO_CANCEL);
+				mNotify.showNotification(0);
+			} else {
+				text = mContext.getResources().getString(R.string.success)
+						+ "!";
+			}
+			Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();			
 		}
 	};
 
@@ -133,7 +136,6 @@ public class SettingsActivity extends PreferenceActivity implements
 			mNotificationManager = (NotificationManager) context
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 			mNotification = new Notification();
-			mNotification.icon = R.drawable.ic_stat_download;
 		}
 
 		public Notify(Context context, String tickerText, String contentTitle,
@@ -263,6 +265,7 @@ public class SettingsActivity extends PreferenceActivity implements
 					R.string.begin_download_profiles);
 			String textSummary = mContext.getResources().getString(
 					R.string.begin_download_profiles_summary);
+			mNotify.setIcon(R.drawable.ic_stat_download);
 			mNotify.setEvent(text, text, textSummary);
 			mNotify.setFlags(Notification.FLAG_ONGOING_EVENT);
 			mNotify.showNotification(0);
@@ -301,6 +304,7 @@ public class SettingsActivity extends PreferenceActivity implements
 			Settings.System.putInt(getContentResolver(),
 					Const.KEY_PREF_GET_USR_COLOR, (Boolean) arg1 ? 1 : 0);
 			this.mPreGetUsrColor.setChecked((Boolean) arg1);
+			this.notifyGetUserColor((Boolean) arg1);
 		} else if (key.equals(Const.KEY_PREF_EXPORT_INFORM)) {
 			Settings.System.putInt(getContentResolver(),
 					Const.KEY_PREF_EXPORT_INFORM, (Boolean) arg1 ? 1 : 0);
@@ -352,6 +356,19 @@ public class SettingsActivity extends PreferenceActivity implements
 	private void sendIntent(String action) {
 		Intent intent = new Intent(action);
 		this.sendBroadcast(intent);
+	}
+	
+	private void notifyGetUserColor(boolean show) {
+		if (show) {
+			String title = mContext.getResources().getString(R.string.text_title_get_user_color_mode);
+			String summary = mContext.getResources().getString(R.string.text_content_get_user_color_mode);
+			mNotify.setIcon(R.drawable.ic_stat_get_user_color);
+			mNotify.setEvent(title, title, summary);
+			mNotify.setFlags(Notification.FLAG_ONGOING_EVENT);
+			mNotify.showNotification(1);
+		} else {
+			mNotify.cancelNotification(1);
+		}
 	}
 
 }
