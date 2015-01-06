@@ -165,6 +165,7 @@ public class ActivityHook {
 		if (!mCreateAct) {
 			Utils.sendTintStatusBarIntent(mActivity, mBackgroundType, mColor,
 					mPath, mDarkMode, mFastTrans);
+			mActivity.registerReceiver(mReceiver, mFilter);
 			return;
 		}
 
