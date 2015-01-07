@@ -1,52 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/author"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="@string/author_inform"
-        android:textStyle="bold" />
+        android:orientation="vertical"  >
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/author_inform"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/author_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:text="@string/author_content" />
+
+        <TextView
+            android:id="@+id/acknow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/acknow_inform"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/acknow_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:text="@string/acknow_content" />
+
+        <TextView
+            android:id="@+id/profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/about_profile"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/profile_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:text="@string/about_profile_content" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/author_content"
+        android:id="@+id/version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:text="@string/author_content" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="15dp"
+        android:text="version"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/gray" />
 
-    <TextView
-        android:id="@+id/acknow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="@string/acknow_inform"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/acknow_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:text="@string/acknow_content" />
-
-    <TextView
-        android:id="@+id/profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="@string/about_profile"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/profile_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:text="@string/about_profile_content" />
-
-</LinearLayout>
+</RelativeLayout>

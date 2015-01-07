@@ -17,6 +17,7 @@ public class About extends Activity {
 	public static final String URL_ACKNOW = "https://github.com/MohammadAG/Xposed-Tinted-Status-Bar";
 	public static final String URL_PROFILE = "https://github.com/watcgfw/ISBpreferences";
 	private View mAboutAuthorContent, mAcknowContent, mAboutProfileContent;
+	private TextView mVersion;
 
 	private OnTouchListener mTouchListener = new OnTouchListener() {
 
@@ -86,6 +87,8 @@ public class About extends Activity {
 		mAboutProfileContent.setOnTouchListener(mTouchListener);
 		mAcknowContent = findViewById(R.id.acknow_content);
 		mAcknowContent.setOnTouchListener(mTouchListener);
+		mVersion = (TextView) findViewById(R.id.version);
+		mVersion.setText(getResources().getString(R.string.about_version) + getResources().getString(R.string.version_name));
 	}
 
 	private void jumpToUrl(String url) {

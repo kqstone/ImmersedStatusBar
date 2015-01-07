@@ -45,6 +45,7 @@
     
     <!--about  -->
     <string name="about">About</string>
+    <string name="about_version">App Version:</string>
     <string name="about_app">About Immersed Statusbar for MIUI6</string>
     <string name="author_inform">Author:</string>
     <string name="author_content">kqstone (kqstone@163.com)</string>
