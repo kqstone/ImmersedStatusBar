@@ -110,6 +110,8 @@ public class ActivityHook {
 					editor.remove(Const.STATUSBAR_BACKGROUND_COLOR + "_"
 							+ mActName);
 					editor.commit();
+					mCreateAct = true;
+					hookAfterPerformResume();
 					msg = (res != null) ? res
 							.getString(R.string.toast_cancel_usr_color) : null;
 				}
@@ -163,7 +165,8 @@ public class ActivityHook {
 		if (!mCreateAct) {
 			Utils.sendTintStatusBarIntent(mActivity, mBackgroundType, mColor,
 					mPath, mDarkMode, mFastTrans);
-			mActivity.registerReceiver(mReceiver, mFilter);
+			if (type == WindowType.Normal)
+				mActivity.registerReceiver(mReceiver, mFilter);
 			return;
 		}
 
