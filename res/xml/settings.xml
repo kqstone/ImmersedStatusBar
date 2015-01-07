@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint" android:summary="@string/summary_force_tint"/>
-    <CheckBoxPreference android:title="@string/title_tint_notification" android:key="key_tint_notification" android:summary="@string/summary_tint_notification"/>
-    <Preference android:key="key_filter_alpha" android:title="@string/title_filter_alpha" android:summary="@string/summary_filter_alpha"/>
-    <CheckBoxPreference android:title="@string/title_quickanim_content" android:key="key_quickanim_content" android:summary="@string/summary_quickanim_content"/>
+    <PreferenceCategory android:title="@string/title_app_settings"><CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint" android:summary="@string/summary_force_tint" /><CheckBoxPreference android:title="@string/title_tint_notification" android:key="key_tint_notification" android:summary="@string/summary_tint_notification" /><Preference android:key="key_filter_alpha" android:title="@string/title_filter_alpha" android:summary="@string/summary_filter_alpha" /><CheckBoxPreference android:title="@string/title_quickanim_content" android:key="key_quickanim_content" android:summary="@string/summary_quickanim_content" /></PreferenceCategory>
     
-    <PreferenceCategory android:title="@string/profile">
-        <Preference android:title="@string/profile_download" android:key="profile" />
+    
+    
+    
+    <PreferenceCategory android:title="@string/activity_presets">
+        <Preference android:title="@string/title_profile" android:key="profile" android:summary="@string/summary_profile_download"/>
         <CheckBoxPreference android:title="@string/title_get_usr_color" android:key="key_get_usr_color" android:summary="@string/summary_title_get_usr_color"/>
     </PreferenceCategory><PreferenceCategory android:title="@string/debug" android:key="debug">
     	<Preference android:title="@string/show_debug_settings" android:key="switch_debug" />
@@ -20,6 +20,7 @@
     <PreferenceCategory android:title="@string/about">
         <Preference android:title="@string/about_app" android:key="about" />
     </PreferenceCategory>
+    
     
     
 

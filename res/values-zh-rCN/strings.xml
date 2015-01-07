@@ -14,6 +14,7 @@
     
     <!--settings  -->
     <string name="title_settings">设置</string>
+    <string name="title_app_settings">程序设置</string>
     <string name="title_force_tint">强制变色</string>
     <string name="summary_force_tint">对顶栏非单一色或渐变色应用强制变色</string>
     <string name="title_tint_notification">变色通知图标</string>
@@ -25,8 +26,9 @@
     <string name="summary_export_inform">输出程序和界面信息以方便改写配置文件\n用法：开启选项后使用adb logcat输出\n命令：adb logcat -v raw *:S ISB:D</string>
     <string name="title_export_inform_tofile">输出信息至SD卡</string>
     <string name="summary_export_inform_tofile">输出程序界面信息及截图至SD卡，位于/sdcard/isb/log文件夹下</string>
-    <string name="profile">配置文件</string>
-    <string name="profile_download">点击从Internet下载配置文件</string>
+    <string name="activity_presets">Activity配置</string>
+    <string name="title_profile">配置文件</string>
+    <string name="summary_profile_download">点击从Internet下载配置文件</string>
     <string name="show_debug_settings">显示调试设置</string>
     <string name="hide_debug_settings">隐藏并关闭调试设置</string>
     <string name="summary_filter_alpha">当前滤镜颜色浓度: </string>
@@ -36,6 +38,8 @@
     <string name="toast_prefix_get_usr_color">状态栏點擊取色: </string>
     <string name="toast_suffix_get_usr_color_fail">失敗</string>
     <string name="toast_cancel_usr_color">已清除取色！ </string>
+    <string name="text_title_get_user_color_mode">状态栏取色模式</string>
+    <string name="text_content_get_user_color_mode">点击状态栏右侧取色，左侧清除；正常使用建议关闭</string>
     
     <!--about  -->
     <string name="about">关于</string>

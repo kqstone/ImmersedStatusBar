@@ -23,7 +23,7 @@
         
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="@string/module_name" android:theme="@android:style/Theme.Holo.Light">
+            android:label="@string/module_name" android:theme="@android:style/Theme.Holo.Light" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
