@@ -131,11 +131,12 @@ public class ActivityHook {
 		mPkgName = mActivity.getPackageName();
 		mActName = mActivity.getLocalClassName();
 		mCreateAct = true;
-		if (mPkgName.equals("com.miui.home") && mActName.equals("launcher.Launcher")) {
+		if (mPkgName.equals("com.miui.home")
+				&& mActName.equals("launcher.Launcher")) {
 			mIsLauncher = true;
 			return;
 		}
-		
+
 		mHelper = new ProfileHelper(mActivity.getPackageName());
 		mHelper.initiateProfile(mActivity.getLocalClassName());
 		if (mHelper != null && mHelper.hasProfile()) {
@@ -272,8 +273,8 @@ public class ActivityHook {
 							mDarkMode = Utils.getDarkMode(mColor);
 							handled = true;
 							drawable = new ColorDrawable(mColor);
-//							actionBar.setBackgroundDrawable(drawable);
-//							container.invalidate();
+							actionBar.setBackgroundDrawable(drawable);
+							container.invalidate();
 							mBackgroundType = 0;
 						}
 					}
@@ -309,10 +310,7 @@ public class ActivityHook {
 	}
 
 	public void hookAfterOnWindowFocusChanged(boolean focused) {
-		if (!focused)
-			return;
-
-		if (!mNeedGetColorFromBackground)
+		if (mIsLauncher || !focused || !mNeedGetColorFromBackground)
 			return;
 
 		Bitmap bitmap;
