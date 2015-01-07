@@ -259,8 +259,8 @@ public class ActivityHook {
 							mDarkMode = Utils.getDarkMode(mColor);
 							handled = true;
 							drawable = new ColorDrawable(mColor);
-							actionBar.setBackgroundDrawable(drawable);
-							container.invalidate();
+//							actionBar.setBackgroundDrawable(drawable);
+//							container.invalidate();
 							mBackgroundType = 0;
 						}
 					}
