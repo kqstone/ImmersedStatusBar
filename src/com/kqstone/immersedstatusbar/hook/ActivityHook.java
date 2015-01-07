@@ -42,6 +42,7 @@ public class ActivityHook {
 	private String mPkgName = null, mActName = null;
 	private ProfileHelper mHelper = null;
 	private boolean mHasProfile = false;
+	private boolean mIsLauncher = false;
 
 	private Integer mBackgroundType = null;
 	private int mColor = 0;
@@ -129,6 +130,12 @@ public class ActivityHook {
 	public void hookAfterOnCreate() {
 		mPkgName = mActivity.getPackageName();
 		mActName = mActivity.getLocalClassName();
+		mCreateAct = true;
+		if (mPkgName.equals("com.miui.home") && mActName.equals("launcher.Launcher")) {
+			mIsLauncher = true;
+			return;
+		}
+		
 		mHelper = new ProfileHelper(mActivity.getPackageName());
 		mHelper.initiateProfile(mActivity.getLocalClassName());
 		if (mHelper != null && mHelper.hasProfile()) {
@@ -137,7 +144,6 @@ public class ActivityHook {
 			if (mBackgroundType == 2)
 				Utils.setTranslucentStatus(mActivity);
 		}
-		mCreateAct = true;
 
 		mPref = mActivity.getSharedPreferences(SHAREDPREF_NAME,
 				Context.MODE_PRIVATE);
@@ -193,6 +199,13 @@ public class ActivityHook {
 					mPath, mDarkMode, mFastTrans);
 			break;
 		case Translucent:
+			if (mIsLauncher) {
+				mBackgroundType = 0;
+				mColor = 0;
+				handled = true;
+				mDarkMode = false;
+				mNeedGetColorFromBackground = false;
+			}
 			Utils.log("Translucent activity, need get darkmode after window focus changed");
 			mNeedGetColorFromBackground = true;
 			break;
@@ -383,6 +396,7 @@ public class ActivityHook {
 	}
 
 	public void hookAfterOnPause() {
-		mActivity.unregisterReceiver(mReceiver);
+		if (!mIsLauncher)
+			mActivity.unregisterReceiver(mReceiver);
 	}
 }
