@@ -146,10 +146,16 @@ public class ActivityHook {
 
 						@Override
 						public void run() {
-							mDarkMode = Utils
+							boolean darkmode = Utils
 									.darkModeStatusBarMiuiActivity(mActivity);
-							Utils.log("get set wallpaper broadcast, reset mDarkMode: "
-									+ mDarkMode);
+							if (mDarkMode != darkmode) {
+								mDarkMode = darkmode;
+								Utils.sendTintStatusBarIntent(mActivity,
+										mBackgroundType, mColor, mPath,
+										mDarkMode, mFastTrans);
+								Utils.log("get set wallpaper broadcast, reset mDarkMode: "
+										+ mDarkMode);
+							}
 						}
 					}, 300);
 				}
