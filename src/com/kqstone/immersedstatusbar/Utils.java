@@ -275,6 +275,23 @@ public class Utils {
 
 		return WindowType.Normal;
 	}
+	
+	public static boolean darkModeStatusBarMiuiActivity(Activity activity) {
+		try {
+			WindowManager.LayoutParams winParams = activity.getWindow().getAttributes();
+			int extraFlags = (int) ReflectionHelper.getObjectField(winParams, "extraFlags");
+			Class<?> miuiLayoutParams = ReflectionHelper.getClass("android.view.MiuiWindowManager$LayoutParams");
+			int darkmodeFlag = (int) ReflectionHelper.getStaticField(miuiLayoutParams, "EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+			Utils.log("extraFlags:" + extraFlags + "; darkmodeFlag" + darkmodeFlag);
+			if ((extraFlags & darkmodeFlag) == darkmodeFlag) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return false;
+	}
 
 	public static boolean isSystemApp(Activity activity) {
 		ApplicationInfo info = activity.getApplicationInfo();

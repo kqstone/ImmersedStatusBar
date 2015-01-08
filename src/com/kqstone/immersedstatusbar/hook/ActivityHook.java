@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -57,6 +58,7 @@ public class ActivityHook {
 
 	private SharedPreferences mPref;
 	private IntentFilter mFilter = new IntentFilter();
+	private Handler mHandler = new Handler();
 
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
@@ -134,6 +136,24 @@ public class ActivityHook {
 		if (mPkgName.equals("com.miui.home")
 				&& mActName.equals("launcher.Launcher")) {
 			mIsLauncher = true;
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(Const.INTENT_SET_WALLPAPER);
+			mActivity.registerReceiver(new BroadcastReceiver() {
+
+				@Override
+				public void onReceive(Context arg0, Intent arg1) {
+					mHandler.postDelayed(new Runnable() {
+
+						@Override
+						public void run() {
+							mDarkMode = Utils
+									.darkModeStatusBarMiuiActivity(mActivity);
+							Utils.log("get set wallpaper broadcast, reset mDarkMode: "
+									+ mDarkMode);
+						}
+					}, 300);
+				}
+			}, filter);
 			return;
 		}
 
@@ -204,11 +224,22 @@ public class ActivityHook {
 				mBackgroundType = 0;
 				mColor = 0;
 				handled = true;
-				mDarkMode = false;
+				mDarkMode = Utils.darkModeStatusBarMiuiActivity(mActivity);
 				mNeedGetColorFromBackground = false;
+				Utils.sendTintStatusBarIntent(mActivity, mBackgroundType,
+						mColor, mPath, mDarkMode, mFastTrans);
+			} else if (mDarkMode = Utils
+					.darkModeStatusBarMiuiActivity(mActivity)) {
+				mBackgroundType = 0;
+				mColor = Color.TRANSPARENT;
+				handled = true;
+				mNeedGetColorFromBackground = false;
+				Utils.sendTintStatusBarIntent(mActivity, mBackgroundType,
+						mColor, mPath, mDarkMode, mFastTrans);
+			} else {
+				Utils.log("Translucent activity, need get darkmode after window focus changed");
+				mNeedGetColorFromBackground = true;
 			}
-			Utils.log("Translucent activity, need get darkmode after window focus changed");
-			mNeedGetColorFromBackground = true;
 			break;
 		case Normal:
 			boolean exinform = Settings.System.getInt(
@@ -394,7 +425,8 @@ public class ActivityHook {
 	}
 
 	public void hookAfterOnPause() {
-		if (!mIsLauncher)
+		WindowType type = Utils.getWindowType(mActivity);
+		if (type == WindowType.Normal)
 			mActivity.unregisterReceiver(mReceiver);
 	}
 }

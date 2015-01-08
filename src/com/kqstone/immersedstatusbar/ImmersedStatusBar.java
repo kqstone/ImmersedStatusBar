@@ -1,13 +1,17 @@
 package com.kqstone.immersedstatusbar;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
+import com.kqstone.immersedstatusbar.helper.WallpaperManagerHook;
 import com.kqstone.immersedstatusbar.hook.ActivityHook;
 import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardHook;
 import com.kqstone.immersedstatusbar.hook.PhoneStatusBarHook;
@@ -84,6 +88,13 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 								.hookAfterOnPause();
 					}
 				});
+		XposedHelpers.findAndHookMethod(WallpaperManager.class, "setWallpaper", InputStream.class, FileOutputStream.class, new XC_MethodHook() {
+			@Override
+			protected void afterHookedMethod(MethodHookParam param)
+					throws Throwable {
+				WallpaperManagerHook.hookAfterSetWallpaper(param.thisObject);
+			}
+		});
 
 	}
 
@@ -240,6 +251,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 						}
 					});
 		}
+
 	}
 
 }
