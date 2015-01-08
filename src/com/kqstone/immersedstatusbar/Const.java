@@ -14,7 +14,7 @@ public final class Const {
 	public static final String INTENT_UPDATE_TRANSANIMASCALE = "com.kqstone.immersedstatusbar.UPDATETRANSANIMSCALE";
 	public static final String INTENT_RESTART_SYSTEMUI = "com.kqstone.immersedstatusbar.RESTARTSYSTEMUI";
 	public static final String INTENT_GET_USER_COLOR = "com.kqstone.immersedstatusbar.GETUSERCOLOR";
-	public static final String INTENT_SET_LOCK_WALLPAPER = "com.kqstone.immersedstatusbar.SETLOCKWALLPAPER";
+	public static final String INTENT_SET_LOCK_WALLPAPER = "com.miui.keyguard.setwallpaper";
 	public static final String INTENT_SET_WALLPAPER = "com.kqstone.immersedstatusbar.SETWALLPAPER";
 
 	public static final String PKG_NAME = "package_name";

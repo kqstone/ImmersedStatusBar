@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 
 import com.kqstone.immersedstatusbar.helper.WallpaperManagerHook;
 import com.kqstone.immersedstatusbar.hook.ActivityHook;
-import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardHook;
+import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardViewMediatorHook;
 import com.kqstone.immersedstatusbar.hook.PhoneStatusBarHook;
 import com.kqstone.immersedstatusbar.hook.SettingsHook;
 import com.kqstone.immersedstatusbar.hook.SimpleStatusbarHook;
@@ -223,14 +223,22 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 		}
 
 		if (lpparam.packageName.equals("com.android.keyguard")) {
+			XposedBridge.hookAllConstructors(XposedHelpers.findClass("com.android.keyguard.MiuiKeyguardViewMediator",
+					lpparam.classLoader), new XC_MethodHook() {
+				@Override
+				protected void afterHookedMethod(MethodHookParam param)
+						throws Throwable {
+					XposedHelpers.setAdditionalInstanceField(param.thisObject, "mMiuiKeyguardViewMediatorHook", new MiuiKeyGuardViewMediatorHook(param.thisObject));
+				}
+			});
+			
 			XposedHelpers.findAndHookMethod(
 					"com.android.keyguard.MiuiKeyguardViewMediator",
 					lpparam.classLoader, "handleShow", new XC_MethodHook() {
 						@Override
 						protected void afterHookedMethod(MethodHookParam param)
 								throws Throwable {
-							MiuiKeyGuardHook
-									.hookAfterHandleShow(param.thisObject);
+							((MiuiKeyGuardViewMediatorHook)XposedHelpers.getAdditionalInstanceField(param.thisObject, "mMiuiKeyguardViewMediatorHook")).hookAfterHandleShow();
 						}
 					});
 		}
