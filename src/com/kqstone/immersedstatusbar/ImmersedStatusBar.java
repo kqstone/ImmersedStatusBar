@@ -76,7 +76,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 								.hookAfterOnWindowFocusChanged((Boolean) param.args[0]);
 					}
 				});
-		
+
 		XposedHelpers.findAndHookMethod(Activity.class, "onPause",
 				new XC_MethodHook() {
 					@Override
@@ -84,17 +84,18 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 							throws Throwable {
 						((ActivityHook) XposedHelpers
 								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook"))
-								.hookAfterOnPause();
+										"mActivityHook")).hookAfterOnPause();
 					}
 				});
-		XposedHelpers.findAndHookMethod(WallpaperManager.class, "setWallpaper", InputStream.class, FileOutputStream.class, new XC_MethodHook() {
-			@Override
-			protected void afterHookedMethod(MethodHookParam param)
-					throws Throwable {
-				WallpaperManagerHook.hookAfterSetWallpaper(param.thisObject);
-			}
-		});
+		XposedHelpers.findAndHookMethod(WallpaperManager.class, "setWallpaper",
+				InputStream.class, FileOutputStream.class, new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param)
+							throws Throwable {
+						WallpaperManagerHook
+								.hookAfterSetWallpaper(param.thisObject);
+					}
+				});
 
 	}
 
@@ -137,16 +138,18 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					mPhoneStatusBarHook.hookBeforeUnBindViews();
 				}
 			});
-			
+
 			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
 					"com.android.systemui.statusbar.phone.PhoneStatusBar",
-					lpparam.classLoader), "interceptTouchEvent", MotionEvent.class, new XC_MethodHook() {
-				@Override
-				protected void beforeHookedMethod(MethodHookParam param)
-						throws Throwable {
-					mPhoneStatusBarHook.hookBeforeInterceptTouchEvent((MotionEvent)param.args[0]);
-				}
-			});
+					lpparam.classLoader), "interceptTouchEvent",
+					MotionEvent.class, new XC_MethodHook() {
+						@Override
+						protected void beforeHookedMethod(MethodHookParam param)
+								throws Throwable {
+							mPhoneStatusBarHook
+									.hookBeforeInterceptTouchEvent((MotionEvent) param.args[0]);
+						}
+					});
 
 			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
 					"com.android.systemui.statusbar.phone.SimpleStatusBar",
@@ -223,22 +226,29 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 		}
 
 		if (lpparam.packageName.equals("com.android.keyguard")) {
-			XposedBridge.hookAllConstructors(XposedHelpers.findClass("com.android.keyguard.MiuiKeyguardViewMediator",
+			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
+					"com.android.keyguard.MiuiKeyguardViewMediator",
 					lpparam.classLoader), new XC_MethodHook() {
 				@Override
 				protected void afterHookedMethod(MethodHookParam param)
 						throws Throwable {
-					XposedHelpers.setAdditionalInstanceField(param.thisObject, "mMiuiKeyguardViewMediatorHook", new MiuiKeyGuardViewMediatorHook(param.thisObject));
+					XposedHelpers.setAdditionalInstanceField(param.thisObject,
+							"mMiuiKeyguardViewMediatorHook",
+							new MiuiKeyGuardViewMediatorHook(param.thisObject));
 				}
 			});
-			
+
 			XposedHelpers.findAndHookMethod(
 					"com.android.keyguard.MiuiKeyguardViewMediator",
 					lpparam.classLoader, "handleShow", new XC_MethodHook() {
 						@Override
 						protected void afterHookedMethod(MethodHookParam param)
 								throws Throwable {
-							((MiuiKeyGuardViewMediatorHook)XposedHelpers.getAdditionalInstanceField(param.thisObject, "mMiuiKeyguardViewMediatorHook")).hookAfterHandleShow();
+							((MiuiKeyGuardViewMediatorHook) XposedHelpers
+									.getAdditionalInstanceField(
+											param.thisObject,
+											"mMiuiKeyguardViewMediatorHook"))
+									.hookAfterHandleShow();
 						}
 					});
 		}

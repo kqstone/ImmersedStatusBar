@@ -11,7 +11,8 @@ public class WallpaperManagerHook {
 
 	public static void hookAfterSetWallpaper(Object wallpaperManager) {
 		Intent intent = new Intent(Const.INTENT_SET_WALLPAPER);
-		Context context = (Context) ReflectionHelper.getObjectField(wallpaperManager, "mContext");
+		Context context = (Context) ReflectionHelper.getObjectField(
+				wallpaperManager, "mContext");
 		context.sendBroadcast(intent);
 		Utils.log("Send change wallpaper broadcast...");
 	}

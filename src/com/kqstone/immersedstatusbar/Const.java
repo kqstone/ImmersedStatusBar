@@ -1,6 +1,5 @@
 package com.kqstone.immersedstatusbar;
 
-
 public final class Const {
 	public static final boolean DEBUG = true;
 
@@ -43,7 +42,5 @@ public final class Const {
 	public static final String KEY_PREF_GET_USR_COLOR = "key_get_usr_color";
 
 	public static final String PROFILE_URL = "http://github.com/kqstone/ISBpreferences/archive/master.zip";
-
-	
 
 }

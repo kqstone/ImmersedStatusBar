@@ -14,10 +14,9 @@ import com.kqstone.immersedstatusbar.helper.BitMapColor;
 import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
 
 public class MiuiKeyGuardViewMediatorHook {
-	private Object mMiuiKeyGuardViewMediator;
 	private Context mContext;
 	private boolean mDarkMode = false;
-	
+
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -28,10 +27,10 @@ public class MiuiKeyGuardViewMediatorHook {
 			}
 		}
 	};
-	
+
 	public MiuiKeyGuardViewMediatorHook(Object miuiKeyGuardViewMediator) {
-		mMiuiKeyGuardViewMediator = miuiKeyGuardViewMediator;
-		mContext = (Context) ReflectionHelper.getObjectField(miuiKeyGuardViewMediator, "mContext");
+		mContext = (Context) ReflectionHelper.getObjectField(
+				miuiKeyGuardViewMediator, "mContext");
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Const.INTENT_SET_LOCK_WALLPAPER);
 		mContext.registerReceiver(mReceiver, filter);
@@ -47,11 +46,12 @@ public class MiuiKeyGuardViewMediatorHook {
 		mContext.sendBroadcast(intent);
 		Utils.log("MiuiKeyGuard show, send intent");
 	}
-	
+
 	private void genDarkMode() {
 		Bitmap lockwallPaper = null;
 		try {
-			lockwallPaper = BitmapFactory.decodeFile("/data/system/theme/lock_wallpaper");
+			lockwallPaper = BitmapFactory
+					.decodeFile("/data/system/theme/lock_wallpaper");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
