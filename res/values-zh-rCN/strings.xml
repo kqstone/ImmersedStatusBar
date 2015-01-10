@@ -35,9 +35,12 @@
     <string name="title_filter_alpha">通知图标滤镜色浓度</string>
     <string name="title_get_usr_color">状态栏取色</string>
     <string name="summary_title_get_usr_color">点击状态栏右上角进行取色并存储，点击左上角清除</string>
-    <string name="toast_prefix_get_usr_color">状态栏點擊取色: </string>
+    <string name="toast_prefix_get_usr_color">状态栏点击取色: </string>
     <string name="toast_get_usr_color_fail">状态栏点击取色失败！</string>
+    <string name="toast_get_usr_color_unnecessary">获取颜色与之前相同，不需保存，已忽略</string>
     <string name="toast_cancel_usr_color">已清除取色！ </string>
+    <string name="toast_cancel_usr_color_unnecessary">该Activity未配置颜色, 不需清除!</string>
+    <string name="toast_cancel_usr_color_in_set">该Activity之前配置了颜色, 现已取消，请重新点击状态栏右侧进行设置！</string>
     <string name="text_title_get_user_color_mode">状态栏取色模式</string>
     <string name="text_content_get_user_color_mode">点击状态栏右侧取色，左侧清除；正常使用建议关闭</string>
     
