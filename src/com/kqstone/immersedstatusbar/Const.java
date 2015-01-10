@@ -25,7 +25,7 @@ public final class Const {
 	public static final String FAST_TRANSITION = "fast_transition";
 	public static final String TRANS_ANIM_SCALE = "trans_anim_scale";
 
-	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 8;
+	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 15;
 	public static final int DELAY_GET_CACHEDRAWABLE = 0;
 
 	public static final long TIME_FOR_STATUSBAR_BACKGROUND_TRANSITION = 100;
