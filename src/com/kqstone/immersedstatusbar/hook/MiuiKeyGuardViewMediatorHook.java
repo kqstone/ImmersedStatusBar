@@ -34,6 +34,7 @@ public class MiuiKeyGuardViewMediatorHook {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Const.INTENT_SET_LOCK_WALLPAPER);
 		mContext.registerReceiver(mReceiver, filter);
+		genDarkMode();
 	}
 
 	public void hookAfterHandleShow() {
