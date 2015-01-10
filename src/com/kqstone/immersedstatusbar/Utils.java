@@ -266,6 +266,16 @@ public class Utils {
 				&& (activityIntent.getFlags() & 0x00002000) == 0x00002000) {
 			return WindowType.Float;
 		}
+		
+		// From Xposed SwipeBack by PeterCxy
+		// https://github.com/LOSP/SwipeBack/blob/master/src/us/shandian/mod/swipeback/hook/ModSwipeBack.java
+		int isFloating = (int) ReflectionHelper.getStaticField(
+				ReflectionHelper.getClass("com.android.internal.R$styleable"),
+				"Window_windowIsFloating");
+		if (activity.getWindow().getWindowStyle().getBoolean(isFloating, false)) {
+			Utils.log("is Floating window, ignore");
+			return WindowType.Float;
+		}
 
 		return WindowType.Normal;
 	}
