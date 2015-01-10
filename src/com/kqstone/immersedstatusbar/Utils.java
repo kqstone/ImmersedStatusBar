@@ -102,7 +102,7 @@ public class Utils {
 		try {
 			Bitmap bitmap = Bitmap.createBitmap(bitmap1, width / 2,
 					sStatusbarHeight, width, Const.OFFEST_FOR_GRADUAL_ACTIVITY);
-
+			bitmap1.recycle();
 			return bitmap;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
