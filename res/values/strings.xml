@@ -37,8 +37,11 @@
     <string name="title_get_usr_color">Get user color after click statusbar</string>
     <string name="summary_title_get_usr_color">get and store user color by click right part of statusbar, and clear it by click left part of statusbar</string>
     <string name="toast_prefix_get_usr_color">Get user color: </string>
-    <string name="toast_suffix_get_usr_color_fail">Failed</string>
+    <string name="toast_get_usr_color_fail">Failed to get user color!</string>
+    <string name="toast_get_usr_color_unnecessary">Color got is same as previous, unnecessary to store</string>
     <string name="toast_cancel_usr_color">Clear customized user color </string>
+    <string name="toast_cancel_usr_color_unnecessary">Unnecessary to clean user color!</string>
+    <string name="toast_cancel_usr_color_in_set">You have set User color before, it has been clear, re-click the right part of statusbar to set</string>
     <string name="text_title_get_user_color_mode">On get user color mode</string>
     <string name="text_content_get_user_color_mode">Suggest to turn of on daily use</string>
     

@@ -66,7 +66,7 @@ public class ActivityHook {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(Const.INTENT_GET_USER_COLOR)) {
 				boolean isget = intent.getBooleanExtra("IS_GET", false);
-				String msg;
+				String msg = null;
 				Resources res = null;
 				try {
 					res = mActivity.getPackageManager()
@@ -76,47 +76,47 @@ public class ActivityHook {
 					e.printStackTrace();
 				}
 				if (isget) {
-					Drawable drawable = null;
 					int color = intent.getIntExtra(
 							Const.STATUSBAR_BACKGROUND_COLOR,
 							Const.UNKNOW_COLOR);
+					int offset = intent.getIntExtra(Const.ACTIVITY_OFFSET, 0);
 					if (color != Const.UNKNOW_COLOR) {
 						if (mColor != color) {
-							mColor = color;
-							mBackgroundType = 0;
-							mDarkMode = Utils.getDarkMode(mColor);
-							drawable = new ColorDrawable(mColor);
-							if (drawable != null) {
-								Utils.setDecorViewBackground(mActivity,
-										drawable, true);
-								mHasSetWindowBackground = true;
+							if (mPref.contains(Const.ACTIVITY_OFFSET + "_"
+									+ mActName)) {
+								clearUserSet();
+								msg = (res != null) ? res
+										.getString(R.string.toast_cancel_usr_color_in_set)
+										: null;
+							} else {
+								setUserSet(color, offset);
+								msg = (res != null) ? res
+										.getString(R.string.toast_prefix_get_usr_color)
+										+ Utils.getHexFromColor(mColor)
+										: null;
 							}
-							Editor editor = mPref.edit();
-							editor.putInt(Const.STATUSBAR_BACKGROUND_COLOR
-									+ "_" + mActName, mColor);
-							editor.commit();
-							Utils.sendTintStatusBarIntent(mActivity,
-									mBackgroundType, mColor, mPath, mDarkMode,
-									mFastTrans);
+						} else {
+							msg = (res != null) ? res
+									.getString(R.string.toast_get_usr_color_unnecessary)
+									: null;
 						}
-						msg = (res != null) ? res
-								.getString(R.string.toast_prefix_get_usr_color)
-								+ Utils.getHexFromColor(mColor) : null;
 					} else {
 						msg = (res != null) ? res
-								.getString(R.string.toast_prefix_get_usr_color)
-								+ res.getString(R.string.toast_suffix_get_usr_color_fail)
+								.getString(R.string.toast_get_usr_color_fail)
 								: null;
 					}
 				} else {
-					Editor editor = mPref.edit();
-					editor.remove(Const.STATUSBAR_BACKGROUND_COLOR + "_"
-							+ mActName);
-					editor.commit();
-					mCreateAct = true;
-					hookAfterPerformResume();
-					msg = (res != null) ? res
-							.getString(R.string.toast_cancel_usr_color) : null;
+					if (mPref.contains(Const.STATUSBAR_BACKGROUND_COLOR + "_"
+							+ mActName)) {
+						clearUserSet();
+						msg = (res != null) ? res
+								.getString(R.string.toast_cancel_usr_color)
+								: null;
+					} else {
+						msg = (res != null) ? res
+								.getString(R.string.toast_cancel_usr_color_unnecessary)
+								: null;
+					}
 				}
 				if (msg != null)
 					Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
@@ -264,6 +264,9 @@ public class ActivityHook {
 			int color = mPref.getInt(Const.STATUSBAR_BACKGROUND_COLOR + "_"
 					+ mActName, Const.UNKNOW_COLOR);
 			if (color != Const.UNKNOW_COLOR) {
+				if (mPref.contains(Const.ACTIVITY_OFFSET + "_" + mActName))
+					Utils.resetPadding(mActivity,
+							Const.OFFEST_FOR_GRADUAL_ACTIVITY);
 				mBackgroundType = 0;
 				mColor = color;
 				mDarkMode = Utils.getDarkMode(mColor);
@@ -434,5 +437,39 @@ public class ActivityHook {
 		WindowType type = Utils.getWindowType(mActivity);
 		if (type == WindowType.Normal)
 			mActivity.unregisterReceiver(mReceiver);
+	}
+
+	private void setUserSet(int color, int offset) {
+		if (offset != 0)
+			Utils.resetPadding(mActivity, Const.OFFEST_FOR_GRADUAL_ACTIVITY);
+		mColor = color;
+		mBackgroundType = 0;
+		mDarkMode = Utils.getDarkMode(mColor);
+		Drawable drawable = new ColorDrawable(mColor);
+		if (drawable != null) {
+			Utils.setDecorViewBackground(mActivity, drawable, true);
+			mHasSetWindowBackground = true;
+		}
+		Editor editor = mPref.edit();
+		editor.putInt(Const.STATUSBAR_BACKGROUND_COLOR + "_" + mActName, mColor);
+		if (offset != 0)
+			editor.putInt(Const.ACTIVITY_OFFSET + "_" + mActName,
+					Const.OFFEST_FOR_GRADUAL_ACTIVITY);
+		editor.commit();
+		Utils.sendTintStatusBarIntent(mActivity, mBackgroundType, mColor,
+				mPath, mDarkMode, mFastTrans);
+	}
+
+	private void clearUserSet() {
+		Editor editor = mPref.edit();
+		editor.remove(Const.STATUSBAR_BACKGROUND_COLOR + "_" + mActName);
+		if (mPref.contains(Const.ACTIVITY_OFFSET + "_" + mActName)) {
+			editor.remove(Const.ACTIVITY_OFFSET + "_" + mActName);
+			Utils.resetPadding(mActivity, -Const.OFFEST_FOR_GRADUAL_ACTIVITY);
+		}
+		editor.commit();
+		mCreateAct = true;
+		mColor = 0;
+		hookAfterPerformResume();
 	}
 }

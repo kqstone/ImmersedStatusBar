@@ -177,6 +177,10 @@ public class PhoneStatusBarHook {
 						BitMapColor bitmapColor = Utils.getBitmapColor(bitmap);
 						int color = bitmapColor.Color;
 						intent.putExtra(Const.STATUSBAR_BACKGROUND_COLOR, color);
+						if (bitmapColor.mType == BitMapColor.Type.GRADUAL) {
+							intent.putExtra(Const.ACTIVITY_OFFSET,
+									Const.OFFEST_FOR_GRADUAL_ACTIVITY);
+						}
 					}
 				}
 				mContext.sendBroadcast(intent);

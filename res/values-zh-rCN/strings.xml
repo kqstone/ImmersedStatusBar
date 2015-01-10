@@ -36,7 +36,7 @@
     <string name="title_get_usr_color">状态栏取色</string>
     <string name="summary_title_get_usr_color">点击状态栏右上角进行取色并存储，点击左上角清除</string>
     <string name="toast_prefix_get_usr_color">状态栏點擊取色: </string>
-    <string name="toast_suffix_get_usr_color_fail">失敗</string>
+    <string name="toast_get_usr_color_fail">状态栏点击取色失败！</string>
     <string name="toast_cancel_usr_color">已清除取色！ </string>
     <string name="text_title_get_user_color_mode">状态栏取色模式</string>
     <string name="text_content_get_user_color_mode">点击状态栏右侧取色，左侧清除；正常使用建议关闭</string>

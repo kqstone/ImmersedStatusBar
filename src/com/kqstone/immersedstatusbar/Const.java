@@ -22,6 +22,7 @@ public final class Const {
 	public static final String STATUSBAR_BACKGROUND_COLOR = "background_color";
 	public static final String STATUSBAR_BACKGROUND_TYPE = "background_type";
 	public static final String STATUSBAR_BACKGROUND_PATH = "background_path";
+	public static final String ACTIVITY_OFFSET = "activity_offset";
 	public static final String FAST_TRANSITION = "fast_transition";
 	public static final String TRANS_ANIM_SCALE = "trans_anim_scale";
 
