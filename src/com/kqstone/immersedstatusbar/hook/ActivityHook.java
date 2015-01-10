@@ -308,13 +308,15 @@ public class ActivityHook {
 						Drawable backgroundDrawable = (Drawable) ReflectionHelper
 								.getObjectField(container, "mBackground");
 						if (backgroundDrawable != null) {
-							mColor = Utils
-									.getMainColorFromActionBarDrawable(backgroundDrawable);
+							BitMapColor bmColor = Utils.getBitmapColor(backgroundDrawable);
+							mColor = bmColor.Color;
 							mDarkMode = Utils.getDarkMode(mColor);
 							handled = true;
 							drawable = new ColorDrawable(mColor);
-							actionBar.setBackgroundDrawable(drawable);
-							container.invalidate();
+							if (bmColor.mType != BitMapColor.Type.FLAT) {
+								actionBar.setBackgroundDrawable(drawable);
+								container.invalidate();
+							}
 							mBackgroundType = 0;
 						}
 					}

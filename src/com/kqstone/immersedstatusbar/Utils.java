@@ -57,28 +57,6 @@ public class Utils {
 	private static int sStatusbarHeight = 0;
 	private static int sDisplayHeight = 0;
 
-	public static int getMainColorFromActionBarDrawable(Drawable drawable)
-			throws IllegalArgumentException {
-		/*
-		 * This should fix the bug where a huge part of the ActionBar background
-		 * is drawn white.
-		 */
-		Drawable copyDrawable = drawable.getConstantState().newDrawable();
-
-		if (copyDrawable instanceof ColorDrawable) {
-			return ((ColorDrawable) drawable).getColor();
-		}
-
-		Bitmap bitmap = drawableToBitmap(copyDrawable);
-		int pixel = bitmap.getPixel(0, 40);
-		int red = Color.red(pixel);
-		int blue = Color.blue(pixel);
-		int green = Color.green(pixel);
-		int alpha = Color.alpha(pixel);
-		copyDrawable = null;
-		return Color.argb(alpha, red, green, blue);
-	}
-
 	public static boolean getDarkMode(int color) {
 
 		float[] hsv = new float[3];
@@ -228,6 +206,22 @@ public class Utils {
 		bmc.mType = BitMapColor.Type.FLAT;
 		bmc.Color = color1;
 		bitmap.recycle();
+		return bmc;
+	}
+	
+	public static BitMapColor getBitmapColor(Drawable drawable)
+			throws IllegalArgumentException {
+		BitMapColor bmc = new BitMapColor();
+		Drawable copyDrawable = drawable.getConstantState().newDrawable();
+		if (copyDrawable instanceof ColorDrawable) {
+			bmc.mType = BitMapColor.Type.FLAT;
+			bmc.Color = ((ColorDrawable) drawable).getColor();
+			return bmc;
+		} else {
+			Bitmap bitmap = drawableToBitmap(copyDrawable);
+			bmc = getBitmapColor(bitmap);
+		}
+		copyDrawable = null;
 		return bmc;
 	}
 
