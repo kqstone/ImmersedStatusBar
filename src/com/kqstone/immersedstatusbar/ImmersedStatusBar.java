@@ -251,6 +251,20 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 									.hookAfterHandleShow();
 						}
 					});
+			
+			XposedHelpers.findAndHookMethod(
+					"com.android.keyguard.MiuiKeyguardViewMediator",
+					lpparam.classLoader, "handleHide", new XC_MethodHook() {
+						@Override
+						protected void afterHookedMethod(MethodHookParam param)
+								throws Throwable {
+							((MiuiKeyGuardViewMediatorHook) XposedHelpers
+									.getAdditionalInstanceField(
+											param.thisObject,
+											"mMiuiKeyguardViewMediatorHook"))
+									.hookAfterHandleHide();
+						}
+					});
 		}
 
 		if (lpparam.packageName.equals("com.android.settings")) {

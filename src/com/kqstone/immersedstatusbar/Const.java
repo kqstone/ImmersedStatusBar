@@ -1,5 +1,7 @@
 package com.kqstone.immersedstatusbar;
 
+import android.content.Intent;
+
 public final class Const {
 	public static final boolean DEBUG = true;
 
@@ -15,6 +17,7 @@ public final class Const {
 	public static final String INTENT_GET_USER_COLOR = "com.kqstone.immersedstatusbar.GETUSERCOLOR";
 	public static final String INTENT_SET_LOCK_WALLPAPER = "com.miui.keyguard.setwallpaper";
 	public static final String INTENT_SET_WALLPAPER = "com.kqstone.immersedstatusbar.SETWALLPAPER";
+	public static final String INTENT_KEYGUARD_STATE_CHANGED = "com.kqstone.immersedstatusbar.KEYGUARDSTATECHANGED";
 
 	public static final String PKG_NAME = "package_name";
 	public static final String ACT_NAME = "activity_name";
@@ -25,6 +28,7 @@ public final class Const {
 	public static final String ACTIVITY_OFFSET = "activity_offset";
 	public static final String FAST_TRANSITION = "fast_transition";
 	public static final String TRANS_ANIM_SCALE = "trans_anim_scale";
+	public static final String IS_LOCKED = "is_locked";
 
 	public static final int OFFEST_FOR_GRADUAL_ACTIVITY = 15;
 	public static final int DELAY_GET_CACHEDRAWABLE = 0;

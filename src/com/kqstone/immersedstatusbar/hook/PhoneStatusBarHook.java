@@ -31,7 +31,11 @@ public class PhoneStatusBarHook {
 	private String mPrePkgName = null;
 	private int mPreColor = Color.BLACK;
 	private boolean mPreDarkMode = false;
-
+	private Drawable mPreDrawable = null;
+	
+	private boolean mKeyGuardState = false;
+	private boolean mShouldUpdateStateAfterUnLocked = false;
+	
 	private long mDelayTime = 1L;
 
 	private Drawable mBackgroundBeforeUnbind;
@@ -66,8 +70,13 @@ public class PhoneStatusBarHook {
 				if (!(pkgName.equals("com.android.keyguard") && actName
 						.equals("MiuiKeyGuard"))
 						&& (mPrePkgName != null
-								&& mPrePkgName.equals("com.android.keyguard") && Utils
-									.isKeyguardLocked(mContext))) {
+								&& mPrePkgName.equals("com.android.keyguard") && mKeyGuardState)) {
+					int type = intent.getIntExtra(Const.STATUSBAR_BACKGROUND_TYPE, 0);
+					int color = intent.getIntExtra(Const.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
+					String path = intent.getStringExtra(Const.STATUSBAR_BACKGROUND_PATH);
+					boolean darkMode = intent.getBooleanExtra(Const.IS_DARKMODE, false);
+					storeStateOnKeyGuard(pkgName, type, color, path, darkMode);
+					mShouldUpdateStateAfterUnLocked = true;
 					return;
 				}
 
@@ -89,13 +98,15 @@ public class PhoneStatusBarHook {
 
 				int type = intent.getIntExtra(Const.STATUSBAR_BACKGROUND_TYPE,
 						0);
+				Drawable drawable = null;
 				switch (type) {
 				case 0:
 					int color = intent.getIntExtra(
 							Const.STATUSBAR_BACKGROUND_COLOR, Color.BLACK);
 					if (color != mPreColor) {
-						updateStatusBarBackground(new ColorDrawable(color),
-								fastTrans);
+						drawable = new ColorDrawable(color);
+						updateStatusBarBackground(drawable, fastTrans);
+						mPreDrawable = drawable;
 						mPreColor = color;
 					}
 					break;
@@ -103,8 +114,9 @@ public class PhoneStatusBarHook {
 					String path = intent
 							.getStringExtra(Const.STATUSBAR_BACKGROUND_PATH);
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
-					updateStatusBarBackground(new BitmapDrawable(bitmap),
-							fastTrans);
+					drawable = new BitmapDrawable(bitmap);
+					updateStatusBarBackground(drawable, fastTrans);
+					mPreDrawable = drawable;
 					mPreColor = Const.UNKNOW_COLOR;
 					break;
 				}
@@ -125,6 +137,12 @@ public class PhoneStatusBarHook {
 				mDelayTime = getDelayTime(scale);
 			} else if (intent.getAction().equals(Const.INTENT_RESTART_SYSTEMUI)) {
 				restartSystemUI();
+			} else if (intent.getAction().equals(Const.INTENT_KEYGUARD_STATE_CHANGED)) {
+				mKeyGuardState = intent.getBooleanExtra(Const.IS_LOCKED, false);
+				if (!mKeyGuardState && mShouldUpdateStateAfterUnLocked) {
+					applyStateOnKeyGuardUnLocked();
+				}
+				Utils.log("get KEYGUARD_STATE_CHANGED intent, mKeyGuardState change to " + mKeyGuardState);
 			}
 		}
 
@@ -229,6 +247,7 @@ public class PhoneStatusBarHook {
 		intentFilter.addAction(Const.INTENT_CHANGE_STATUSBAR_COLOR);
 		intentFilter.addAction(Const.INTENT_UPDATE_TRANSANIMASCALE);
 		intentFilter.addAction(Const.INTENT_RESTART_SYSTEMUI);
+		intentFilter.addAction(Const.INTENT_KEYGUARD_STATE_CHANGED);
 		intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 		mContext.registerReceiver(mActivityResumeReceiver, intentFilter);
 
@@ -290,6 +309,24 @@ public class PhoneStatusBarHook {
 		if (animscale == 0)
 			return 0;
 		return (long) (animscale * 340) + 50;
+	}
+	
+	private void storeStateOnKeyGuard(String pkgName, int backgroundtype, int color, String path, boolean isdark) {
+		mPrePkgName = pkgName;
+		if (backgroundtype == 0) {
+			mPreColor = color;
+			mPreDrawable = new ColorDrawable(color);
+		} else {
+			mPreColor = Const.UNKNOW_COLOR;
+			mPreDrawable = new BitmapDrawable(BitmapFactory.decodeFile(path));
+		}
+		mPreDarkMode = isdark;
+	}
+	
+	private void applyStateOnKeyGuardUnLocked() {
+		Utils.log("update State OnKeyGuardUnLocked");
+		this.updateStatusBarBackground(mPreDrawable, true);
+		this.updateStatusBarContent(mPreDarkMode, true);
 	}
 
 }
