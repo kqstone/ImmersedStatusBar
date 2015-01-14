@@ -1,6 +1,9 @@
 package com.kqstone.immersedstatusbar.hook;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
@@ -40,6 +43,7 @@ public class StatusBarIconViewHook {
 	}
 
 	private static Drawable getIcon(Context context, Object icon) {
+		Drawable result = null;
 		Resources r = null;
 
 		String iconPackage = (String) ReflectionHelper.getObjectField(icon,
@@ -49,8 +53,8 @@ public class StatusBarIconViewHook {
 			try {
 				r = context.getPackageManager().getResourcesForApplication(
 						iconPackage);
-			} catch (Exception ex) {
-				return null;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		} else {
 			r = context.getResources();
@@ -58,14 +62,25 @@ public class StatusBarIconViewHook {
 
 		int iconId = (int) ReflectionHelper.getObjectField(icon, "iconId");
 		if (iconId == 0) {
-			return null;
+			result = null;
 		}
 
 		try {
-			return r.getDrawable(iconId);
+			result = r.getDrawable(iconId);
 		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+		
+		if (result == null) {
+			try {
+				PackageManager pm = context.getPackageManager();
+				ApplicationInfo info = pm.getApplicationInfo(iconPackage, 0);
+				result = info.loadIcon(pm);
+			} catch (NameNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 
-		return null;
+		return result;
 	}
 }
