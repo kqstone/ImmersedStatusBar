@@ -46,7 +46,7 @@
     
     <!--about  -->
     <string name="about">关于</string>
-    <string name="about_version">程序版本:</string>
+    <string name="about_version">程序版本: v%1$s</string>
     <string name="about_app">关于MIUI6版沉浸状态栏</string>
     <string name="author_inform">作者:</string>    
     <string name="author_content">kqstone (kqstone@163.com) \nhttps://github.com/kqstone/ImmersedStatusBar/tree/master/src/com/kqstone/immersedstatusbar</string>

@@ -88,7 +88,8 @@ public class About extends Activity {
 		mAcknowContent = findViewById(R.id.acknow_content);
 		mAcknowContent.setOnTouchListener(mTouchListener);
 		mVersion = (TextView) findViewById(R.id.version);
-		mVersion.setText(getResources().getString(R.string.about_version) + getResources().getString(R.string.version_name));
+		String version = String.format(getResources().getString(R.string.about_version), getResources().getString(R.string.version_name));
+		mVersion.setText(version);
 	}
 
 	private void jumpToUrl(String url) {
