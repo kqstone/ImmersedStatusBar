@@ -9,6 +9,7 @@ import android.app.WallpaperManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.kqstone.immersedstatusbar.helper.WallpaperManagerHook;
@@ -18,7 +19,6 @@ import com.kqstone.immersedstatusbar.hook.PhoneStatusBarHook;
 import com.kqstone.immersedstatusbar.hook.SettingsHook;
 import com.kqstone.immersedstatusbar.hook.SimpleStatusbarHook;
 import com.kqstone.immersedstatusbar.hook.StatusBarIconViewHook;
-
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
@@ -87,6 +87,20 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 										"mActivityHook")).hookAfterOnPause();
 					}
 				});
+		
+		XposedHelpers.findAndHookMethod(Activity.class,
+				"onWindowAttributesChanged", WindowManager.LayoutParams.class,
+				new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param)
+							throws Throwable {
+						((ActivityHook) XposedHelpers
+								.getAdditionalInstanceField(param.thisObject,
+										"mActivityHook"))
+								.hookAfterOnWindowAttributesChanged((WindowManager.LayoutParams) param.args[0]);
+					}
+				});
+		
 		XposedHelpers.findAndHookMethod(WallpaperManager.class, "setWallpaper",
 				InputStream.class, FileOutputStream.class, new XC_MethodHook() {
 					@Override

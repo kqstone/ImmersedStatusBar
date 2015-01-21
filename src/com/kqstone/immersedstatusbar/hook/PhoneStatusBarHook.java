@@ -132,6 +132,16 @@ public class PhoneStatusBarHook {
 				}
 
 			} else if (intent.getAction().equals(
+					Const.INTENT_CHANGE_STATUSBAR_DARKMODE)) {
+				boolean darkMode = intent.getBooleanExtra(Const.IS_DARKMODE,
+						false);
+				Utils.log("Darkmode: " + darkMode + "; PreDarkMode: "
+						+ mPreDarkMode);
+				if (darkMode != mPreDarkMode) {
+					updateStatusBarContent(darkMode, true);
+					mPreDarkMode = darkMode;
+				}
+			} else if (intent.getAction().equals(
 					Const.INTENT_UPDATE_TRANSANIMASCALE)) {
 				float scale = intent.getFloatExtra(Const.TRANS_ANIM_SCALE, 1F);
 				mDelayTime = getDelayTime(scale);
@@ -245,6 +255,7 @@ public class PhoneStatusBarHook {
 
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(Const.INTENT_CHANGE_STATUSBAR_COLOR);
+		intentFilter.addAction(Const.INTENT_CHANGE_STATUSBAR_DARKMODE);
 		intentFilter.addAction(Const.INTENT_UPDATE_TRANSANIMASCALE);
 		intentFilter.addAction(Const.INTENT_RESTART_SYSTEMUI);
 		intentFilter.addAction(Const.INTENT_KEYGUARD_STATE_CHANGED);

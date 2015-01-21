@@ -248,8 +248,7 @@ public class Utils {
 
 	public static WindowType getWindowType(Activity activity) {
 		String pkgName = activity.getPackageName();
-		if (pkgName.equals("cn.wps.moffice_eng")
-				|| pkgName.equals("com.tencent.mobileqq")) {
+		if (pkgName.equals("com.tencent.mobileqq")) {
 			return WindowType.Normal;
 		}
 		Intent activityIntent = activity.getIntent();

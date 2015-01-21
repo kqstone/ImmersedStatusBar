@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -439,6 +440,24 @@ public class ActivityHook {
 		WindowType type = Utils.getWindowType(mActivity);
 		if (type == WindowType.Normal)
 			mActivity.unregisterReceiver(mReceiver);
+	}
+	
+	public void hookAfterOnWindowAttributesChanged(WindowManager.LayoutParams winParams) {
+		boolean darkmode = false;
+		int extraFlags = (int) ReflectionHelper.getObjectField(winParams, "extraFlags");
+		Class<?> miuiLayoutParams = ReflectionHelper.getClass("android.view.MiuiWindowManager$LayoutParams");
+		int darkmodeFlag = (int) ReflectionHelper.getStaticField(miuiLayoutParams, "EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+		Utils.log("extraFlags:" + extraFlags + "; darkmodeFlag" + darkmodeFlag);
+		if ((extraFlags & darkmodeFlag) == darkmodeFlag) {
+			darkmode = true;
+		}
+		if (mDarkMode != darkmode) {
+			mDarkMode = darkmode;
+			Intent intent = new Intent(Const.INTENT_CHANGE_STATUSBAR_DARKMODE);
+			intent.putExtra(Const.IS_DARKMODE, mDarkMode);
+			mActivity.sendBroadcast(intent);
+			Utils.log("Change DarkMode by WindowAttributesChanged: " + mDarkMode);
+		}
 	}
 
 	private void setUserSet(int color, int offset) {

@@ -10,6 +10,7 @@ public final class Const {
 	public final static int UNKNOW_COLOR = 16777216;
 
 	public static final String INTENT_CHANGE_STATUSBAR_COLOR = "com.kqstone.immersedstatusbar.CHANGESTATUSBARCOLOR";
+	public static final String INTENT_CHANGE_STATUSBAR_DARKMODE = "com.kqstone.immersedstatusbar.CHANGESTATUSBARDARKMODE";;
 	public static final String INTENT_UPDATE_NOTIFICATION_ICONS = "com.kqstone.immersedstatusbar.UPDATENOTIFICATIONICONS";
 	public static final String INTENT_UPDATE_SETTINGS = "com.kqstone.immersedstatusbar.UPDATESETTINGS";
 	public static final String INTENT_UPDATE_TRANSANIMASCALE = "com.kqstone.immersedstatusbar.UPDATETRANSANIMSCALE";
