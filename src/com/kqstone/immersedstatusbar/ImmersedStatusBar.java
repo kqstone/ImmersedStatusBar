@@ -9,6 +9,7 @@ import android.app.WallpaperManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.view.MotionEvent;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
@@ -19,6 +20,7 @@ import com.kqstone.immersedstatusbar.hook.PhoneStatusBarHook;
 import com.kqstone.immersedstatusbar.hook.SettingsHook;
 import com.kqstone.immersedstatusbar.hook.SimpleStatusbarHook;
 import com.kqstone.immersedstatusbar.hook.StatusBarIconViewHook;
+import com.kqstone.immersedstatusbar.hook.WindowHook;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
@@ -88,19 +90,6 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					}
 				});
 		
-		XposedHelpers.findAndHookMethod(Activity.class,
-				"onWindowAttributesChanged", WindowManager.LayoutParams.class,
-				new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						((ActivityHook) XposedHelpers
-								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook"))
-								.hookAfterOnWindowAttributesChanged((WindowManager.LayoutParams) param.args[0]);
-					}
-				});
-		
 		XposedHelpers.findAndHookMethod(WallpaperManager.class, "setWallpaper",
 				InputStream.class, FileOutputStream.class, new XC_MethodHook() {
 					@Override
@@ -108,6 +97,28 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 							throws Throwable {
 						WallpaperManagerHook
 								.hookAfterSetWallpaper(param.thisObject);
+					}
+				});
+		
+		XposedBridge.hookAllConstructors(Window.class,
+				new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param) {
+						XposedHelpers.setAdditionalInstanceField(
+								param.thisObject, "mWindowHook",
+								new WindowHook(param.thisObject));
+					}
+				});
+		
+		XposedHelpers.findAndHookMethod(Window.class, "setExtraFlags",
+				int.class, int.class, new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param)
+							throws Throwable {
+						((WindowHook) XposedHelpers.getAdditionalInstanceField(
+								param.thisObject, "mWindowHook"))
+								.hookAfterSetExtraFlags((int) param.args[0],
+										(int) param.args[1]);
 					}
 				});
 
