@@ -1,313 +1,43 @@
 package com.kqstone.immersedstatusbar;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import android.app.Activity;
-import android.app.WallpaperManager;
-import android.os.Bundle;
-import android.preference.ListPreference;
-import android.view.MotionEvent;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
-
-import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
-import com.kqstone.immersedstatusbar.helper.WallpaperManagerHook;
 import com.kqstone.immersedstatusbar.hook.ActivityHook;
+import com.kqstone.immersedstatusbar.hook.DevelopmentSettingsHook;
 import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardViewMediatorHook;
 import com.kqstone.immersedstatusbar.hook.PhoneStatusBarHook;
-import com.kqstone.immersedstatusbar.hook.SettingsHook;
-import com.kqstone.immersedstatusbar.hook.SimpleStatusbarHook;
+import com.kqstone.immersedstatusbar.hook.SimpleStatusBarHook;
 import com.kqstone.immersedstatusbar.hook.StatusBarIconViewHook;
+import com.kqstone.immersedstatusbar.hook.WallpaperManagerHook;
 import com.kqstone.immersedstatusbar.hook.WindowHook;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class ImmersedStatusBar implements IXposedHookZygoteInit,
 		IXposedHookLoadPackage {
-	private PhoneStatusBarHook mPhoneStatusBarHook;
 
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
-		XposedBridge.hookAllConstructors(ActivityHook.sClazz,
-				new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param) {
-						ReflectionHelper.setAdditionalInstanceField(
-								param.thisObject, "mActivityHook",
-								new ActivityHook(param.thisObject));
-					}
-				});
-
-		XposedHelpers.findAndHookMethod(Activity.class, "onCreate",
-				Bundle.class, new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						((ActivityHook) ReflectionHelper
-								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook")).hookAfterOnCreate();
-					}
-				});
-
-		XposedHelpers.findAndHookMethod(Activity.class, "performResume",
-				new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						((ActivityHook) ReflectionHelper
-								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook"))
-								.hookAfterPerformResume();
-					}
-				});
-
-		XposedHelpers.findAndHookMethod(Activity.class, "onWindowFocusChanged",
-				boolean.class, new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						((ActivityHook) ReflectionHelper
-								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook"))
-								.hookAfterOnWindowFocusChanged((Boolean) param.args[0]);
-					}
-				});
-
-		XposedHelpers.findAndHookMethod(Activity.class, "onPause",
-				new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						((ActivityHook) ReflectionHelper
-								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook")).hookAfterOnPause();
-					}
-				});
-		
-		XposedHelpers.findAndHookMethod(WallpaperManager.class, "setWallpaper",
-				InputStream.class, FileOutputStream.class, new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						WallpaperManagerHook
-								.hookAfterSetWallpaper(param.thisObject);
-					}
-				});
-		
-		XposedBridge.hookAllConstructors(Window.class,
-				new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param) {
-						ReflectionHelper.setAdditionalInstanceField(
-								param.thisObject, "mWindowHook",
-								new WindowHook(param.thisObject));
-					}
-				});
-		
-		XposedHelpers.findAndHookMethod(Window.class, "setExtraFlags",
-				int.class, int.class, new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param)
-							throws Throwable {
-						((WindowHook) ReflectionHelper.getAdditionalInstanceField(
-								param.thisObject, "mWindowHook"))
-								.hookAfterSetExtraFlags((int) param.args[0],
-										(int) param.args[1]);
-					}
-				});
-
+		ActivityHook.doHook();
+		WallpaperManagerHook.doHook();
+		WindowHook.doHook();
 	}
 
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
+		ClassLoader loader = lpparam.classLoader;
 		if (lpparam.packageName.equals("com.android.systemui")) {
-			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.PhoneStatusBar",
-					lpparam.classLoader), new XC_MethodHook() {
-				@Override
-				protected void afterHookedMethod(MethodHookParam param)
-						throws Throwable {
-					mPhoneStatusBarHook = new PhoneStatusBarHook(
-							param.thisObject);
-				}
-			});
-
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.PhoneStatusBar",
-					lpparam.classLoader), "bindViews", new XC_MethodHook() {
-				@Override
-				protected void beforeHookedMethod(MethodHookParam param)
-						throws Throwable {
-					mPhoneStatusBarHook.hookBeforeBindViews();
-				}
-
-				@Override
-				protected void afterHookedMethod(MethodHookParam param)
-						throws Throwable {
-					mPhoneStatusBarHook.hookAfterBindViews();
-				}
-			});
-
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.PhoneStatusBar",
-					lpparam.classLoader), "unbindViews", new XC_MethodHook() {
-				@Override
-				protected void beforeHookedMethod(MethodHookParam param)
-						throws Throwable {
-					mPhoneStatusBarHook.hookBeforeUnBindViews();
-				}
-			});
-
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.PhoneStatusBar",
-					lpparam.classLoader), "interceptTouchEvent",
-					MotionEvent.class, new XC_MethodHook() {
-						@Override
-						protected void beforeHookedMethod(MethodHookParam param)
-								throws Throwable {
-							mPhoneStatusBarHook
-									.hookBeforeInterceptTouchEvent((MotionEvent) param.args[0]);
-						}
-					});
-
-			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.SimpleStatusBar",
-					lpparam.classLoader), new XC_MethodHook() {
-				@Override
-				protected void afterHookedMethod(MethodHookParam param)
-						throws Throwable {
-					XposedHelpers.setAdditionalInstanceField(param.thisObject,
-							"mSimpleStatusbarHook", new SimpleStatusbarHook(
-									param.thisObject));
-				}
-			});
-
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.SimpleStatusBar",
-					lpparam.classLoader), "updateNotificationIcons",
-					boolean.class, ArrayList.class,
-					LinearLayout.LayoutParams.class, new XC_MethodHook() {
-						@Override
-						protected void afterHookedMethod(MethodHookParam param)
-								throws Throwable {
-							((SimpleStatusbarHook) XposedHelpers
-									.getAdditionalInstanceField(
-											param.thisObject,
-											"mSimpleStatusbarHook"))
-									.hookAfterUpdateNotificationIcons();
-						}
-					});
-
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.phone.SimpleStatusBar",
-					lpparam.classLoader), "updateDarkMode",
-					new XC_MethodHook() {
-						@Override
-						protected void afterHookedMethod(MethodHookParam param)
-								throws Throwable {
-							((SimpleStatusbarHook) XposedHelpers
-									.getAdditionalInstanceField(
-											param.thisObject,
-											"mSimpleStatusbarHook"))
-									.hookAfterUpdateDarkMode();
-						}
-					});
-
-			Class<?> StatusBarIcon = XposedHelpers.findClass(
-					"com.android.internal.statusbar.StatusBarIcon", null);
-			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.StatusBarIconView",
-					lpparam.classLoader), new XC_MethodHook() {
-				@Override
-				protected void afterHookedMethod(MethodHookParam param)
-						throws Throwable {
-					XposedHelpers.setAdditionalInstanceField(param.thisObject,
-							"mStatusBarIconViewHook",
-							new StatusBarIconViewHook(param.thisObject));
-				}
-			});
-
-			XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
-					"com.android.systemui.statusbar.StatusBarIconView",
-					lpparam.classLoader), "setIcon", StatusBarIcon,
-					new XC_MethodHook() {
-
-						@Override
-						protected void afterHookedMethod(MethodHookParam param)
-								throws Throwable {
-							((StatusBarIconViewHook) XposedHelpers
-									.getAdditionalInstanceField(
-											param.thisObject,
-											"mStatusBarIconViewHook"))
-									.hookAfterSetIcon(param.args[0]);
-						}
-					});
+			PhoneStatusBarHook.doHook(loader);
+			SimpleStatusBarHook.doHook(loader);
+			StatusBarIconViewHook.doHook(loader);
 		}
 
 		if (lpparam.packageName.equals("com.android.keyguard")) {
-			XposedBridge.hookAllConstructors(XposedHelpers.findClass(
-					"com.android.keyguard.MiuiKeyguardViewMediator",
-					lpparam.classLoader), new XC_MethodHook() {
-				@Override
-				protected void afterHookedMethod(MethodHookParam param)
-						throws Throwable {
-					XposedHelpers.setAdditionalInstanceField(param.thisObject,
-							"mMiuiKeyguardViewMediatorHook",
-							new MiuiKeyGuardViewMediatorHook(param.thisObject));
-				}
-			});
-
-			XposedHelpers.findAndHookMethod(
-					"com.android.keyguard.MiuiKeyguardViewMediator",
-					lpparam.classLoader, "handleShow", new XC_MethodHook() {
-						@Override
-						protected void afterHookedMethod(MethodHookParam param)
-								throws Throwable {
-							((MiuiKeyGuardViewMediatorHook) XposedHelpers
-									.getAdditionalInstanceField(
-											param.thisObject,
-											"mMiuiKeyguardViewMediatorHook"))
-									.hookAfterHandleShow();
-						}
-					});
-			
-			XposedHelpers.findAndHookMethod(
-					"com.android.keyguard.MiuiKeyguardViewMediator",
-					lpparam.classLoader, "handleHide", new XC_MethodHook() {
-						@Override
-						protected void afterHookedMethod(MethodHookParam param)
-								throws Throwable {
-							((MiuiKeyGuardViewMediatorHook) XposedHelpers
-									.getAdditionalInstanceField(
-											param.thisObject,
-											"mMiuiKeyguardViewMediatorHook"))
-									.hookAfterHandleHide();
-						}
-					});
+			MiuiKeyGuardViewMediatorHook.doHook(loader);
 		}
 
 		if (lpparam.packageName.equals("com.android.settings")) {
-			XposedHelpers.findAndHookMethod(
-					"com.android.settings.DevelopmentSettings",
-					lpparam.classLoader, "a", int.class, ListPreference.class,
-					Object.class, new XC_MethodHook() {
-						@Override
-						protected void afterHookedMethod(MethodHookParam param)
-								throws Throwable {
-							Object developmentSettings = param.thisObject;
-							int which = (Integer) param.args[0];
-							Object value = param.args[2];
-							SettingsHook.hookAfterA(developmentSettings, which,
-									value);
-						}
-					});
+			DevelopmentSettingsHook.doHook(loader);
 		}
 
 	}

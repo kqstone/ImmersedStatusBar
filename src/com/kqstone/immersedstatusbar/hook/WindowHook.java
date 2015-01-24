@@ -1,52 +1,40 @@
 package com.kqstone.immersedstatusbar.hook;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.Window;
 
-import com.kqstone.immersedstatusbar.Const;
 import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
+import com.kqstone.immersedstatusbar.injector.WindowInjector;
+
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 
 public class WindowHook {
-	private Window mWindow;
-	private Context mContext;
-	private boolean mDarkMode;
+	private static Class<?> sClass = Window.class;
+	
+	public static void doHook() {
+		XposedBridge.hookAllConstructors(sClass,
+				new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param) {
+						ReflectionHelper.setAdditionalInstanceField(
+								param.thisObject, "mWindowHook",
+								new WindowInjector(param.thisObject));
+					}
+				});
+		
+		XposedHelpers.findAndHookMethod(sClass, "setExtraFlags",
+				int.class, int.class, new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(MethodHookParam param)
+							throws Throwable {
+						((WindowInjector) ReflectionHelper.getAdditionalInstanceField(
+								param.thisObject, "mWindowHook"))
+								.hookAfterSetExtraFlags((int) param.args[0],
+										(int) param.args[1]);
+					}
+				});
 
-	public WindowHook(Object window) {
-		mWindow = (Window) window;
-		mContext = (Context) ReflectionHelper
-				.getObjectField(window, "mContext");
-	}
-
-	public void hookAfterSetExtraFlags(int flagval, int flag) {
-		updateDarkMode(flagval, flag);
-	}
-
-	private void updateDarkMode(int flagval, int flag) {
-		Class<?> miuiLayoutParams = ReflectionHelper
-				.getClass("android.view.MiuiWindowManager$LayoutParams");
-		int darkmodeFlag = (int) ReflectionHelper.getStaticField(
-				miuiLayoutParams, "EXTRA_FLAG_STATUS_BAR_DARK_MODE");
-		if (flag == darkmodeFlag) {
-			mDarkMode = flagval != 0 ? true : false;
-			try {
-				ActivityHook activityhook = (ActivityHook) ReflectionHelper
-						.getAdditionalInstanceField(
-								(Activity) mWindow.getCallback(), "mActivityHook");
-				ReflectionHelper.setObjectField(activityhook, "mDarkMode",
-						mDarkMode);
-				sendBroadCast();
-			} catch (ClassCastException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private void sendBroadCast() {
-		Intent intent = new Intent(Const.INTENT_CHANGE_STATUSBAR_DARKMODE);
-		intent.putExtra(Const.IS_DARKMODE, mDarkMode);
-		mContext.sendBroadcast(intent);
 	}
 
 }

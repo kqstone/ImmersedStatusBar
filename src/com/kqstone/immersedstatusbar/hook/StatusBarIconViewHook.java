@@ -1,86 +1,42 @@
 package com.kqstone.immersedstatusbar.hook;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.provider.Settings;
-import android.widget.ImageView;
-
-import com.kqstone.immersedstatusbar.Const;
-import com.kqstone.immersedstatusbar.Utils;
 import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
+import com.kqstone.immersedstatusbar.injector.StatusBarIconViewInjector;
+
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 
 public class StatusBarIconViewHook {
-	private Context mContext;
-	private Object mStatusBarIconView;
+	private static final String sClassName = "com.android.systemui.statusbar.StatusBarIconView";
 
-	public StatusBarIconViewHook(Object statusBarIconViewHook) {
-		mStatusBarIconView = statusBarIconViewHook;
-		mContext = (Context) ReflectionHelper.getObjectField(
-				statusBarIconViewHook, "mContext");
-	}
+	public static void doHook(ClassLoader loader) {
+		Class<?> clazz = XposedHelpers.findClass(sClassName, loader);
+		Class<?> StatusBarIcon = XposedHelpers.findClass(
+				"com.android.internal.statusbar.StatusBarIcon", null);
 
-	public void hookAfterSetIcon(Object statusBarIcon) {
-		boolean supportDarkMode = (boolean) ReflectionHelper.getObjectField(
-				mStatusBarIconView, "mSupportDarkMode");
-		boolean enableDarkMode = (boolean) ReflectionHelper.getObjectField(
-				mStatusBarIconView, "mEnableDarkMode");
-		if (supportDarkMode && enableDarkMode)
-			return;
-
-		boolean tinticons = Settings.System.getInt(
-				mContext.getContentResolver(),
-				Const.KEY_PREF_TINT_NOTIFICATION, 0) == 1 ? true : false;
-		Utils.log("tint notification icons: " + tinticons
-				+ ", hook getIcon>>>>>>>>");
-		if (tinticons) {
-			Drawable drawable = getIcon(mContext, statusBarIcon);
-			((ImageView) mStatusBarIconView).setImageDrawable(drawable);
-		}
-	}
-
-	private static Drawable getIcon(Context context, Object icon) {
-		Drawable result = null;
-		Resources r = null;
-
-		String iconPackage = (String) ReflectionHelper.getObjectField(icon,
-				"iconPackage");
-
-		if (iconPackage != null) {
-			try {
-				r = context.getPackageManager().getResourcesForApplication(
-						iconPackage);
-			} catch (Exception e) {
-				e.printStackTrace();
+		XposedBridge.hookAllConstructors(clazz, new XC_MethodHook() {
+			@Override
+			protected void afterHookedMethod(MethodHookParam param)
+					throws Throwable {
+				ReflectionHelper.setAdditionalInstanceField(param.thisObject,
+						"mStatusBarIconViewHook",
+						new StatusBarIconViewInjector(param.thisObject));
 			}
-		} else {
-			r = context.getResources();
-		}
+		});
 
-		int iconId = (int) ReflectionHelper.getObjectField(icon, "iconId");
-		if (iconId == 0) {
-			result = null;
-		}
+		XposedHelpers.findAndHookMethod(clazz, "setIcon", StatusBarIcon,
+				new XC_MethodHook() {
 
-		try {
-			result = r.getDrawable(iconId);
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-		}
-		
-		if (result == null) {
-			try {
-				PackageManager pm = context.getPackageManager();
-				ApplicationInfo info = pm.getApplicationInfo(iconPackage, 0);
-				result = info.loadIcon(pm);
-			} catch (NameNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result;
+					@Override
+					protected void afterHookedMethod(MethodHookParam param)
+							throws Throwable {
+						((StatusBarIconViewInjector) ReflectionHelper
+								.getAdditionalInstanceField(param.thisObject,
+										"mStatusBarIconViewHook"))
+								.hookAfterSetIcon(param.args[0]);
+					}
+				});
 	}
+
 }

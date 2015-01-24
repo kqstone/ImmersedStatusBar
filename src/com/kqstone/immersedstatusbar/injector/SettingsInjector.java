@@ -1,4 +1,4 @@
-package com.kqstone.immersedstatusbar.hook;
+package com.kqstone.immersedstatusbar.injector;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-public class SettingsHook {
+public class SettingsInjector {
 
 	public static void hookAfterA(Object developmentSettings, int which,
 			Object value) {
