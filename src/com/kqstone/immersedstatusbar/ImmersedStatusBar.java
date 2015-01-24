@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
 import com.kqstone.immersedstatusbar.helper.WallpaperManagerHook;
 import com.kqstone.immersedstatusbar.hook.ActivityHook;
 import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardViewMediatorHook;
@@ -38,7 +39,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 				new XC_MethodHook() {
 					@Override
 					protected void afterHookedMethod(MethodHookParam param) {
-						XposedHelpers.setAdditionalInstanceField(
+						ReflectionHelper.setAdditionalInstanceField(
 								param.thisObject, "mActivityHook",
 								new ActivityHook(param.thisObject));
 					}
@@ -49,7 +50,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					@Override
 					protected void afterHookedMethod(MethodHookParam param)
 							throws Throwable {
-						((ActivityHook) XposedHelpers
+						((ActivityHook) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
 										"mActivityHook")).hookAfterOnCreate();
 					}
@@ -60,7 +61,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					@Override
 					protected void afterHookedMethod(MethodHookParam param)
 							throws Throwable {
-						((ActivityHook) XposedHelpers
+						((ActivityHook) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
 										"mActivityHook"))
 								.hookAfterPerformResume();
@@ -72,7 +73,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					@Override
 					protected void afterHookedMethod(MethodHookParam param)
 							throws Throwable {
-						((ActivityHook) XposedHelpers
+						((ActivityHook) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
 										"mActivityHook"))
 								.hookAfterOnWindowFocusChanged((Boolean) param.args[0]);
@@ -84,7 +85,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					@Override
 					protected void afterHookedMethod(MethodHookParam param)
 							throws Throwable {
-						((ActivityHook) XposedHelpers
+						((ActivityHook) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
 										"mActivityHook")).hookAfterOnPause();
 					}
@@ -104,7 +105,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 				new XC_MethodHook() {
 					@Override
 					protected void afterHookedMethod(MethodHookParam param) {
-						XposedHelpers.setAdditionalInstanceField(
+						ReflectionHelper.setAdditionalInstanceField(
 								param.thisObject, "mWindowHook",
 								new WindowHook(param.thisObject));
 					}
@@ -115,7 +116,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 					@Override
 					protected void afterHookedMethod(MethodHookParam param)
 							throws Throwable {
-						((WindowHook) XposedHelpers.getAdditionalInstanceField(
+						((WindowHook) ReflectionHelper.getAdditionalInstanceField(
 								param.thisObject, "mWindowHook"))
 								.hookAfterSetExtraFlags((int) param.args[0],
 										(int) param.args[1]);

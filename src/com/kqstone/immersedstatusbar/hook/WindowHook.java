@@ -8,8 +8,6 @@ import android.view.Window;
 import com.kqstone.immersedstatusbar.Const;
 import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
 
-import de.robv.android.xposed.XposedHelpers;
-
 public class WindowHook {
 	private Window mWindow;
 	private Context mContext;
@@ -32,12 +30,16 @@ public class WindowHook {
 				miuiLayoutParams, "EXTRA_FLAG_STATUS_BAR_DARK_MODE");
 		if (flag == darkmodeFlag) {
 			mDarkMode = flagval != 0 ? true : false;
-			ActivityHook activityhook = (ActivityHook) XposedHelpers
-					.getAdditionalInstanceField(
-							(Activity) mWindow.getCallback(), "mActivityHook");
-			ReflectionHelper.setObjectField(activityhook, "mDarkMode",
-					mDarkMode);
-			sendBroadCast();
+			try {
+				ActivityHook activityhook = (ActivityHook) ReflectionHelper
+						.getAdditionalInstanceField(
+								(Activity) mWindow.getCallback(), "mActivityHook");
+				ReflectionHelper.setObjectField(activityhook, "mDarkMode",
+						mDarkMode);
+				sendBroadCast();
+			} catch (ClassCastException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

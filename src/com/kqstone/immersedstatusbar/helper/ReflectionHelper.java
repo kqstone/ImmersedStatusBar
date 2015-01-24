@@ -1,13 +1,14 @@
 package com.kqstone.immersedstatusbar.helper;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 public class ReflectionHelper {
 	private static HashMap<String, Method> sMethodCache = new HashMap<String, Method>();
 	private static HashMap<String, Field> sFieldCache = new HashMap<String, Field>();
+	private static WeakHashMap<Object, HashMap<String, Object>> sAdditionalInstanceFieldCache = new WeakHashMap<Object, HashMap<String, Object>>();
 
 	private static HashMap<Class<?>, Class<?>> primativeClassMap = new HashMap<Class<?>, Class<?>>();
 	static {
@@ -108,6 +109,26 @@ public class ReflectionHelper {
 		return result;
 	}
 
+	// get from XposedHelpers
+	public static Object getAdditionalInstanceField(Object object,
+			String fieldName) {
+		if (object == null)
+			throw new NullPointerException("object must not be null");
+		if (fieldName == null)
+			throw new NullPointerException("key must not be null");
+
+		HashMap<String, Object> objectFields;
+		synchronized (sAdditionalInstanceFieldCache) {
+			objectFields = sAdditionalInstanceFieldCache.get(object);
+			if (objectFields == null)
+				return null;
+		}
+
+		synchronized (objectFields) {
+			return objectFields.get(fieldName);
+		}
+	}
+
 	public static void setStaticField(Class<?> clazz, String fieldName,
 			Object value) {
 		try {
@@ -133,6 +154,28 @@ public class ReflectionHelper {
 			e.printStackTrace();
 		} catch (Throwable e) {
 			e.printStackTrace();
+		}
+	}
+
+	// get from XposedHelpers
+	public static Object setAdditionalInstanceField(Object object,
+			String fieldName, Object fieldObj) {
+		if (object == null)
+			throw new NullPointerException("object must not be null");
+		if (fieldName == null)
+			throw new NullPointerException("key must not be null");
+
+		HashMap<String, Object> objectFields;
+		synchronized (sAdditionalInstanceFieldCache) {
+			objectFields = sAdditionalInstanceFieldCache.get(object);
+			if (objectFields == null) {
+				objectFields = new HashMap<String, Object>();
+				sAdditionalInstanceFieldCache.put(object, objectFields);
+			}
+		}
+
+		synchronized (objectFields) {
+			return objectFields.put(fieldName, fieldObj);
 		}
 	}
 
