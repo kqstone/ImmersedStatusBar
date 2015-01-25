@@ -34,6 +34,8 @@ public class WindowInjector {
 				ActivityInjector activityInjector = (ActivityInjector) ReflectionHelper
 						.getAdditionalInstanceField(
 								(Activity) mWindow.getCallback(), "mActivityHook");
+				if (activityInjector.getCurrentDarkMode() == mDarkMode)
+					return;
 				activityInjector.setCurrentDarkMode(mDarkMode);
 				sendBroadCast();
 			} catch (ClassCastException e) {

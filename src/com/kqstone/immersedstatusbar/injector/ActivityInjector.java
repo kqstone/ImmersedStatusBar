@@ -493,6 +493,14 @@ public class ActivityInjector {
 		hookAfterPerformResume();
 	}
 	
+	public int getCurrentColor() {
+		return mColor;
+	}
+	
+	public boolean getCurrentDarkMode() {
+		return mDarkMode;
+	}
+	
 	public void setCurrentColor(int color) {
 		mColor = color;
 	}

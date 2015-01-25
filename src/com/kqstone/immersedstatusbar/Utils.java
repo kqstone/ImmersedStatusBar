@@ -220,6 +220,7 @@ public class Utils {
 		} else {
 			Bitmap bitmap = drawableToBitmap(copyDrawable);
 			bmc = getBitmapColor(bitmap);
+			bitmap.recycle();
 		}
 		copyDrawable = null;
 		return bmc;
@@ -328,10 +329,11 @@ public class Utils {
 		Bitmap bitmap;
 
 		try {
+			int w = drawable.getIntrinsicWidth();
+			int h = drawable.getIntrinsicHeight();
 			bitmap = Bitmap.createBitmap(1, 80, Config.ARGB_8888);
-			bitmap.setDensity(480);
 			Canvas canvas = new Canvas(bitmap);
-			drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+			drawable.setBounds(0, 0, w, h);
 			drawable.draw(canvas);
 		} catch (IllegalArgumentException e) {
 			throw e;

@@ -36,6 +36,8 @@ public class ActionBarImplInjector {
 			if (backgroundDrawable != null) {
 				BitMapColor bmColor = Utils.getBitmapColor(backgroundDrawable);
 				mColor = bmColor.Color;
+				if (mColor == mActivityInjector.getCurrentColor())
+					return;
 				mDarkMode = Utils.getDarkMode(mColor);
 				Drawable drawable = new ColorDrawable(mColor);
 				if (bmColor.mType != BitMapColor.Type.FLAT) {
@@ -58,6 +60,8 @@ public class ActionBarImplInjector {
 		if (bitmap != null) {
 			BitMapColor bmColor = Utils.getBitmapColor(bitmap);
 			mColor = bmColor.Color;
+			if (mColor == mActivityInjector.getCurrentColor())
+				return;
 			mDarkMode = Utils.getDarkMode(mColor);
 			updateActivityInjectorState();
 			sendBroadcast();
@@ -68,12 +72,15 @@ public class ActionBarImplInjector {
 	public void hookAfteSetBackgroundDrawable(Drawable drawable) {
 				BitMapColor bmColor = Utils.getBitmapColor(drawable);
 				mColor = bmColor.Color;
+				if (mColor == mActivityInjector.getCurrentColor())
+					return;
 				mDarkMode = Utils.getDarkMode(mColor);
 				Drawable tempdrawable = new ColorDrawable(mColor);
 				if (bmColor.mType != BitMapColor.Type.FLAT) {
 					((ActionBar) mActionBar)
 							.setBackgroundDrawable(tempdrawable);
 				}
+				tempdrawable = null;
 				updateActivityInjectorState();
 				sendBroadcast();
 	}
