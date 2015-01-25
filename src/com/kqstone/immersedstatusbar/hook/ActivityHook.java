@@ -19,7 +19,7 @@ public class ActivityHook {
 			protected void afterHookedMethod(MethodHookParam param) {
 				ReflectionHelper
 						.setAdditionalInstanceField(param.thisObject,
-								"mActivityHook", new ActivityInjector(
+								"mActivityInjector", new ActivityInjector(
 										param.thisObject));
 			}
 		});
@@ -31,7 +31,7 @@ public class ActivityHook {
 							throws Throwable {
 						((ActivityInjector) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook")).hookAfterOnCreate();
+										"mActivityInjector")).hookAfterOnCreate();
 					}
 				});
 
@@ -42,7 +42,7 @@ public class ActivityHook {
 							throws Throwable {
 						((ActivityInjector) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook"))
+										"mActivityInjector"))
 								.hookAfterPerformResume();
 					}
 				});
@@ -54,7 +54,7 @@ public class ActivityHook {
 							throws Throwable {
 						((ActivityInjector) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
-										"mActivityHook"))
+										"mActivityInjector"))
 								.hookAfterOnWindowFocusChanged((Boolean) param.args[0]);
 					}
 				});
@@ -65,7 +65,7 @@ public class ActivityHook {
 					throws Throwable {
 				((ActivityInjector) ReflectionHelper
 						.getAdditionalInstanceField(param.thisObject,
-								"mActivityHook")).hookAfterOnPause();
+								"mActivityInjector")).hookAfterOnPause();
 			}
 		});
 	}

@@ -301,7 +301,7 @@ public class ActivityInjector {
 
 			if (!handled) {
 				ActionBar actionBar = mActivity.getActionBar();
-				if (actionBar != null) {
+				if (actionBar != null && actionBar.isShowing()) {
 					FrameLayout container = (FrameLayout) ReflectionHelper
 							.getObjectField(actionBar, "mContainerView");
 					if (container != null) {

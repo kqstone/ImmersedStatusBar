@@ -1,5 +1,6 @@
 package com.kqstone.immersedstatusbar;
 
+import com.kqstone.immersedstatusbar.hook.ActionBarImplHook;
 import com.kqstone.immersedstatusbar.hook.ActivityHook;
 import com.kqstone.immersedstatusbar.hook.DevelopmentSettingsHook;
 import com.kqstone.immersedstatusbar.hook.MiuiKeyGuardViewMediatorHook;
@@ -21,6 +22,7 @@ public class ImmersedStatusBar implements IXposedHookZygoteInit,
 		ActivityHook.doHook();
 		WallpaperManagerHook.doHook();
 		WindowHook.doHook();
+		ActionBarImplHook.doHook();
 	}
 
 	@Override
