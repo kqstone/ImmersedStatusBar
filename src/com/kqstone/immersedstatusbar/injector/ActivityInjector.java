@@ -492,4 +492,12 @@ public class ActivityInjector {
 		mColor = 0;
 		hookAfterPerformResume();
 	}
+	
+	public void setCurrentColor(int color) {
+		mColor = color;
+	}
+	
+	public void setCurrentDarkMode (boolean darkMode) {
+		mDarkMode = darkMode;
+	}
 }

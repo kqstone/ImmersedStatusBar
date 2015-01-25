@@ -31,11 +31,10 @@ public class WindowInjector {
 		if (flag == darkmodeFlag) {
 			mDarkMode = flagval != 0 ? true : false;
 			try {
-				ActivityInjector activityhook = (ActivityInjector) ReflectionHelper
+				ActivityInjector activityInjector = (ActivityInjector) ReflectionHelper
 						.getAdditionalInstanceField(
 								(Activity) mWindow.getCallback(), "mActivityHook");
-				ReflectionHelper.setObjectField(activityhook, "mDarkMode",
-						mDarkMode);
+				activityInjector.setCurrentDarkMode(mDarkMode);
 				sendBroadCast();
 			} catch (ClassCastException e) {
 				e.printStackTrace();

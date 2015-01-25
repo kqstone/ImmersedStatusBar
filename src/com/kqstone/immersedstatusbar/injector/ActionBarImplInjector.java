@@ -81,9 +81,8 @@ public class ActionBarImplInjector {
 	}
 
 	private void updateActivityInjectorState() {
-		ReflectionHelper.setObjectField(mActivityInjector, "mColor", mColor);
-		ReflectionHelper.setObjectField(mActivityInjector, "mDarkMode",
-				mDarkMode);
+		mActivityInjector.setCurrentColor(mColor);
+		mActivityInjector.setCurrentDarkMode(mDarkMode);
 		Utils.setDecorViewBackground(mActivity, new ColorDrawable(mColor), true);
 	}
 
