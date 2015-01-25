@@ -65,26 +65,17 @@ public class ActionBarImplInjector {
 		bitmap.recycle();
 	}
 
-	public void hookAfteSetBackgroundDrawable() {
-		FrameLayout container = (FrameLayout) ReflectionHelper.getObjectField(
-				mActionBar, "mContainerView");
-		if (container != null) {
-			Drawable backgroundDrawable = (Drawable) ReflectionHelper
-					.getObjectField(container, "mBackground");
-			if (backgroundDrawable != null) {
-				BitMapColor bmColor = Utils.getBitmapColor(backgroundDrawable);
+	public void hookAfteSetBackgroundDrawable(Drawable drawable) {
+				BitMapColor bmColor = Utils.getBitmapColor(drawable);
 				mColor = bmColor.Color;
 				mDarkMode = Utils.getDarkMode(mColor);
 				Drawable tempdrawable = new ColorDrawable(mColor);
 				if (bmColor.mType != BitMapColor.Type.FLAT) {
 					((ActionBar) mActionBar)
 							.setBackgroundDrawable(tempdrawable);
-					container.invalidate();
 				}
 				updateActivityInjectorState();
 				sendBroadcast();
-			}
-		}
 	}
 
 	private void updateActivityInjectorState() {

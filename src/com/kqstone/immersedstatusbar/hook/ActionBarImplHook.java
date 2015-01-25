@@ -52,7 +52,7 @@ public class ActionBarImplHook {
 						((ActionBarImplInjector) ReflectionHelper
 								.getAdditionalInstanceField(param.thisObject,
 										"mActionBarImplInjector"))
-								.hookAfteSetBackgroundDrawable();
+								.hookAfteSetBackgroundDrawable((Drawable) param.args[0]);
 					}
 				});
 	}
