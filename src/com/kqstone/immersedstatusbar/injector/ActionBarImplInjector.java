@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.widget.FrameLayout;
 
 import com.kqstone.immersedstatusbar.Utils;
@@ -42,7 +43,12 @@ public class ActionBarImplInjector {
 					container.invalidate();
 				}
 				updateActivityInjectorState();
-				sendBroadcast();
+				new Handler().post(new Runnable() {
+
+					@Override
+					public void run() {
+						sendBroadcast();
+					}});
 			}
 		}
 	}
@@ -56,6 +62,7 @@ public class ActionBarImplInjector {
 			updateActivityInjectorState();
 			sendBroadcast();
 		}
+		bitmap.recycle();
 	}
 
 	public void hookAfteSetBackgroundDrawable() {
