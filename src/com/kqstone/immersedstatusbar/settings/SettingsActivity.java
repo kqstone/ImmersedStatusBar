@@ -28,11 +28,12 @@ public class SettingsActivity extends PreferenceActivity implements
 	private final static String KEY_PREF_ABOUT = "about";
 	private final static String KEY_PREF_PROFILE = "profile";
 	private static final String KEY_SWITCH_DEBUG = "switch_debug";
-	public static final String KEY_PREF_FILTER_ALPHA = "key_filter_alpha";
+	public static final String KEY_PREF_FILTER_ALPHA = "key_filter_alpha"; 
 
 	private Context mContext;
 	private Preference mPrefAbout;
 	private Preference mPrefDownoadProfile;
+	private CheckBoxPreference mPreTintStatusBar;
 	private CheckBoxPreference mPrefForceTint;
 	private CheckBoxPreference mPreTintNotification;
 	private CheckBoxPreference mPreQuickAnimContent;
@@ -192,9 +193,15 @@ public class SettingsActivity extends PreferenceActivity implements
 		mPrefAbout.setOnPreferenceClickListener(this);
 		mPrefDownoadProfile = findPreference(KEY_PREF_PROFILE);
 		mPrefDownoadProfile.setOnPreferenceClickListener(this);
+		mPreTintStatusBar = (CheckBoxPreference) findPreference(Const.KEY_PREF_TINT_STATUSBAR);
+		mPreTintStatusBar.setChecked(Settings.System.getInt(getContentResolver(),
+				Const.KEY_PREF_TINT_STATUSBAR, 0) == 1 ? true : false);
+		mPreTintStatusBar.setOnPreferenceChangeListener(this);
 		mPrefForceTint = (CheckBoxPreference) findPreference(Const.KEY_PREF_FORCE_TINT);
 		mPrefForceTint.setChecked(Settings.System.getInt(getContentResolver(),
 				Const.KEY_PREF_FORCE_TINT, 0) == 1 ? true : false);
+		mPrefForceTint.setEnabled(Settings.System.getInt(getContentResolver(),
+				Const.KEY_PREF_TINT_STATUSBAR, 0) == 1 ? true : false);
 		mPrefForceTint.setOnPreferenceChangeListener(this);
 		mPreTintNotification = (CheckBoxPreference) findPreference(Const.KEY_PREF_TINT_NOTIFICATION);
 		boolean isTintNoti = Settings.System.getInt(getContentResolver(),
@@ -287,6 +294,11 @@ public class SettingsActivity extends PreferenceActivity implements
 			Settings.System.putInt(getContentResolver(),
 					Const.KEY_PREF_FORCE_TINT, (Boolean) arg1 ? 1 : 0);
 			mPrefForceTint.setChecked((Boolean) arg1);
+		} else if (key.equals(Const.KEY_PREF_TINT_STATUSBAR)) {
+			Settings.System.putInt(getContentResolver(),
+					Const.KEY_PREF_TINT_STATUSBAR, (Boolean) arg1 ? 1 : 0);
+			this.mPreTintStatusBar.setChecked((Boolean) arg1);
+			this.mPrefForceTint.setEnabled((Boolean) arg1);
 		} else if (key.equals(Const.KEY_PREF_TINT_NOTIFICATION)) {
 			Settings.System.putInt(getContentResolver(),
 					Const.KEY_PREF_TINT_NOTIFICATION, (Boolean) arg1 ? 1 : 0);
