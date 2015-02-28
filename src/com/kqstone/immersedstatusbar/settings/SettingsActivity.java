@@ -258,15 +258,7 @@ public class SettingsActivity extends LiveBlurPreferenceActivity implements
 				.valueOf(alpha)));
 	}
 	
-	@Override 
-	public void onWindowFocusChanged(boolean focused) {
-		Utils.setTranslucentStatus(this);
-		ActionBar actionBar = this.getActionBar();
-		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33cccccc")));
-//		Utils.sendTintStatusBarIntent(this, 1, Color.parseColor("#eecccccc"), null, true, true);
-		this.setupBlurMargin(actionBar.getHeight()+60, 0);
-		this.getViewForTop().setBackgroundColor(Color.parseColor("#ffffff"));
-	}
+
 
 	@Override
 	public boolean onPreferenceClick(Preference arg0) {
