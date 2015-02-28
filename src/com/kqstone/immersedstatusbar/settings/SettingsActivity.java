@@ -1,5 +1,6 @@
 package com.kqstone.immersedstatusbar.settings;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -7,6 +8,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,9 +24,10 @@ import android.widget.Toast;
 
 import com.kqstone.immersedstatusbar.Const;
 import com.kqstone.immersedstatusbar.R;
+import com.kqstone.immersedstatusbar.Utils;
 import com.kqstone.immersedstatusbar.helper.ProfileDownload;
 
-public class SettingsActivity extends PreferenceActivity implements
+public class SettingsActivity extends LiveBlurPreferenceActivity implements
 		OnPreferenceClickListener, OnPreferenceChangeListener {
 	private final static String KEY_PREF_ABOUT = "about";
 	private final static String KEY_PREF_PROFILE = "profile";
@@ -252,6 +256,16 @@ public class SettingsActivity extends PreferenceActivity implements
 				Const.KEY_PREF_FILTER_ALPHA, 100);
 		this.mPreFilterAlpha.setSummary(getFilterAlphaValue(String
 				.valueOf(alpha)));
+	}
+	
+	@Override 
+	public void onWindowFocusChanged(boolean focused) {
+		Utils.setTranslucentStatus(this);
+		ActionBar actionBar = this.getActionBar();
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33cccccc")));
+//		Utils.sendTintStatusBarIntent(this, 1, Color.parseColor("#eecccccc"), null, true, true);
+		this.setupBlurMargin(actionBar.getHeight()+60, 0);
+		this.getViewForTop().setBackgroundColor(Color.parseColor("#ffffff"));
 	}
 
 	@Override

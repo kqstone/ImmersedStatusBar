@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="E:/WSM-Project-master/API/XposedBridgeApi42.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Android SDK/sdk/extras/android/support/v7/appcompat/libs/android-support-v4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
