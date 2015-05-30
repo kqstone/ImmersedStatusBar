@@ -46,7 +46,6 @@ public final class Const {
 	public static final String KEY_PREF_EXPORT_INFORM_TOFILE = "key_export_inform_tofile";
 	public static final String KEY_PREF_FILTER_ALPHA = "key_filter_alpha";
 	public static final String KEY_PREF_GET_USR_COLOR = "key_get_usr_color";
-	public static final String KEY_PREF_TINT_STATUSBAR = "key_tint_statusbar";
 
 	public static final String PROFILE_URL = "http://github.com/kqstone/ISBpreferences/archive/master.zip";
 

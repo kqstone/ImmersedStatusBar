@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <PreferenceCategory android:title="@string/title_app_settings"><CheckBoxPreference android:title="@string/title_tint_statusbar" android:key="key_tint_statusbar" android:summary="@string/summary_tint_statusbar" /><CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint" android:summary="@string/summary_force_tint" /><CheckBoxPreference android:title="@string/title_tint_notification" android:key="key_tint_notification" android:summary="@string/summary_tint_notification" /><Preference android:key="key_filter_alpha" android:title="@string/title_filter_alpha" android:summary="@string/summary_filter_alpha" /><CheckBoxPreference android:title="@string/title_quickanim_content" android:key="key_quickanim_content" android:summary="@string/summary_quickanim_content" /></PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_app_settings"><CheckBoxPreference android:title="@string/title_force_tint" android:key="key_force_tint" android:summary="@string/summary_force_tint" /><CheckBoxPreference android:title="@string/title_tint_notification" android:key="key_tint_notification" android:summary="@string/summary_tint_notification" /><Preference android:key="key_filter_alpha" android:title="@string/title_filter_alpha" android:summary="@string/summary_filter_alpha" /><CheckBoxPreference android:title="@string/title_quickanim_content" android:key="key_quickanim_content" android:summary="@string/summary_quickanim_content" /></PreferenceCategory>
     
     
     
