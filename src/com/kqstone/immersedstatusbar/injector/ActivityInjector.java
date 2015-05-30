@@ -34,7 +34,7 @@ import com.kqstone.immersedstatusbar.helper.ReflectionHelper;
 public class ActivityInjector {
 	private static final String SHAREDPREF_NAME = "isb";
 	private static final String[] FastTransApp = { "com.miui.home",
-			"com.UCMobile", "com.tencent.mm", "com.sina.weibo" };
+			"com.UCMobile", "com.sina.weibo" };
 
 	private static final String[][] IgnorApp = { { "com.baidu.netdisk",
 			"ui.MainActivity" } };

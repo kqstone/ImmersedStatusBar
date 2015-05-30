@@ -248,10 +248,6 @@ public class Utils {
 	}
 
 	public static WindowType getWindowType(Activity activity) {
-		String pkgName = activity.getPackageName();
-		if (pkgName.equals("com.tencent.mobileqq")) {
-			return WindowType.Normal;
-		}
 		Intent activityIntent = activity.getIntent();
 		int flags = activity.getWindow().getAttributes().flags;
 		if ((flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) {
